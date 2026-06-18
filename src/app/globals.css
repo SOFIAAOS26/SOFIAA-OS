@@ -1,26 +1,56 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* SOFIAA Design System — Digital Silence */
+  --color-sofiaa-black: #0A0A0A;
+  --color-sofiaa-blue: #4F7CFF;
+  --color-sofiaa-white: #FFFFFF;
+  --color-sofiaa-gray: #F5F5F7;
+
+  /* Aliases para uso rápido */
+  --color-background: #0A0A0A;
+  --color-foreground: #FFFFFF;
+
+  /* Tipografía */
+  --font-sans: "Inter", "SF Pro Display", system-ui, sans-serif;
+
+  /* Animaciones del Orb */
+  --animate-orb-idle: orbIdle 3s ease-in-out infinite;
+  --animate-orb-listening: orbListening 0.8s ease-in-out infinite;
+  --animate-orb-thinking: orbThinking 1.2s linear infinite;
+  --animate-orb-responding: orbResponding 1s ease-in-out infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@keyframes orbIdle {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.05); opacity: 0.5; }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes orbListening {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+
+@keyframes orbThinking {
+  0% { transform: rotate(0deg); opacity: 0.8; }
+  100% { transform: rotate(360deg); opacity: 0.8; }
+}
+
+@keyframes orbResponding {
+  0%, 100% { transform: scale(1.05); opacity: 0.9; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html, body {
+  background-color: #0A0A0A;
+  color: #FFFFFF;
+  font-family: "Inter", "SF Pro Display", system-ui, sans-serif;
+  height: 100%;
+  overflow: hidden;
 }

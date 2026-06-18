@@ -1,65 +1,143 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import Orb from "@/components/orb/Orb";
+import { OrbState } from "@/components/orb/orb.states";
+
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
 
 export default function Home() {
+  const [orbState, setOrbState] = useState<OrbState>("idle");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const sendMessage = async () => {
+    if (!input.trim() || isLoading) return;
+
+    const userMessage: Message = { role: "user", content: input.trim() };
+    const updatedMessages = [...messages, userMessage];
+
+    setMessages(updatedMessages);
+    setInput("");
+    setIsLoading(true);
+    setOrbState("thinking");
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: updatedMessages }),
+      });
+
+      const data = await res.json();
+      setOrbState("responding");
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: data.response },
+      ]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "Hubo un error al procesar tu solicitud." },
+      ]);
+    } finally {
+      setIsLoading(false);
+      setTimeout(() => setOrbState("idle"), 2000);
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className="flex flex-col items-center h-full bg-[#0A0A0A]">
+      {/* Header */}
+      <div className="flex flex-col items-center gap-1 pt-10 pb-6">
+        <p className="text-xs tracking-[0.3em] text-white/30 uppercase font-light">
+          SOFIAA LAB
+        </p>
+        <h1 className="text-2xl font-semibold tracking-tight text-white">
+          SOFIAA
+        </h1>
+        <p className="text-sm text-white/40 font-light">
+          Intelligent Experience OS
+        </p>
+      </div>
+
+      {/* Orb */}
+      <div className="flex flex-col items-center gap-4 py-4">
+        <Orb state={orbState} />
+        <p className="text-sm text-white/30 tracking-wide font-light h-5">
+          {orbState === "idle" && messages.length === 0 && "¿En qué puedo acompañarte?"}
+          {orbState === "listening" && "Te escucho..."}
+          {orbState === "thinking" && "Procesando tu solicitud..."}
+          {orbState === "responding" && "Aquí está mi respuesta"}
+        </p>
+      </div>
+
+      {/* Mensajes */}
+      <div className="flex-1 w-full max-w-xl overflow-y-auto px-6 space-y-4 py-2">
+        {messages.map((msg, i) => (
+          <div
+            key={i}
+            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <div
+              className={`max-w-xs rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                msg.role === "user"
+                  ? "bg-[#4F7CFF] text-white rounded-br-sm"
+                  : "bg-white/5 text-white/80 border border-white/8 rounded-bl-sm"
+              }`}
+            >
+              {msg.content}
+            </div>
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input */}
+      <div className="w-full max-w-xl px-6 pb-10 pt-4">
+        <div className="relative flex items-center">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onFocus={() => setOrbState("listening")}
+            onBlur={() => { if (!input) setOrbState("idle"); }}
+            onKeyDown={(e) => { if (e.key === "Enter") sendMessage(); }}
+            placeholder="Escribe tu pregunta..."
+            disabled={isLoading}
+            className="w-full bg-white/5 border border-white/10 rounded-full px-6 py-4 text-white placeholder-white/25 text-sm focus:outline-none focus:border-[#4F7CFF]/50 transition-all duration-300 disabled:opacity-50"
+          />
+          <button
+            onClick={sendMessage}
+            disabled={isLoading || !input.trim()}
+            className="absolute right-2 flex items-center justify-center w-10 h-10 rounded-full bg-[#4F7CFF] hover:bg-[#3d6aee] transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+            aria-label="Enviar"
           >
-            Documentation
-          </a>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-4 h-4 text-white"
+            >
+              <path d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+          </button>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }
