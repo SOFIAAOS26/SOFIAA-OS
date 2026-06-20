@@ -500,34 +500,34 @@ export default function Home() {
       />
     )}
     <main
-      className="flex flex-col items-center h-full"
+      className="flex-1 flex flex-col overflow-hidden w-full"
       style={{ background: "linear-gradient(145deg, #EEF1FF 0%, #FAFAFA 55%, #FFF3FC 100%)" }}
     >
-      {/* Header */}
-      <div className="relative flex flex-col items-center gap-1 pt-6 pb-2 sm:pt-10 sm:pb-4 w-full max-w-xl px-4 sm:px-6">
+      {/* Header — shrink-0 para que nunca se comprima */}
+      <div className="shrink-0 relative flex flex-col items-center gap-0.5 pt-5 pb-1 w-full px-4">
         <p className="text-xs tracking-[0.32em] uppercase font-light" style={{ color: "rgba(0,0,0,0.28)" }}>
           SOFIAA LAB
         </p>
         <h1
           style={{
             ...gradientText,
-            fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
+            fontSize: "clamp(1.4rem, 6vw, 2.4rem)",
             fontWeight: 700,
             letterSpacing: "-0.02em",
           }}
         >
           SOFIAA
         </h1>
-        <p className="text-sm font-light" style={{ color: "rgba(0,0,0,0.32)" }}>
+        <p className="text-xs font-light" style={{ color: "rgba(0,0,0,0.32)" }}>
           Intelligent Experience OS
         </p>
 
-        {/* Botón limpiar — aparece solo cuando hay conversación */}
+        {/* Botón limpiar */}
         {messages.length > 0 && !isLoading && (
           <button
             onClick={resetChat}
             title="Nueva conversación"
-            className="absolute right-6 top-10 flex items-center gap-1.5 px-4 py-2 rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
+            className="absolute right-4 top-5 flex items-center gap-1 px-3 py-1.5 rounded-full transition-all duration-200 active:scale-95"
             style={{
               background: "rgba(255,255,255,0.65)",
               backdropFilter: "blur(20px)",
@@ -538,7 +538,7 @@ export default function Home() {
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
               strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
-              style={{ width: "13px", height: "13px", stroke: "url(#btnGrad)", flexShrink: 0 }}>
+              style={{ width: "12px", height: "12px", stroke: "url(#btnGrad)", flexShrink: 0 }}>
               <defs>
                 <linearGradient id="btnGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#4F7CFF" />
@@ -548,37 +548,32 @@ export default function Home() {
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
               <path d="M3 3v5h5" />
             </svg>
-            <span style={{
-              ...gradientText,
-              fontSize: "0.78rem",
-              fontWeight: 600,
-              letterSpacing: "0.01em",
-            }}>
-              Probemos algo más
+            <span style={{ ...gradientText, fontSize: "0.72rem", fontWeight: 600 }}>
+              Nuevo
             </span>
           </button>
         )}
       </div>
 
-      {/* Orb */}
-      <div className="flex flex-col items-center gap-2 py-1 sm:py-2">
+      {/* Orb — shrink-0 */}
+      <div className="shrink-0 flex flex-col items-center gap-1 py-1">
         <Orb state={orbState} />
-        <p className="text-sm tracking-wide font-light h-5 transition-all duration-300"
+        <p className="text-xs tracking-wide font-light h-4 transition-all duration-300"
           style={{ color: disclosure.showStateLabel ? disclosure.stateLabelColor : "rgba(0,0,0,0.30)" }}>
           {disclosure.showStateLabel ? disclosure.stateLabel : (
             orbState === "listening" ? "Te escucho..." :
-            orbState === "thinking"  ? "Procesando tu solicitud..." : ""
+            orbState === "thinking"  ? "Procesando..." : ""
           )}
         </p>
       </div>
 
-      {/* Saludo animado — texto flotante, sin caja */}
+      {/* Saludo animado — shrink-0 */}
       {showWelcome && (
-        <div className="w-full max-w-sm px-8 pt-6 pb-2 text-center">
+        <div className="shrink-0 w-full px-6 pt-2 pb-1 text-center">
           <p
             style={{
               ...gradientText,
-              fontSize: "clamp(1rem, 2.5vw, 1.2rem)",
+              fontSize: "clamp(0.95rem, 4.5vw, 1.2rem)",
               fontWeight: 500,
               lineHeight: 1.5,
             }}
@@ -601,29 +596,29 @@ export default function Home() {
         </div>
       )}
 
-      {/* Acciones rápidas */}
+      {/* Acciones rápidas — shrink-0 */}
       {showQuickActions && (
-        <div className="flex flex-wrap justify-center gap-2 px-6 py-4 w-full max-w-xl">
+        <div className="shrink-0 flex flex-wrap justify-center gap-2 px-4 py-2 w-full">
           {QUICK_ACTIONS.map(({ label, icon }) => (
             <button
               key={label}
               onClick={() => { telemetry.trackQuickAction(label); sendMessage(label); }}
-              style={glass.chip}
-              className="hover:scale-105 active:scale-95"
+              style={{ ...glass.chip, fontSize: "0.78rem", padding: "0.4rem 0.85rem" }}
+              className="active:scale-95"
             >
-              <span className="mr-1.5 opacity-50">{icon}</span>
+              <span className="mr-1 opacity-50">{icon}</span>
               {label}
             </button>
           ))}
         </div>
       )}
 
-      {/* Mensajes */}
-      <div className="flex-1 w-full max-w-xl overflow-y-auto px-4 sm:px-6 space-y-4 pt-2 pb-2 sm:pt-4 sm:pb-4">
+      {/* Mensajes — flex-1 + min-h-0 es clave para scroll correcto en flex */}
+      <div className="flex-1 min-h-0 w-full overflow-y-auto px-3 sm:px-5 space-y-3 py-2">
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             <div
-              className={`max-w-sm rounded-3xl px-5 py-4 text-sm leading-relaxed ${
+              className={`sofiaa-bubble rounded-3xl px-4 py-3 text-sm leading-relaxed ${
                 msg.role === "user" ? "rounded-br-md" : "rounded-bl-md"
               }`}
               style={msg.role === "user" ? glass.user : glass.assistant}
@@ -663,31 +658,34 @@ export default function Home() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Chip de confirmación de navegación */}
+      {/* Chip de confirmación de navegación — shrink-0 */}
       {pendingNav && (
-        <div className="w-full max-w-xl px-4 sm:px-6 pb-2 flex items-center gap-2">
+        <div className="shrink-0 w-full px-3 sm:px-5 pb-1 flex items-center gap-2">
           <div
-            className="flex items-center gap-2 px-4 py-2 rounded-full text-sm"
+            className="flex-1 flex items-center gap-2 px-3 py-2 rounded-2xl text-xs"
             style={{
-              background: "rgba(79,124,255,0.12)",
-              border: "1px solid rgba(79,124,255,0.35)",
+              background: "rgba(79,124,255,0.10)",
+              border: "1px solid rgba(79,124,255,0.30)",
               color: "#4F7CFF",
               fontWeight: 500,
             }}
           >
-            <span style={{ fontSize: "0.8rem" }}>→</span>
-            <span>Escribe <strong>sí</strong> para continuar, o cualquier otra cosa para cancelar</span>
+            <span>→</span>
+            <span>Escribe <strong>sí</strong> para ir, o cualquier cosa para cancelar</span>
           </div>
           <button
             onClick={() => setPendingNav(null)}
-            style={{ color: "rgba(0,0,0,0.3)", fontSize: "1.1rem", lineHeight: 1, background: "none", border: "none", cursor: "pointer" }}
-            aria-label="Cancelar navegación"
+            style={{ color: "rgba(0,0,0,0.3)", fontSize: "1.2rem", lineHeight: 1, background: "none", border: "none", cursor: "pointer", padding: "0 4px" }}
+            aria-label="Cancelar"
           >×</button>
         </div>
       )}
 
-      {/* Input liquid glass */}
-      <div className="w-full max-w-xl px-4 sm:px-6 pb-6 sm:pb-10 pt-2 sm:pt-4" style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom, 1.5rem))" }}>
+      {/* Input — shrink-0, siempre visible en la parte inferior */}
+      <div
+        className="shrink-0 w-full px-3 sm:px-5 pt-2"
+        style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom, 1rem))" }}
+      >
         <div className="relative flex items-center">
           <input
             ref={inputRef}
@@ -701,8 +699,8 @@ export default function Home() {
             onKeyDown={(e) => { if (e.key === "Enter") sendMessage(); }}
             placeholder={isListeningVoice ? "Escuchando..." : "Escribe o habla..."}
             disabled={isLoading || isWelcoming || isListeningVoice || (orbState !== "listening" && !disclosure.inputEnabled)}
-            style={glass.input}
-            className="disabled:opacity-60 pr-24 pl-14"
+            style={{ ...glass.input, padding: "0.75rem 1rem", fontSize: "0.875rem" }}
+            className="disabled:opacity-60 pr-24 pl-12"
           />
 
           {/* Botón micrófono */}
