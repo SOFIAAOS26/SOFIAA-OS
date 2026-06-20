@@ -1,44 +1,60 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* SOFIAA Design System — Digital Silence */
   --color-sofiaa-black: #0A0A0A;
   --color-sofiaa-blue: #4F7CFF;
   --color-sofiaa-white: #FFFFFF;
   --color-sofiaa-gray: #F5F5F7;
-
-  /* Aliases para uso rápido */
-  --color-background: #0A0A0A;
-  --color-foreground: #FFFFFF;
-
-  /* Tipografía */
+  --color-background: #F0F2FB;
+  --color-foreground: #1D1D1F;
   --font-sans: "Inter", "SF Pro Display", system-ui, sans-serif;
-
-  /* Animaciones del Orb */
-  --animate-orb-idle: orbIdle 3s ease-in-out infinite;
-  --animate-orb-listening: orbListening 0.8s ease-in-out infinite;
-  --animate-orb-thinking: orbThinking 1.2s linear infinite;
-  --animate-orb-responding: orbResponding 1s ease-in-out infinite;
+  --animate-cursor-blink: cursorBlink 1s step-end infinite;
 }
 
-@keyframes orbIdle {
-  0%, 100% { transform: scale(1); opacity: 0.4; }
-  50% { transform: scale(1.05); opacity: 0.5; }
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
-@keyframes orbListening {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.15); opacity: 1; }
+@keyframes neuronPulse {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
 }
 
-@keyframes orbThinking {
-  0% { transform: rotate(0deg); opacity: 0.8; }
-  100% { transform: rotate(360deg); opacity: 0.8; }
+@keyframes connPulse {
+  0% { stroke-opacity: 0.08; }
+  100% { stroke-opacity: 0.7; }
 }
 
-@keyframes orbResponding {
-  0%, 100% { transform: scale(1.05); opacity: 0.9; }
-  50% { transform: scale(1.2); opacity: 1; }
+@keyframes waveExpand {
+  0%   { transform: scale(1);   opacity: 0.55; }
+  100% { transform: scale(2.0); opacity: 0; }
+}
+
+@keyframes orbSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes orbCacheHit {
+  0%   { transform: scale(1);    opacity: 1; }
+  50%  { transform: scale(1.06); opacity: 0.85; }
+  100% { transform: scale(1);    opacity: 1; }
+}
+
+@keyframes orbError {
+  0%   { transform: scale(1);    }
+  20%  { transform: scale(1.03); }
+  40%  { transform: scale(0.98); }
+  60%  { transform: scale(1.02); }
+  80%  { transform: scale(0.99); }
+  100% { transform: scale(1);    }
+}
+
+@keyframes orbSuccess {
+  0%   { transform: scale(1);    }
+  40%  { transform: scale(1.08); }
+  100% { transform: scale(1);    }
 }
 
 * {
@@ -48,9 +64,18 @@
 }
 
 html, body {
-  background-color: #0A0A0A;
-  color: #FFFFFF;
+  background: linear-gradient(145deg, #EEF1FF 0%, #FAFAFA 55%, #FFF3FC 100%);
+  color: #1D1D1F;
   font-family: "Inter", "SF Pro Display", system-ui, sans-serif;
   height: 100%;
+}
+
+/* La página principal bloquea scroll — las páginas internas lo heredan libre */
+.sofiaa-root {
   overflow: hidden;
+  height: 100%;
+}
+
+input::placeholder {
+  color: rgba(0, 0, 0, 0.28);
 }
