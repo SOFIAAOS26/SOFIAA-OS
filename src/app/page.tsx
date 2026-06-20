@@ -101,7 +101,9 @@ export default function Home() {
   const [resetKey, setResetKey]         = useState(0);
   const [isListeningVoice, setIsListeningVoice] = useState(false);
   const [showAdmin, setShowAdmin]               = useState(false);
+  const [pendingNav, setPendingNav]         = useState<string | null>(null);
   const messagesEndRef  = useRef<HTMLDivElement>(null);
+  const inputRef        = useRef<HTMLInputElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef    = useRef<any>(null);
   const sentViaVoiceRef   = useRef(false);
@@ -294,9 +296,26 @@ export default function Home() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const AFFIRMATIVE = ["si", "sí", "ok", "vamos", "dale", "claro", "perfecto", "adelante", "yes",
+    "confirmo", "llévame", "llevame", "por favor", "sí por favor", "si por favor", "venga", "ándale", "andale"];
+
   const sendMessage = async (overrideText?: string) => {
     const text = (overrideText ?? input).trim();
     if (!text || isLoading) return;
+
+    // ── Navegación pendiente: esperar confirmación del usuario ───────────────
+    if (pendingNav) {
+      const normalized = text.toLowerCase().trim();
+      const confirmed = AFFIRMATIVE.some((w) => normalized === w || normalized.startsWith(w + " ") || normalized.endsWith(" " + w));
+      setPendingNav(null);
+      setInput("");
+      if (confirmed) {
+        router.push(pendingNav);
+        return;
+      }
+      // Si no confirmó, procesar el mensaje normalmente (sin navegar)
+    }
+    // ─────────────────────────────────────────────────────────────────────────
 
     // Frase secreta — abre panel de admin sin pasar al modelo
     if (text.toLowerCase() === "espada del augurio") {
@@ -411,7 +430,7 @@ export default function Home() {
       const navMatch = fullResponse.match(/\[NAVIGATE:([^\]]+)\]/);
       if (navMatch) {
         const dest = navMatch[1].trim();
-        // Limpiar el token del mensaje antes de navegar
+        // Limpiar el token del mensaje
         setMessages((prev) => {
           const updated = [...prev];
           const last = updated[updated.length - 1];
@@ -423,9 +442,9 @@ export default function Home() {
           }
           return updated;
         });
-        // Navegar fuera del render cycle
         if (dest.startsWith("/")) {
-          setTimeout(() => router.push(dest), 2200);
+          // Guardar destino — esperamos confirmación del usuario antes de navegar
+          setPendingNav(dest);
         } else {
           window.open(dest, "_blank", "noopener,noreferrer");
         }
@@ -445,6 +464,8 @@ export default function Home() {
     } finally {
       setIsLoading(false);
       orb.finishResponse(1800);
+      // Mantener el foco en el input después de cada mensaje
+      setTimeout(() => inputRef.current?.focus(), 100);
     }
   };
 
@@ -483,7 +504,7 @@ export default function Home() {
       style={{ background: "linear-gradient(145deg, #EEF1FF 0%, #FAFAFA 55%, #FFF3FC 100%)" }}
     >
       {/* Header */}
-      <div className="relative flex flex-col items-center gap-1 pt-10 pb-4 w-full max-w-xl px-6">
+      <div className="relative flex flex-col items-center gap-1 pt-6 pb-2 sm:pt-10 sm:pb-4 w-full max-w-xl px-4 sm:px-6">
         <p className="text-xs tracking-[0.32em] uppercase font-light" style={{ color: "rgba(0,0,0,0.28)" }}>
           SOFIAA LAB
         </p>
@@ -540,7 +561,7 @@ export default function Home() {
       </div>
 
       {/* Orb */}
-      <div className="flex flex-col items-center gap-3 py-2">
+      <div className="flex flex-col items-center gap-2 py-1 sm:py-2">
         <Orb state={orbState} />
         <p className="text-sm tracking-wide font-light h-5 transition-all duration-300"
           style={{ color: disclosure.showStateLabel ? disclosure.stateLabelColor : "rgba(0,0,0,0.30)" }}>
@@ -598,7 +619,7 @@ export default function Home() {
       )}
 
       {/* Mensajes */}
-      <div className="flex-1 w-full max-w-xl overflow-y-auto px-6 space-y-5 pt-4 pb-4">
+      <div className="flex-1 w-full max-w-xl overflow-y-auto px-4 sm:px-6 space-y-4 pt-2 pb-2 sm:pt-4 sm:pb-4">
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             <div
@@ -642,17 +663,43 @@ export default function Home() {
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Chip de confirmación de navegación */}
+      {pendingNav && (
+        <div className="w-full max-w-xl px-4 sm:px-6 pb-2 flex items-center gap-2">
+          <div
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-sm"
+            style={{
+              background: "rgba(79,124,255,0.12)",
+              border: "1px solid rgba(79,124,255,0.35)",
+              color: "#4F7CFF",
+              fontWeight: 500,
+            }}
+          >
+            <span style={{ fontSize: "0.8rem" }}>→</span>
+            <span>Escribe <strong>sí</strong> para continuar, o cualquier otra cosa para cancelar</span>
+          </div>
+          <button
+            onClick={() => setPendingNav(null)}
+            style={{ color: "rgba(0,0,0,0.3)", fontSize: "1.1rem", lineHeight: 1, background: "none", border: "none", cursor: "pointer" }}
+            aria-label="Cancelar navegación"
+          >×</button>
+        </div>
+      )}
+
       {/* Input liquid glass */}
-      <div className="w-full max-w-xl px-6 pb-10 pt-4">
+      <div className="w-full max-w-xl px-4 sm:px-6 pb-6 sm:pb-10 pt-2 sm:pt-4" style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom, 1.5rem))" }}>
         <div className="relative flex items-center">
           <input
+            ref={inputRef}
             type="text"
+            inputMode="text"
+            enterKeyHint="send"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onFocus={() => { if (!isWelcoming) orb.transition("listening"); }}
             onBlur={() => { if (!input && orbState === "listening") orb.transition("idle"); }}
             onKeyDown={(e) => { if (e.key === "Enter") sendMessage(); }}
-            placeholder={isListeningVoice ? "Escuchando..." : "Escribe o habla con SOFIAA..."}
+            placeholder={isListeningVoice ? "Escuchando..." : "Escribe o habla..."}
             disabled={isLoading || isWelcoming || isListeningVoice || (orbState !== "listening" && !disclosure.inputEnabled)}
             style={glass.input}
             className="disabled:opacity-60 pr-24 pl-14"

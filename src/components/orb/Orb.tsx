@@ -48,7 +48,7 @@ export default function Orb({ state }: { state: OrbState }) {
   return (
     <div
       className="relative flex items-center justify-center"
-      style={{ width: "clamp(190px, 32vw, 260px)", height: "clamp(190px, 32vw, 260px)" }}
+      style={{ width: "clamp(150px, 38vw, 260px)", height: "clamp(150px, 38vw, 260px)" }}
     >
       {/* Anillos de energía */}
       {cfg.waves && [0, 1, 2].map((i) => (
