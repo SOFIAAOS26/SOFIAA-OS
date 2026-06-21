@@ -9,6 +9,7 @@ import { subscribeEvaluaciones } from "@/lib/firestore/evaluaciones";
 import { subscribeProyectos } from "@/lib/firestore/proyectos";
 import { subscribeProveedores } from "@/lib/firestore/proveedores";
 import { subscribeEmpleados } from "@/lib/firestore/empleados";
+import { exportAnalisisPDF } from "@/lib/exportPDF";
 import type { Evaluacion, Proyecto, Proveedor, Empleado } from "@/extensions/tec-bi/schema";
 
 const ACCENT  = "#0EA5E9";
@@ -126,6 +127,22 @@ export default function AnalisisPage() {
   const valorTotal = proyectosData.reduce((s, p) => s + p.valor, 0);
   const rentabilidadGlobal = valorTotal > 0 ? (((valorTotal - costoTotalInterno - costoTotalExterno) / valorTotal) * 100).toFixed(1) : null;
 
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      await exportAnalisisPDF({
+        costoInterno: costoTotalInterno,
+        costoExterno: costoTotalExterno,
+        valorTotal,
+        rentabilidadGlobal,
+        proyectos: proyectosData,
+        auditoria,
+      });
+    } finally { setExporting(false); }
+  };
+
   if (loading) return <p style={{ color: "#aaa", fontSize: 13 }}>Cargando datos…</p>;
 
   if (evaluaciones.length === 0) return (
@@ -138,9 +155,18 @@ export default function AnalisisPage() {
 
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: "#1D1D1F", margin: "0 0 4px" }}>💰 Análisis de Costos</h1>
-        <p style={{ fontSize: 12, color: "#888", margin: 0 }}>Rentabilidad, costos y auditoría de recursos</p>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
+        <div>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#1D1D1F", margin: "0 0 4px" }}>💰 Análisis de Costos</h1>
+          <p style={{ fontSize: 12, color: "#888", margin: 0 }}>Rentabilidad, costos y auditoría de recursos</p>
+        </div>
+        <button
+          onClick={handleExport}
+          disabled={exporting || evaluaciones.length === 0}
+          style={{ background: "#0EA5E9", color: "#fff", border: "none", borderRadius: 10, padding: "9px 18px", fontSize: 12, fontWeight: 600, cursor: "pointer", opacity: exporting ? 0.6 : 1, display: "flex", alignItems: "center", gap: 6 }}
+        >
+          {exporting ? "⏳ Generando…" : "⬇️ Exportar PDF"}
+        </button>
       </div>
 
       {/* KPI row */}

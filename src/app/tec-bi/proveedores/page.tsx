@@ -4,6 +4,7 @@ import { useState, useEffect, FormEvent } from "react";
 import TecBiModal, {
   fieldStyle, labelStyle, formGrid, formRow, SubmitBtn,
 } from "@/components/tec-bi/TecBiModal";
+import Toast, { useToast } from "@/components/tec-bi/Toast";
 import {
   subscribeProveedores, createProveedor, updateProveedor, toggleProveedor,
 } from "@/lib/firestore/proveedores";
@@ -47,6 +48,7 @@ export default function ProveedoresPage() {
   const [editing, setEditing]     = useState<Proveedor | null>(null);
   const [form, setForm]           = useState({ ...EMPTY });
   const [saving, setSaving]       = useState(false);
+  const { toast, showToast }      = useToast();
 
   useEffect(() => {
     const unsub = subscribeProveedores((data) => {
@@ -73,10 +75,10 @@ export default function ProveedoresPage() {
   const handleSubmit = async (ev: FormEvent) => {
     ev.preventDefault(); setSaving(true);
     try {
-      if (editing?.id) await updateProveedor(editing.id, form);
-      else await createProveedor(form);
+      if (editing?.id) { await updateProveedor(editing.id, form); showToast("Proveedor actualizado"); }
+      else { await createProveedor(form); showToast("Proveedor creado"); }
       setModalOpen(false);
-    } catch (err) { console.error(err); }
+    } catch (err) { console.error(err); showToast("Error al guardar", "error"); }
     finally { setSaving(false); }
   };
 
@@ -88,6 +90,7 @@ export default function ProveedoresPage() {
 
   return (
     <div>
+      <Toast toast={toast} />
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
         <div>

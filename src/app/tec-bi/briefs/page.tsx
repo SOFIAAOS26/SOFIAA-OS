@@ -2,6 +2,7 @@
 
 import { useState, useEffect, FormEvent } from "react";
 import TecBiModal, { fieldStyle, labelStyle, SubmitBtn } from "@/components/tec-bi/TecBiModal";
+import Toast, { useToast } from "@/components/tec-bi/Toast";
 import { subscribeBriefs, createBrief, updateBrief, updateEstadoBrief, calcularMargenDias } from "@/lib/firestore/briefs";
 import { subscribeClientes } from "@/lib/firestore/clientes";
 import type { Brief, EstadoBrief, TipoProyecto, ClienteInterno } from "@/extensions/tec-bi/schema";
@@ -67,6 +68,7 @@ export default function BriefsPage() {
   const [form, setForm]           = useState({ ...EMPTY_FORM });
   const [entregables, setEntregables] = useState<string[]>([""]);
   const [saving, setSaving]       = useState(false);
+  const { toast, showToast }      = useToast();
 
   useEffect(() => {
     const u1 = subscribeBriefs((data) => { setBriefs(data); setLoading(false); });
@@ -129,10 +131,10 @@ export default function BriefsPage() {
         fechaLimite: new Date(form.fechaLimite),
         estado: form.estado,
       };
-      if (editing?.id) await updateBrief(editing.id, payload);
-      else await createBrief(payload);
+      if (editing?.id) { await updateBrief(editing.id, payload); showToast("Brief actualizado"); }
+      else { await createBrief(payload); showToast("Brief creado"); }
       setModalOpen(false);
-    } catch (err) { console.error(err); }
+    } catch (err) { console.error(err); showToast("Error al guardar", "error"); }
     finally { setSaving(false); }
   };
 
@@ -149,6 +151,7 @@ export default function BriefsPage() {
 
   return (
     <div>
+      <Toast toast={toast} />
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
         <div>

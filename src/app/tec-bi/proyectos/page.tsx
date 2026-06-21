@@ -2,6 +2,7 @@
 
 import { useState, useEffect, FormEvent } from "react";
 import TecBiModal, { fieldStyle, labelStyle, SubmitBtn } from "@/components/tec-bi/TecBiModal";
+import Toast, { useToast } from "@/components/tec-bi/Toast";
 import { subscribeProyectos, createProyecto, updateProyecto, updateEstadoProyecto } from "@/lib/firestore/proyectos";
 import { subscribeBriefs } from "@/lib/firestore/briefs";
 import { subscribeEmpleados } from "@/lib/firestore/empleados";
@@ -50,6 +51,7 @@ export default function ProyectosPage() {
   const [editing, setEditing]       = useState<Proyecto | null>(null);
   const [form, setForm]             = useState({ ...EMPTY_FORM });
   const [saving, setSaving]         = useState(false);
+  const { toast, showToast }        = useToast();
 
   useEffect(() => {
     const u1 = subscribeProyectos((d) => { setProyectos(d); setLoading(false); });
@@ -88,10 +90,10 @@ export default function ProyectosPage() {
     ev.preventDefault(); setSaving(true);
     try {
       const payload = { ...form };
-      if (editing?.id) await updateProyecto(editing.id, payload);
-      else await createProyecto(payload);
+      if (editing?.id) { await updateProyecto(editing.id, payload); showToast("Proyecto actualizado"); }
+      else { await createProyecto(payload); showToast("Proyecto creado"); }
       setModalOpen(false);
-    } catch (err) { console.error(err); }
+    } catch (err) { console.error(err); showToast("Error al guardar", "error"); }
     finally { setSaving(false); }
   };
 
@@ -108,6 +110,7 @@ export default function ProyectosPage() {
 
   return (
     <div>
+      <Toast toast={toast} />
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
         <div>

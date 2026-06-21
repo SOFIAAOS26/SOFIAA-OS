@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { subscribeEvaluaciones, promedioMetricas } from "@/lib/firestore/evaluaciones";
+import { exportEvaluacionesPDF } from "@/lib/exportPDF";
 import { subscribeProyectos } from "@/lib/firestore/proyectos";
 import StarRating from "@/components/tec-bi/StarRating";
 import { subscribeEmpleados } from "@/lib/firestore/empleados";
@@ -50,6 +51,29 @@ export default function EvaluacionesPage() {
     ? Math.round((evaluaciones.filter((e) => e.cumplimientoTiempo === "A tiempo").length / evaluaciones.length) * 100)
     : null;
 
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      await exportEvaluacionesPDF({
+        total: evaluaciones.length,
+        avgCalidad,
+        pctATiempo,
+        evaluaciones: evaluaciones.map((ev) => ({
+          proyecto: proyectos.find((p) => p.id === ev.proyectoId)?.titulo ?? ev.proyectoId,
+          tipo: ev.tipo,
+          evaluado: getAsignado(ev),
+          calidad: Math.round(promedioMetricas(ev)),
+          costo: ev.tipo === "Interno" ? (ev.datosInternos?.costoTotal ?? null) : (ev.datosExternos?.costoFinal ?? null),
+          tiempo: ev.cumplimientoTiempo,
+          unidades: ev.unidadesProducidas,
+          versiones: ev.numeroDVersiones,
+        })),
+      });
+    } finally { setExporting(false); }
+  };
+
   return (
     <div>
       {/* Header */}
@@ -58,12 +82,23 @@ export default function EvaluacionesPage() {
           <h1 style={{ fontSize: 22, fontWeight: 700, color: "#1D1D1F", margin: 0 }}>⭐ Evaluaciones</h1>
           <p style={{ fontSize: 12, color: "#888", marginTop: 2 }}>{evaluaciones.length} evaluaciones registradas</p>
         </div>
-        <button
-          onClick={() => router.push("/tec-bi/evaluaciones/nueva")}
-          style={{ background: ACCENT, color: "#fff", border: "none", borderRadius: 10, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}
-        >
-          + Nueva evaluación
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          {evaluaciones.length > 0 && (
+            <button
+              onClick={handleExport}
+              disabled={exporting}
+              style={{ background: "rgba(14,165,233,0.1)", color: ACCENT, border: `1px solid rgba(14,165,233,0.3)`, borderRadius: 10, padding: "9px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer", opacity: exporting ? 0.6 : 1 }}
+            >
+              {exporting ? "⏳ Generando…" : "⬇️ PDF"}
+            </button>
+          )}
+          <button
+            onClick={() => router.push("/tec-bi/evaluaciones/nueva")}
+            style={{ background: ACCENT, color: "#fff", border: "none", borderRadius: 10, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}
+          >
+            + Nueva evaluación
+          </button>
+        </div>
       </div>
 
       {/* KPI mini-row */}

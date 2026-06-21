@@ -4,6 +4,7 @@ import { useState, useEffect, FormEvent } from "react";
 import TecBiModal, {
   fieldStyle, labelStyle, formGrid, formRow, SubmitBtn,
 } from "@/components/tec-bi/TecBiModal";
+import Toast, { useToast } from "@/components/tec-bi/Toast";
 import {
   subscribeEmpleados, createEmpleado, updateEmpleado, toggleEmpleado,
 } from "@/lib/firestore/empleados";
@@ -26,6 +27,7 @@ export default function EmpleadosPage() {
   const [editing, setEditing]     = useState<Empleado | null>(null);
   const [form, setForm]           = useState({ ...EMPTY });
   const [saving, setSaving]       = useState(false);
+  const { toast, showToast }      = useToast();
 
   useEffect(() => {
     const unsub = subscribeEmpleados((data) => {
@@ -66,12 +68,15 @@ export default function EmpleadosPage() {
     try {
       if (editing?.id) {
         await updateEmpleado(editing.id, form);
+        showToast("Empleado actualizado");
       } else {
         await createEmpleado(form);
+        showToast("Empleado creado");
       }
       setModalOpen(false);
     } catch (err) {
       console.error(err);
+      showToast("Error al guardar", "error");
     } finally {
       setSaving(false);
     }
@@ -85,6 +90,7 @@ export default function EmpleadosPage() {
 
   return (
     <div>
+      <Toast toast={toast} />
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
         <div>
