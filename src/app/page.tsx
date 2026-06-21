@@ -1,14 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { OrbState } from "@/components/orb/orb.states";
 
-// WebGL orb — carga lazy con SSR desactivado (Three.js no corre en servidor)
-const Orb = dynamic(() => import("@/components/orb/NeuralWebGLOrb"), { ssr: false });
+import Orb from "@/components/orb/Orb";
 import AdminPanel from "@/components/admin/AdminPanel";
 import { analyzeMessage } from "@/core/guardrails.engine";
 import { getSafetyResponse } from "@/config/safety.response.map";
