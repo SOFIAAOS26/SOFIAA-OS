@@ -18,11 +18,12 @@ export function subscribeEvaluaciones(cb: (data: Evaluacion[]) => void) {
 export async function createEvaluacion(
   data: Omit<Evaluacion, "id" | "createdAt">
 ) {
-  const ref = await addDoc(collection(db, COL), {
-    ...data,
-    fecha: data.fecha ?? new Date(),
-    createdAt: serverTimestamp(),
-  });
+  // Firestore rechaza campos undefined — los eliminamos antes de guardar
+  const clean = Object.fromEntries(
+    Object.entries({ ...data, fecha: data.fecha ?? new Date(), createdAt: serverTimestamp() })
+      .filter(([, v]) => v !== undefined)
+  );
+  const ref = await addDoc(collection(db, COL), clean);
 
   // Actualizar acumulados del empleado o proveedor
   await recalcularAcumulados(data.proyectoId, data.tipo, ref.id);
