@@ -8,6 +8,7 @@ import {
   subscribeClientes, createCliente, updateCliente, toggleCliente,
 } from "@/lib/firestore/clientes";
 import type { ClienteInterno, TipoCampus } from "@/extensions/tec-bi/schema";
+import PageGuard from "@/components/tec-bi/PageGuard";
 
 const ACCENT = "#0EA5E9";
 const TIPOS: TipoCampus[] = ["Nacional", "Campus", "Ambos"];
@@ -82,6 +83,7 @@ export default function ClientesPage() {
 
   return (
     <div>
+      <PageGuard section="clientes" />
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
         <div>

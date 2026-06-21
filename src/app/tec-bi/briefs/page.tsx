@@ -159,7 +159,7 @@ export default function BriefsPage() {
           <h1 style={{ fontSize: 22, fontWeight: 700, color: "#1D1D1F", margin: 0 }}>📋 Briefs</h1>
           <p style={{ fontSize: 12, color: "#888", marginTop: 2 }}>{filtered.length} solicitudes</p>
         </div>
-        <AdminOnly fallback={<LockButton label="Nuevo brief" />}>
+        <AdminOnly section="briefs" fallback={<LockButton label="Nuevo brief" />}>
           <button onClick={openNew} style={{ background: ACCENT, color: "#fff", border: "none", borderRadius: 10, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
             + Nuevo brief
           </button>

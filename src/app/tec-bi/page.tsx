@@ -6,6 +6,7 @@ import { tecBiExtension } from "@/extensions/tec-bi/manifest";
 import { subscribeEvaluaciones, promedioMetricas } from "@/lib/firestore/evaluaciones";
 import { subscribeProyectos } from "@/lib/firestore/proyectos";
 import type { Evaluacion, Proyecto } from "@/extensions/tec-bi/schema";
+import PageGuard from "@/components/tec-bi/PageGuard";
 
 const ACCENT = tecBiExtension.theme.badgeColor;
 const MXN = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 });
@@ -81,6 +82,7 @@ export default function TecBiDashboard() {
 
   return (
     <div>
+      <PageGuard section="dashboard" />
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 26, fontWeight: 700, color: "#1D1D1F", marginBottom: 4 }}>

@@ -8,6 +8,7 @@ import {
 import { subscribeEvaluaciones } from "@/lib/firestore/evaluaciones";
 import { subscribeProyectos } from "@/lib/firestore/proyectos";
 import { subscribeProveedores } from "@/lib/firestore/proveedores";
+import PageGuard from "@/components/tec-bi/PageGuard";
 import { subscribeEmpleados } from "@/lib/firestore/empleados";
 import { exportAnalisisPDF } from "@/lib/exportPDF";
 import type { Evaluacion, Proyecto, Proveedor, Empleado } from "@/extensions/tec-bi/schema";
@@ -147,6 +148,7 @@ export default function AnalisisPage() {
 
   if (evaluaciones.length === 0) return (
     <div style={{ textAlign: "center", padding: "64px 0" }}>
+      <PageGuard section="analisis" />
       <div style={{ fontSize: 40, marginBottom: 12 }}>💰</div>
       <h2 style={{ fontSize: 16, fontWeight: 600, color: "#1D1D1F", margin: "0 0 8px" }}>Sin datos aún</h2>
       <p style={{ fontSize: 13, color: "#888" }}>Registra evaluaciones para ver el análisis de costos.</p>
@@ -155,6 +157,7 @@ export default function AnalisisPage() {
 
   return (
     <div>
+      <PageGuard section="analisis" />
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 700, color: "#1D1D1F", margin: "0 0 4px" }}>💰 Análisis de Costos</h1>

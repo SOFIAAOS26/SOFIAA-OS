@@ -7,6 +7,7 @@ import {
 } from "recharts";
 import { subscribeEvaluaciones } from "@/lib/firestore/evaluaciones";
 import type { Evaluacion } from "@/extensions/tec-bi/schema";
+import PageGuard from "@/components/tec-bi/PageGuard";
 
 const ACCENT = "#0EA5E9";
 const MXN = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 });
@@ -85,6 +86,7 @@ export default function ROIPage() {
 
   return (
     <div>
+      <PageGuard section="roi" />
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: 22, fontWeight: 700, color: "#1D1D1F", margin: "0 0 4px" }}>📈 Simulador ROI</h1>
         <p style={{ fontSize: 12, color: "#888", margin: 0 }}>Proyecciones de retorno basadas en datos reales</p>

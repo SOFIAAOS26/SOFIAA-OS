@@ -6,6 +6,7 @@ import TecBiModal, {
 } from "@/components/tec-bi/TecBiModal";
 import Toast, { useToast } from "@/components/tec-bi/Toast";
 import AdminOnly, { LockButton } from "@/components/tec-bi/AdminOnly";
+import PageGuard from "@/components/tec-bi/PageGuard";
 import {
   subscribeEmpleados, createEmpleado, updateEmpleado, toggleEmpleado,
 } from "@/lib/firestore/empleados";
@@ -91,6 +92,7 @@ export default function EmpleadosPage() {
 
   return (
     <div>
+      <PageGuard section="empleados" />
       <Toast toast={toast} />
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>

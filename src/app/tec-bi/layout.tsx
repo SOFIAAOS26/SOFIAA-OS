@@ -4,6 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { tecBiExtension } from "@/extensions/tec-bi/manifest";
 import { useAuth } from "@/contexts/AuthContext";
+import { canView, pathToSection } from "@/lib/permissions";
 
 const NAV = tecBiExtension.routes;
 
@@ -58,7 +59,7 @@ export default function TecBiLayout({ children }: { children: React.ReactNode })
           </span>
         </div>
 
-        {/* Nav links — scrollable */}
+        {/* Nav links — filtrado por rol */}
         <nav
           style={{
             display: "flex",
@@ -68,7 +69,10 @@ export default function TecBiLayout({ children }: { children: React.ReactNode })
             scrollbarWidth: "none",
           }}
         >
-          {NAV.map((route) => {
+          {NAV.filter((route) => {
+            const section = pathToSection(route.path);
+            return canView(section, profile?.rol ?? null);
+          }).map((route) => {
             const active = pathname === route.path;
             return (
               <Link

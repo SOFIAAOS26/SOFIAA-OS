@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { subscribeEvaluaciones, promedioMetricas } from "@/lib/firestore/evaluaciones";
 import { exportEvaluacionesPDF } from "@/lib/exportPDF";
 import AdminOnly, { LockButton } from "@/components/tec-bi/AdminOnly";
+import PageGuard from "@/components/tec-bi/PageGuard";
 import { subscribeProyectos } from "@/lib/firestore/proyectos";
 import StarRating from "@/components/tec-bi/StarRating";
 import { subscribeEmpleados } from "@/lib/firestore/empleados";
@@ -77,6 +78,7 @@ export default function EvaluacionesPage() {
 
   return (
     <div>
+      <PageGuard section="evaluaciones" />
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
         <div>

@@ -10,7 +10,7 @@ import {
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 
-export type Rol = "admin" | "director" | "vp";
+export type Rol = "admin" | "director" | "user" | "vp";
 
 export interface UserProfile {
   nombre: string;

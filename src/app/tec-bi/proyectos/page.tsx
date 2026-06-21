@@ -4,6 +4,7 @@ import { useState, useEffect, FormEvent } from "react";
 import TecBiModal, { fieldStyle, labelStyle, SubmitBtn } from "@/components/tec-bi/TecBiModal";
 import Toast, { useToast } from "@/components/tec-bi/Toast";
 import AdminOnly, { LockButton } from "@/components/tec-bi/AdminOnly";
+import PageGuard from "@/components/tec-bi/PageGuard";
 import { subscribeProyectos, createProyecto, updateProyecto, updateEstadoProyecto } from "@/lib/firestore/proyectos";
 import { subscribeBriefs } from "@/lib/firestore/briefs";
 import { subscribeEmpleados } from "@/lib/firestore/empleados";
@@ -111,6 +112,7 @@ export default function ProyectosPage() {
 
   return (
     <div>
+      <PageGuard section="proyectos" />
       <Toast toast={toast} />
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
