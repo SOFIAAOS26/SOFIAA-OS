@@ -38,43 +38,58 @@ const QUICK_ACTIONS = [
   { label: "¿Cómo puedo contactarlos?", icon: "→" },
 ];
 
+// ─── Liquid Glass — material translúcido estilo iOS 26 ────────────────────────
+const LG = {
+  // Fondo ultra-translúcido + blur agresivo + highlight especular en el borde superior
+  base: (opacity = 0.38) =>
+    `rgba(255,255,255,${opacity})`,
+  blur: "blur(52px) saturate(220%)",
+  border: "1px solid rgba(255,255,255,0.88)",
+  // La línea brillante en el borde superior es la firma del liquid glass
+  highlight: "inset 0 1.5px 0 rgba(255,255,255,0.98), inset 0 -1px 0 rgba(200,210,255,0.12)",
+};
+
 const glass = {
   assistant: {
-    background: "rgba(255,255,255,0.62)",
-    backdropFilter: "blur(24px) saturate(180%)",
-    WebkitBackdropFilter: "blur(24px) saturate(180%)",
-    border: "1px solid rgba(255,255,255,0.88)",
-    boxShadow: "0 4px 24px rgba(100,100,200,0.07), inset 0 1px 0 rgba(255,255,255,0.85)",
+    background: LG.base(0.38),
+    backdropFilter: LG.blur,
+    WebkitBackdropFilter: LG.blur,
+    border: LG.border,
+    boxShadow: `0 4px 20px rgba(100,100,200,0.07), ${LG.highlight}`,
     color: "#1D1D1F",
   } as React.CSSProperties,
   user: {
-    background: "linear-gradient(135deg, #5B8AFF, #7B4FE8)",
-    boxShadow: "0 4px 18px rgba(79,124,255,0.35)",
+    background: "linear-gradient(135deg, rgba(91,138,255,0.92), rgba(123,79,232,0.88))",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    border: "1px solid rgba(255,255,255,0.28)",
+    boxShadow: "0 4px 18px rgba(79,124,255,0.28), inset 0 1.5px 0 rgba(255,255,255,0.40)",
     color: "#FFFFFF",
   } as React.CSSProperties,
   input: {
-    background: "rgba(255,255,255,0.58)",
-    backdropFilter: "blur(24px) saturate(180%)",
-    WebkitBackdropFilter: "blur(24px) saturate(180%)",
-    border: "1px solid rgba(255,255,255,0.88)",
-    boxShadow: "0 2px 20px rgba(100,100,200,0.09), inset 0 1px 0 rgba(255,255,255,0.9)",
+    background: LG.base(0.52),
+    backdropFilter: LG.blur,
+    WebkitBackdropFilter: LG.blur,
+    border: LG.border,
+    boxShadow: `0 2px 16px rgba(100,100,200,0.07), ${LG.highlight}`,
     borderRadius: "9999px",
-    padding: "1rem 1.5rem",
+    // Más compacto: padding reducido
+    padding: "0.5rem 0.9rem",
     color: "#1D1D1F",
-    fontSize: "0.875rem",
+    fontSize: "0.82rem",
     outline: "none",
     width: "100%",
-    transition: "box-shadow 0.3s",
+    transition: "box-shadow 0.25s",
   } as React.CSSProperties,
   chip: {
-    background: "rgba(255,255,255,0.55)",
-    backdropFilter: "blur(20px)",
-    WebkitBackdropFilter: "blur(20px)",
-    border: "1px solid rgba(255,255,255,0.85)",
-    boxShadow: "0 2px 12px rgba(100,100,200,0.08)",
+    background: LG.base(0.45),
+    backdropFilter: LG.blur,
+    WebkitBackdropFilter: LG.blur,
+    border: LG.border,
+    boxShadow: `0 2px 10px rgba(100,100,200,0.06), ${LG.highlight}`,
     borderRadius: "9999px",
-    padding: "0.45rem 1rem",
-    fontSize: "0.8125rem",
+    padding: "0.38rem 0.9rem",
+    fontSize: "0.79rem",
     color: "#3D3D3F",
     cursor: "pointer",
     transition: "all 0.2s",
@@ -700,22 +715,24 @@ export default function Home() {
             onKeyDown={(e) => { if (e.key === "Enter") sendMessage(); }}
             placeholder={isListeningVoice ? "Escuchando..." : "Escribe o habla..."}
             disabled={isLoading || isWelcoming || isListeningVoice || (orbState !== "listening" && !disclosure.inputEnabled)}
-            style={{ ...glass.input, padding: "0.75rem 1rem", fontSize: "0.875rem" }}
-            className="disabled:opacity-60 pr-24 pl-12"
+            style={glass.input}
+            className="disabled:opacity-60 pr-20 pl-10"
           />
 
-          {/* Botón micrófono */}
+          {/* Botón micrófono — compacto */}
           <button
             onClick={toggleVoice}
             disabled={isLoading || isWelcoming}
-            className="absolute left-2 flex items-center justify-center w-10 h-10 rounded-full disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
+            className="absolute left-1.5 flex items-center justify-center w-8 h-8 rounded-full disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95"
             style={{
               background: isListeningVoice
                 ? "linear-gradient(135deg, #E91E8C, #FF6B35)"
-                : "rgba(255,255,255,0.7)",
+                : LG.base(0.75),
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
               boxShadow: isListeningVoice
-                ? "0 0 18px rgba(233,30,140,0.5)"
-                : "0 2px 8px rgba(100,100,200,0.12)",
+                ? "0 0 16px rgba(233,30,140,0.45)"
+                : `0 1px 6px rgba(100,100,200,0.10), inset 0 1px 0 rgba(255,255,255,0.95)`,
               border: isListeningVoice ? "none" : "1px solid rgba(255,255,255,0.9)",
               animation: isListeningVoice ? "waveExpand 1.5s ease-out infinite" : "none",
             }}
@@ -725,28 +742,28 @@ export default function Home() {
               fill="none"
               stroke={isListeningVoice ? "white" : "#9B4FD9"}
               strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
-              className="w-4 h-4">
+              style={{ width: "13px", height: "13px" }}>
               <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3Z" />
               <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
               <line x1="12" y1="19" x2="12" y2="22" />
             </svg>
           </button>
 
-          {/* Botón enviar */}
+          {/* Botón enviar — compacto */}
           <button
             onClick={() => sendMessage()}
             disabled={isLoading || isWelcoming || !input.trim()}
-            className="absolute right-2 flex items-center justify-center w-10 h-10 rounded-full disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
+            className="absolute right-1.5 flex items-center justify-center w-8 h-8 rounded-full disabled:opacity-35 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95"
             style={{
               background: "linear-gradient(135deg, #4F7CFF, #9B4FD9)",
-              boxShadow: "0 2px 14px rgba(79,124,255,0.4)",
+              boxShadow: "0 2px 12px rgba(79,124,255,0.35), inset 0 1px 0 rgba(255,255,255,0.25)",
             }}
             aria-label="Enviar"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
               fill="none" stroke="white" strokeWidth={2.5}
               strokeLinecap="round" strokeLinejoin="round"
-              className="w-4 h-4">
+              style={{ width: "13px", height: "13px" }}>
               <path d="M12 19V5M5 12l7-7 7 7" />
             </svg>
           </button>
