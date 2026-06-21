@@ -3,12 +3,14 @@
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { tecBiExtension } from "@/extensions/tec-bi/manifest";
+import { useAuth } from "@/contexts/AuthContext";
 
 const NAV = tecBiExtension.routes;
 
 export default function TecBiLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
+  const { profile, signOut } = useAuth();
 
   return (
     <div
@@ -93,6 +95,27 @@ export default function TecBiLayout({ children }: { children: React.ReactNode })
             );
           })}
         </nav>
+
+        {/* User chip */}
+        {profile && (
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+            <div style={{
+              background: "rgba(14,165,233,0.1)", border: "1px solid rgba(14,165,233,0.25)",
+              borderRadius: 99, padding: "3px 10px", display: "flex", alignItems: "center", gap: 5,
+            }}>
+              <span style={{ fontSize: 10 }}>👤</span>
+              <span style={{ fontSize: 11, fontWeight: 600, color: "#0EA5E9" }}>{profile.nombre}</span>
+              <span style={{ fontSize: 9, color: "#aaa", textTransform: "uppercase" }}>· {profile.rol}</span>
+            </div>
+            <button
+              onClick={() => signOut()}
+              title="Cerrar sesión"
+              style={{ background: "none", border: "none", fontSize: 11, color: "#bbb", cursor: "pointer", padding: "2px 4px" }}
+            >
+              ⎋
+            </button>
+          </div>
+        )}
 
         {/* Exit button */}
         <button

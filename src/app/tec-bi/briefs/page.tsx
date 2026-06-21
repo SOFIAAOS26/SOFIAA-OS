@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import TecBiModal, { fieldStyle, labelStyle, SubmitBtn } from "@/components/tec-bi/TecBiModal";
 import Toast, { useToast } from "@/components/tec-bi/Toast";
+import AdminOnly, { LockButton } from "@/components/tec-bi/AdminOnly";
 import { subscribeBriefs, createBrief, updateBrief, updateEstadoBrief, calcularMargenDias } from "@/lib/firestore/briefs";
 import { subscribeClientes } from "@/lib/firestore/clientes";
 import type { Brief, EstadoBrief, TipoProyecto, ClienteInterno } from "@/extensions/tec-bi/schema";
@@ -158,9 +159,11 @@ export default function BriefsPage() {
           <h1 style={{ fontSize: 22, fontWeight: 700, color: "#1D1D1F", margin: 0 }}>📋 Briefs</h1>
           <p style={{ fontSize: 12, color: "#888", marginTop: 2 }}>{filtered.length} solicitudes</p>
         </div>
-        <button onClick={openNew} style={{ background: ACCENT, color: "#fff", border: "none", borderRadius: 10, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-          + Nuevo brief
-        </button>
+        <AdminOnly fallback={<LockButton label="Nuevo brief" />}>
+          <button onClick={openNew} style={{ background: ACCENT, color: "#fff", border: "none", borderRadius: 10, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+            + Nuevo brief
+          </button>
+        </AdminOnly>
       </div>
 
       {/* Filters */}

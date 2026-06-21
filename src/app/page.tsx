@@ -6,6 +6,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { OrbState } from "@/components/orb/orb.states";
 import { useExtension } from "@/hooks/useExtension";
+import { useAuth } from "@/contexts/AuthContext";
+import LoginModal from "@/components/tec-bi/LoginModal";
 
 import Orb from "@/components/orb/Orb";
 import AdminPanel from "@/components/admin/AdminPanel";
@@ -111,7 +113,12 @@ export default function Home() {
   const activeExtension = useExtension();
   const telemetry = useSofiaaTelemetry();
   const [orbState, setOrbState]       = useState<OrbState>("idle");
-  const [tecBiSummary, setTecBiSummary] = useState<string | null>(null);
+  const [tecBiSummary, setTecBiSummary]   = useState<string | null>(null);
+  const [showLogin, setShowLogin]         = useState(false);
+  const { profile, signOut }              = useAuth();
+
+  const LOGIN_TRIGGERS = ["login", "iniciar sesión", "iniciar sesion", "quiero hacer login",
+    "ingresar", "acceder", "autenticar", "identificarme", "quiero loguearme"];
   const [messages, setMessages]       = useState<Message[]>([]);
   const [welcomeText, setWelcomeText] = useState("");
   const [isWelcoming, setIsWelcoming] = useState(true);
@@ -348,6 +355,25 @@ export default function Home() {
     }
     // ─────────────────────────────────────────────────────────────────────────
 
+    // Frases de login — mostrar modal de autenticación
+    if (LOGIN_TRIGGERS.some((t) => text.toLowerCase().includes(t))) {
+      setInput("");
+      if (profile) {
+        setMessages([...messages, { role: "user", content: text }, { role: "assistant", content: `Ya estás autenticado como **${profile.nombre}** (${profile.rol}). Si deseas cerrar sesión escribe "cerrar sesión".` }]);
+      } else {
+        setShowLogin(true);
+      }
+      return;
+    }
+
+    // Cerrar sesión
+    if (text.toLowerCase().includes("cerrar sesión") || text.toLowerCase().includes("cerrar sesion") || text.toLowerCase().includes("logout")) {
+      setInput("");
+      await signOut();
+      setMessages([...messages, { role: "user", content: text }, { role: "assistant", content: "Sesión cerrada. ¡Hasta pronto!" }]);
+      return;
+    }
+
     // Frase secreta — abre panel de admin sin pasar al modelo
     if (text.toLowerCase() === "espada del augurio") {
       setInput("");
@@ -509,6 +535,15 @@ export default function Home() {
 
   return (
     <div className="sofiaa-root">
+    <LoginModal
+      isOpen={showLogin}
+      onClose={() => setShowLogin(false)}
+      onSuccess={(email) => {
+        setShowLogin(false);
+        // El nombre real llega del AuthContext via onAuthStateChanged — usamos email como fallback
+        setMessages((prev) => [...prev, { role: "assistant", content: `✅ Sesión iniciada. Bienvenido al sistema TEC BI.` }]);
+      }}
+    />
     {showAdmin && (
       <AdminPanel
         messages={messages}
@@ -595,6 +630,20 @@ export default function Home() {
         <p className="text-xs font-light" style={{ color: "rgba(0,0,0,0.32)" }}>
           {activeExtension ? activeExtension.description : "Intelligent Experience OS"}
         </p>
+
+        {/* User chip */}
+        {profile && (
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
+            <div style={{
+              background: "rgba(14,165,233,0.1)", border: "1px solid rgba(14,165,233,0.25)",
+              borderRadius: 99, padding: "3px 10px", display: "flex", alignItems: "center", gap: 5,
+            }}>
+              <span style={{ fontSize: 10 }}>👤</span>
+              <span style={{ fontSize: 11, fontWeight: 600, color: "#0EA5E9" }}>{profile.nombre}</span>
+              <span style={{ fontSize: 9, color: "#aaa", textTransform: "uppercase", letterSpacing: "0.3px" }}>· {profile.rol}</span>
+            </div>
+          </div>
+        )}
 
         {/* Botón limpiar */}
         {messages.length > 0 && !isLoading && (

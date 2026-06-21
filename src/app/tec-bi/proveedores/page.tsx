@@ -5,6 +5,7 @@ import TecBiModal, {
   fieldStyle, labelStyle, formGrid, formRow, SubmitBtn,
 } from "@/components/tec-bi/TecBiModal";
 import Toast, { useToast } from "@/components/tec-bi/Toast";
+import AdminOnly, { LockButton } from "@/components/tec-bi/AdminOnly";
 import {
   subscribeProveedores, createProveedor, updateProveedor, toggleProveedor,
 } from "@/lib/firestore/proveedores";
@@ -97,9 +98,11 @@ export default function ProveedoresPage() {
           <h1 style={{ fontSize: 22, fontWeight: 700, color: "#1D1D1F", margin: 0 }}>🏢 Proveedores</h1>
           <p style={{ fontSize: 12, color: "#888", marginTop: 2 }}>{filtered.length} {soloActivos ? "activos" : "registros"}</p>
         </div>
-        <button onClick={openNew} style={{ background: ACCENT, color: "#fff", border: "none", borderRadius: 10, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-          + Nuevo proveedor
-        </button>
+        <AdminOnly fallback={<LockButton label="Nuevo proveedor" />}>
+          <button onClick={openNew} style={{ background: ACCENT, color: "#fff", border: "none", borderRadius: 10, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+            + Nuevo proveedor
+          </button>
+        </AdminOnly>
       </div>
 
       {/* Filters */}
