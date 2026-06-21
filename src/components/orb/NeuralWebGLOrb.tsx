@@ -1,21 +1,14 @@
 // @ts-nocheck
 // Reason: THREE.js .d.ts types use Uint8Array<ArrayBufferLike> which conflicts with
 // TypeScript 5.5+ strict typed-array generics. Runtime behavior is fully correct.
-// All type safety is maintained in the rest of the codebase.
 'use client'
 
 /**
- * NeuralWebGLOrb.tsx — SOFIAA Edition
+ * NeuralWebGLOrb.tsx — SOFIAA Edition v2
  *
- * Orbe 3D WebGL adaptado al sistema de estados completo de SOFIAA OS.
- * Soporta los 7 estados: idle | listening | thinking | responding | cache_hit | error | success
- *
- * Requiere (instalar con --legacy-peer-deps por React 19):
- *   npm install three @react-three/fiber @react-three/postprocessing --legacy-peer-deps
- *   npm install -D @types/three --legacy-peer-deps
- *
- * Montar siempre con SSR desactivado:
- *   const NeuralWebGLOrb = dynamic(() => import('@/components/orb/NeuralWebGLOrb'), { ssr: false })
+ * Orbe cristalino 3D con efecto vidrio/plasma.
+ * Superficie casi suave, borde Fresnel brillante, interior translúcido.
+ * 7 estados: idle | listening | thinking | responding | cache_hit | error | success
  */
 
 import { useRef, useEffect, useMemo, useCallback, useState } from 'react'
@@ -27,111 +20,111 @@ import type { OrbState }        from './orb.states'
 // ─── Configuración visual por estado ──────────────────────────────────────────
 
 interface StateConfig {
-  noiseAmp:         number   // amplitud de desplazamiento de vértices
-  noiseFreq:        number   // frecuencia espacial del ruido
-  rotSpeed:         number   // velocidad de rotación del gradiente de color
-  pulseAmp:         number   // intensidad del pulso rítmico (responding = 1 Hz)
-  audioSensitivity: number   // 0 = sin mic | 1 = totalmente reactivo
-  scale:            number   // escala del mesh
-  colorA:           string   // color primario (hex)
-  colorB:           string   // color secundario (hex)
-  bloomIntensity:   number   // intensidad del glow de postproceso
+  noiseAmp:         number   // muy pequeño — solo respiración sutil
+  noiseFreq:        number   // frecuencia espacial
+  rotSpeed:         number   // velocidad de rotación del color interno
+  pulseAmp:         number   // pulso rítmico
+  audioSensitivity: number
+  scale:            number
+  colorCore:        string   // color del núcleo interior
+  colorRim:         string   // color del borde Fresnel
+  colorMid:         string   // color medio para gradiente
+  bloomIntensity:   number
+  rimPower:         number   // potencia del efecto Fresnel (mayor = borde más fino)
 }
 
 const STATE_CONFIG: Record<OrbState, StateConfig> = {
   idle: {
-    noiseAmp: 0.08, noiseFreq: 1.2, rotSpeed: 0.10,
-    pulseAmp: 0.00, audioSensitivity: 0.05, scale: 1.00,
-    colorA: '#1a4fd6', colorB: '#7B4FE8', bloomIntensity: 1.2,
+    noiseAmp: 0.018, noiseFreq: 1.4, rotSpeed: 0.06,
+    pulseAmp: 0.12, audioSensitivity: 0.03, scale: 1.00, rimPower: 3.5,
+    colorCore: '#0a0e2a', colorMid: '#1a3a8f', colorRim: '#6B9FFF',
+    bloomIntensity: 0.9,
   },
   listening: {
-    noiseAmp: 0.22, noiseFreq: 1.8, rotSpeed: 0.28,
-    pulseAmp: 0.00, audioSensitivity: 1.00, scale: 1.06,
-    colorA: '#4F7CFF', colorB: '#00C8FF', bloomIntensity: 1.8,
+    noiseAmp: 0.035, noiseFreq: 1.6, rotSpeed: 0.18,
+    pulseAmp: 0.25, audioSensitivity: 1.00, scale: 1.05, rimPower: 2.8,
+    colorCore: '#051820', colorMid: '#0066aa', colorRim: '#00D4FF',
+    bloomIntensity: 1.6,
   },
   thinking: {
-    noiseAmp: 0.05, noiseFreq: 3.8, rotSpeed: 1.10,
-    pulseAmp: 0.00, audioSensitivity: 0.00, scale: 0.92,
-    colorA: '#5B2DA8', colorB: '#1a4fd6', bloomIntensity: 1.4,
+    noiseAmp: 0.012, noiseFreq: 4.5, rotSpeed: 0.90,
+    pulseAmp: 0.08, audioSensitivity: 0.00, scale: 0.94, rimPower: 4.0,
+    colorCore: '#100520', colorMid: '#3a1080', colorRim: '#9B6FFF',
+    bloomIntensity: 1.1,
   },
   responding: {
-    noiseAmp: 0.14, noiseFreq: 1.5, rotSpeed: 0.35,
-    pulseAmp: 0.65, audioSensitivity: 0.00, scale: 1.00,
-    colorA: '#1a4fd6', colorB: '#e91e8c', bloomIntensity: 1.6,
+    noiseAmp: 0.025, noiseFreq: 1.8, rotSpeed: 0.22,
+    pulseAmp: 0.55, audioSensitivity: 0.00, scale: 1.00, rimPower: 3.0,
+    colorCore: '#050a1a', colorMid: '#1a3fcc', colorRim: '#4F9FFF',
+    bloomIntensity: 1.4,
   },
   cache_hit: {
-    noiseAmp: 0.18, noiseFreq: 2.0, rotSpeed: 0.60,
-    pulseAmp: 0.80, audioSensitivity: 0.00, scale: 1.08,
-    colorA: '#00D2C8', colorB: '#4F7CFF', bloomIntensity: 2.2,
+    noiseAmp: 0.028, noiseFreq: 2.2, rotSpeed: 0.45,
+    pulseAmp: 0.70, audioSensitivity: 0.00, scale: 1.07, rimPower: 2.5,
+    colorCore: '#001a18', colorMid: '#007a75', colorRim: '#00FFE8',
+    bloomIntensity: 2.0,
   },
   error: {
-    noiseAmp: 0.28, noiseFreq: 2.5, rotSpeed: 0.80,
-    pulseAmp: 0.55, audioSensitivity: 0.00, scale: 0.96,
-    colorA: '#FF503C', colorB: '#FF8C00', bloomIntensity: 1.8,
+    noiseAmp: 0.042, noiseFreq: 2.8, rotSpeed: 0.65,
+    pulseAmp: 0.60, audioSensitivity: 0.00, scale: 0.97, rimPower: 2.8,
+    colorCore: '#1a0500', colorMid: '#8a1500', colorRim: '#FF5540',
+    bloomIntensity: 1.7,
   },
   success: {
-    noiseAmp: 0.10, noiseFreq: 1.4, rotSpeed: 0.20,
-    pulseAmp: 0.90, audioSensitivity: 0.00, scale: 1.10,
-    colorA: '#34C759', colorB: '#00D2C8', bloomIntensity: 2.0,
+    noiseAmp: 0.020, noiseFreq: 1.5, rotSpeed: 0.15,
+    pulseAmp: 0.80, audioSensitivity: 0.00, scale: 1.08, rimPower: 2.8,
+    colorCore: '#001a08', colorMid: '#0a6630', colorRim: '#34FF80',
+    bloomIntensity: 1.9,
   },
 }
 
-// ─── GLSL: Simplex Noise 3D (Stefan Gustavson) — inline, sin dependencias ─────
+// ─── GLSL: Simplex Noise 3D (Stefan Gustavson) ────────────────────────────────
 
-const SIMPLEX_3D_GLSL = /* glsl */`
-vec3  _m289v3(vec3 x)  { return x - floor(x*(1.0/289.0))*289.0; }
-vec4  _m289v4(vec4 x)  { return x - floor(x*(1.0/289.0))*289.0; }
-vec4  _perm(vec4 x)    { return _m289v4(((x*34.0)+1.0)*x); }
-vec4  _tiSqrt(vec4 r)  { return 1.79284291400159 - 0.85373472095314*r; }
-
+const SIMPLEX = /* glsl */`
+vec3  _s289(vec3 x)  { return x - floor(x*(1./289.))*289.; }
+vec4  _s289(vec4 x)  { return x - floor(x*(1./289.))*289.; }
+vec4  _perm(vec4 x)  { return _s289(((x*34.)+1.)*x); }
 float snoise(vec3 v) {
-  const vec2 C = vec2(1.0/6.0, 1.0/3.0);
-  const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+  const vec2 C = vec2(1./6., 1./3.);
   vec3 i  = floor(v + dot(v, C.yyy));
   vec3 x0 = v - i + dot(i, C.xxx);
   vec3 g  = step(x0.yzx, x0.xyz);
-  vec3 l  = 1.0 - g;
+  vec3 l  = 1. - g;
   vec3 i1 = min(g.xyz, l.zxy);
   vec3 i2 = max(g.xyz, l.zxy);
   vec3 x1 = x0 - i1 + C.xxx;
   vec3 x2 = x0 - i2 + C.yyy;
-  vec3 x3 = x0 - D.yyy;
-  i = _m289v3(i);
+  vec3 x3 = x0 - .5;
+  i = _s289(i);
   vec4 p = _perm(_perm(_perm(
-    i.z + vec4(0.0, i1.z, i2.z, 1.0)) +
-    i.y + vec4(0.0, i1.y, i2.y, 1.0)) +
-    i.x + vec4(0.0, i1.x, i2.x, 1.0));
-  float n_ = 0.142857142857;
-  vec3  ns = n_ * D.wyz - D.xzx;
-  vec4  j  = p - 49.0*floor(p*ns.z*ns.z);
+    i.z+vec4(0.,i1.z,i2.z,1.))+
+    i.y+vec4(0.,i1.y,i2.y,1.))+
+    i.x+vec4(0.,i1.x,i2.x,1.));
+  vec3  ns = .142857*vec3(.5,1.,-2.) - vec3(.5,.5,.5)*.142857;
+  vec4  j  = p - 49.*floor(p*ns.z*ns.z);
   vec4  x_ = floor(j*ns.z);
-  vec4  y_ = floor(j - 7.0*x_);
-  vec4  x  = x_*ns.x + ns.yyyy;
-  vec4  y  = y_*ns.x + ns.yyyy;
-  vec4  h  = 1.0 - abs(x) - abs(y);
-  vec4  b0 = vec4(x.xy, y.xy);
-  vec4  b1 = vec4(x.zw, y.zw);
-  vec4  s0 = floor(b0)*2.0 + 1.0;
-  vec4  s1 = floor(b1)*2.0 + 1.0;
-  vec4  sh = -step(h, vec4(0.0));
-  vec4  a0 = b0.xzyw + s0.xzyw*sh.xxyy;
-  vec4  a1 = b1.xzyw + s1.xzyw*sh.zzww;
-  vec3  p0 = vec3(a0.xy, h.x);
-  vec3  p1 = vec3(a0.zw, h.y);
-  vec3  p2 = vec3(a1.xy, h.z);
-  vec3  p3 = vec3(a1.zw, h.w);
-  vec4 norm = _tiSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
-  p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
-  vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-  m = m * m;
-  return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+  vec4  y_ = floor(j - 7.*x_);
+  vec4  xs = x_*ns.x+ns.y; vec4 ys = y_*ns.x+ns.y;
+  vec4  h  = 1.-abs(xs)-abs(ys);
+  vec4  b0 = vec4(xs.xy,ys.xy);
+  vec4  b1 = vec4(xs.zw,ys.zw);
+  vec4  s0 = floor(b0)*2.+1.; vec4 s1 = floor(b1)*2.+1.;
+  vec4  sh = -step(h,vec4(0.));
+  vec4  a0 = b0.xzyw+s0.xzyw*sh.xxyy;
+  vec4  a1 = b1.xzyw+s1.xzyw*sh.zzww;
+  vec3  p0=vec3(a0.xy,h.x); vec3 p1=vec3(a0.zw,h.y);
+  vec3  p2=vec3(a1.xy,h.z); vec3 p3=vec3(a1.zw,h.w);
+  vec4  nm = max(.5-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.);
+  nm *= nm;
+  vec4 nd = vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3));
+  return 42.*dot(nm*nm,nd);
 }
 `
 
 // ─── Vertex Shader ─────────────────────────────────────────────────────────────
 
-const VERTEX_SHADER = /* glsl */`
-${SIMPLEX_3D_GLSL}
+const VERT = /* glsl */`
+${SIMPLEX}
 
 uniform float uTime;
 uniform float uBass;
@@ -139,67 +132,78 @@ uniform float uNoiseAmp;
 uniform float uNoiseFreq;
 
 varying vec3  vNormal;
-varying vec3  vWorldPos;
-varying float vDisplacement;
+varying vec3  vPos;
+varying float vDisp;
 
 void main() {
   vNormal = normalize(normalMatrix * normal);
 
-  // Dos octavas asimétricas → respiración biológica, no mecánica
-  float n1 = snoise(position * uNoiseFreq       + vec3(uTime * 0.40, 0.0,        0.0 ));
-  float n2 = snoise(position * uNoiseFreq * 2.1 + vec3(0.0,          uTime*0.25, 3.71));
-  float d  = (n1*0.65 + n2*0.35) * uNoiseAmp * (1.0 + uBass * 2.8);
+  // Deformación sutil: una sola octava suave
+  float n = snoise(position * uNoiseFreq + vec3(uTime * 0.3, 0., 0.));
+  float d = n * uNoiseAmp * (1. + uBass * 1.5);
 
-  vec3 displaced = position + normal * d;
-  vWorldPos      = displaced;
-  vDisplacement  = d;
+  vec3 disp = position + normal * d;
+  vPos  = disp;
+  vDisp = d;
 
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(displaced, 1.0);
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(disp, 1.);
 }
 `
 
-// ─── Fragment Shader ───────────────────────────────────────────────────────────
+// ─── Fragment Shader — efecto cristal/plasma ───────────────────────────────────
 
-const FRAGMENT_SHADER = /* glsl */`
-${SIMPLEX_3D_GLSL}
+const FRAG = /* glsl */`
+${SIMPLEX}
 
 uniform float uTime;
 uniform float uTreble;
 uniform float uRotSpeed;
 uniform float uPulseAmp;
-uniform vec3  uColorA;
-uniform vec3  uColorB;
+uniform float uRimPower;
+uniform vec3  uColorCore;
+uniform vec3  uColorMid;
+uniform vec3  uColorRim;
 
 varying vec3  vNormal;
-varying vec3  vWorldPos;
-varying float vDisplacement;
+varying vec3  vPos;
+varying float vDisp;
 
 void main() {
-  // Gradiente bicolor rotatorio
-  float a    = uTime * uRotSpeed;
-  float rotX = vWorldPos.x * cos(a) - vWorldPos.z * sin(a);
-  float t    = clamp(rotX * 0.55 + 0.5, 0.0, 1.0);
-  vec3  base = mix(uColorA, uColorB, t);
+  // — Fresnel: cuánto mira "hacia nosotros" vs "de lado"
+  vec3  N       = normalize(vNormal);
+  float NdotV   = abs(dot(N, vec3(0.,0.,1.)));
+  float fresnel = pow(1. - NdotV, uRimPower);   // 0 = centro, 1 = borde
 
-  // Filamentos de ruido de alta frecuencia
-  float spd  = 0.45 + uTreble * 2.8;
-  float f1   = snoise(vWorldPos * 4.2 + uTime *  spd);
-  float f2   = snoise(vWorldPos * 8.0 - uTime * (spd * 0.55) + 5.3);
-  float fil  = smoothstep(0.2, 0.78, f1*0.55 + f2*0.45);
-  vec3  filC = mix(base, vec3(1.0, 0.94, 1.0), fil * 0.32);
+  // — Gradiente interior: núcleo oscuro → mid → borde brillante
+  float t     = fresnel;
+  vec3  inner = mix(uColorCore, uColorMid, smoothstep(0.,0.55,t));
+  vec3  outer = mix(uColorMid,  uColorRim, smoothstep(0.45,1.,t));
+  vec3  base  = mix(inner, outer, step(0.45, t));
 
-  // Borde Fresnel luminoso
-  float fresnel = pow(1.0 - abs(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0))), 2.5);
-  vec3  midTone = mix(uColorA, uColorB, 0.5);
+  // — Rotación de color lenta (da sensación de plasma vivo)
+  float rot    = uTime * uRotSpeed;
+  float rotVal = vPos.x*cos(rot) - vPos.z*sin(rot);
+  float tilt   = clamp(rotVal * 0.3 + 0.5, 0., 1.);
+  vec3  tinted = mix(base, mix(uColorMid, uColorRim, tilt), 0.18);
 
-  // Pulso rítmico (responding/cache_hit/success) — simula habla sin AudioNode TTS
-  float pulse = (sin(uTime * 6.28318) * 0.5 + 0.5) * uPulseAmp;
-  vec3  glow  = uColorB * pulse * 0.30;
+  // — Venas de energía finas (solo visibles en el borde)
+  float vein = snoise(vPos * 5.5 + uTime * (0.3 + uTreble));
+  vein = smoothstep(0.55, 0.85, vein) * fresnel * 0.35;
+  tinted += uColorRim * vein;
 
-  vec3  color = filC + midTone * fresnel * 0.50 + glow;
-  float alpha = 0.70 + fresnel * 0.22 + abs(vDisplacement) * 1.4;
+  // — Punto de luz especular (simula reflexión de luz)
+  vec3  lightDir = normalize(vec3(0.6, 0.8, 1.0));
+  float spec     = pow(max(dot(N, lightDir), 0.), 24.);
+  tinted += vec3(1.) * spec * 0.25;
 
-  gl_FragColor = vec4(color, clamp(alpha, 0.50, 1.0));
+  // — Pulso rítmico en el borde
+  float pulse = (sin(uTime * 6.283) * 0.5 + 0.5) * uPulseAmp;
+  tinted += uColorRim * fresnel * pulse * 0.40;
+
+  // — Alpha: casi transparente en el centro, opaco en el borde (efecto cristal)
+  float alpha = 0.08 + fresnel * 0.88 + spec * 0.2 + abs(vDisp) * 0.8;
+
+  gl_FragColor = vec4(tinted, clamp(alpha, 0.05, 1.0));
 }
 `
 
@@ -209,7 +213,7 @@ interface AudioSnapshot { bass: number; treble: number }
 
 function useAudioAnalyser(active: boolean): () => AudioSnapshot {
   const analyserRef = useRef<AnalyserNode | null>(null)
-  const dataRef     = useRef(new Float32Array(new ArrayBuffer(512))) // 128 bins × 4 bytes
+  const dataRef     = useRef(new Float32Array(128))
   const cleanupRef  = useRef<(() => void) | null>(null)
 
   useEffect(() => {
@@ -227,13 +231,13 @@ function useAudioAnalyser(active: boolean): () => AudioSnapshot {
         const ctx      = new AudioContext()
         const analyser = ctx.createAnalyser()
         analyser.fftSize               = 256
-        analyser.smoothingTimeConstant = 0.75
+        analyser.smoothingTimeConstant = 0.80
         ctx.createMediaStreamSource(stream).connect(analyser)
         analyserRef.current = analyser
-        dataRef.current     = new Float32Array(new ArrayBuffer(analyser.frequencyBinCount * 4))
+        dataRef.current     = new Float32Array(analyser.frequencyBinCount)
         cleanupRef.current  = () => { stream.getTracks().forEach(t => t.stop()); ctx.close() }
       })
-      .catch(() => { /* mic denegado — el orbe opera en modo visual puro */ })
+      .catch(() => {})
 
     return () => {
       alive = false
@@ -249,15 +253,11 @@ function useAudioAnalyser(active: boolean): () => AudioSnapshot {
     analyser.getFloatFrequencyData(dataRef.current)
     const bins = dataRef.current
     const len  = bins.length
-    // Float frequency data is in dB (-Infinity to 0). Normalize: (db + 140) / 140 → 0..1
     let bassAcc = 0
-    for (let i = 0; i < 10; i++) bassAcc += Math.max(0, (bins[i] + 140) / 140)
+    for (let i = 0; i < 8; i++)  bassAcc += Math.max(0, (bins[i] + 140) / 140)
     let trebAcc = 0
-    for (let i = 80; i < len; i++) trebAcc += Math.max(0, (bins[i] + 140) / 140)
-    return {
-      bass:   bassAcc / 10,
-      treble: trebAcc / (len - 80),
-    }
+    for (let i = 60; i < len; i++) trebAcc += Math.max(0, (bins[i] + 140) / 140)
+    return { bass: bassAcc / 8, treble: trebAcc / (len - 60) }
   }, [])
 }
 
@@ -271,74 +271,76 @@ interface OrbMeshProps {
 function OrbMesh({ state, getAudioData }: OrbMeshProps) {
   const meshRef = useRef<THREE.Mesh>(null)
 
-  // Estado interpolado en tiempo real — sin re-renders de React
   const live = useRef({
-    noiseAmp:         STATE_CONFIG.idle.noiseAmp,
-    noiseFreq:        STATE_CONFIG.idle.noiseFreq,
-    rotSpeed:         STATE_CONFIG.idle.rotSpeed,
-    pulseAmp:         STATE_CONFIG.idle.pulseAmp,
-    audioSensitivity: STATE_CONFIG.idle.audioSensitivity,
-    scale:            STATE_CONFIG.idle.scale,
-    bloomIntensity:   STATE_CONFIG.idle.bloomIntensity,
+    noiseAmp: STATE_CONFIG.idle.noiseAmp,
+    noiseFreq: STATE_CONFIG.idle.noiseFreq,
+    rotSpeed:  STATE_CONFIG.idle.rotSpeed,
+    pulseAmp:  STATE_CONFIG.idle.pulseAmp,
+    rimPower:  STATE_CONFIG.idle.rimPower,
+    audioSens: STATE_CONFIG.idle.audioSensitivity,
+    scale:     STATE_CONFIG.idle.scale,
   })
 
   const uniforms = useMemo<Record<string, THREE.IUniform>>(() => ({
     uTime:      { value: 0 },
     uBass:      { value: 0 },
     uTreble:    { value: 0 },
-    uNoiseAmp:  { value: STATE_CONFIG.idle.noiseAmp  },
+    uNoiseAmp:  { value: STATE_CONFIG.idle.noiseAmp },
     uNoiseFreq: { value: STATE_CONFIG.idle.noiseFreq },
-    uRotSpeed:  { value: STATE_CONFIG.idle.rotSpeed  },
+    uRotSpeed:  { value: STATE_CONFIG.idle.rotSpeed },
     uPulseAmp:  { value: 0 },
-    uColorA:    { value: new THREE.Color(STATE_CONFIG.idle.colorA) },
-    uColorB:    { value: new THREE.Color(STATE_CONFIG.idle.colorB) },
+    uRimPower:  { value: STATE_CONFIG.idle.rimPower },
+    uColorCore: { value: new THREE.Color(STATE_CONFIG.idle.colorCore) },
+    uColorMid:  { value: new THREE.Color(STATE_CONFIG.idle.colorMid)  },
+    uColorRim:  { value: new THREE.Color(STATE_CONFIG.idle.colorRim)  },
   }), [])
 
-  // Colores target para interpolación suave
-  const targetColorA = useRef(new THREE.Color(STATE_CONFIG.idle.colorA))
-  const targetColorB = useRef(new THREE.Color(STATE_CONFIG.idle.colorB))
+  const tCore = useRef(new THREE.Color(STATE_CONFIG.idle.colorCore))
+  const tMid  = useRef(new THREE.Color(STATE_CONFIG.idle.colorMid))
+  const tRim  = useRef(new THREE.Color(STATE_CONFIG.idle.colorRim))
 
   useFrame(({ clock }) => {
     const cfg = STATE_CONFIG[state]
     const l   = live.current
-    const L   = 0.035   // lerp factor → ~0.55s de transición a 60fps
+    const L   = 0.030   // lerp suave ~0.65s a 60fps
 
-    // Actualizar colores target cuando cambia el estado
-    targetColorA.current.set(cfg.colorA)
-    targetColorB.current.set(cfg.colorB)
+    tCore.current.set(cfg.colorCore)
+    tMid.current.set(cfg.colorMid)
+    tRim.current.set(cfg.colorRim)
 
-    // Interpolar todos los valores numéricos
-    l.noiseAmp         += (cfg.noiseAmp         - l.noiseAmp)         * L
-    l.noiseFreq        += (cfg.noiseFreq        - l.noiseFreq)        * L
-    l.rotSpeed         += (cfg.rotSpeed         - l.rotSpeed)         * L
-    l.pulseAmp         += (cfg.pulseAmp         - l.pulseAmp)         * L
-    l.audioSensitivity += (cfg.audioSensitivity - l.audioSensitivity) * L
-    l.scale            += (cfg.scale            - l.scale)            * L
+    l.noiseAmp += (cfg.noiseAmp         - l.noiseAmp) * L
+    l.noiseFreq += (cfg.noiseFreq       - l.noiseFreq) * L
+    l.rotSpeed  += (cfg.rotSpeed        - l.rotSpeed)  * L
+    l.pulseAmp  += (cfg.pulseAmp        - l.pulseAmp)  * L
+    l.rimPower  += (cfg.rimPower        - l.rimPower)  * L
+    l.audioSens += (cfg.audioSensitivity - l.audioSens) * L
+    l.scale     += (cfg.scale           - l.scale)     * L
 
-    // Interpolar colores en espacio linear
-    ;(uniforms.uColorA.value as THREE.Color).lerp(targetColorA.current, L)
-    ;(uniforms.uColorB.value as THREE.Color).lerp(targetColorB.current, L)
+    ;(uniforms.uColorCore.value as THREE.Color).lerp(tCore.current, L)
+    ;(uniforms.uColorMid.value  as THREE.Color).lerp(tMid.current,  L)
+    ;(uniforms.uColorRim.value  as THREE.Color).lerp(tRim.current,  L)
 
     const { bass, treble } = getAudioData()
 
     uniforms.uTime.value      = clock.getElapsedTime()
-    uniforms.uBass.value      = bass   * l.audioSensitivity
-    uniforms.uTreble.value    = treble * Math.max(l.audioSensitivity * 0.5, 0.1)
+    uniforms.uBass.value      = bass   * l.audioSens
+    uniforms.uTreble.value    = treble * Math.max(l.audioSens * 0.4, 0.08)
     uniforms.uNoiseAmp.value  = l.noiseAmp
     uniforms.uNoiseFreq.value = l.noiseFreq
     uniforms.uRotSpeed.value  = l.rotSpeed
     uniforms.uPulseAmp.value  = l.pulseAmp
+    uniforms.uRimPower.value  = l.rimPower
 
     meshRef.current?.scale.setScalar(l.scale)
   })
 
   return (
     <mesh ref={meshRef}>
-      {/* 64×64 segmentos — balance óptimo entre suavidad y rendimiento móvil */}
-      <sphereGeometry args={[1, 64, 64]} />
+      {/* 80×80 → superficie más suave sin ser costoso */}
+      <sphereGeometry args={[1, 80, 80]} />
       <shaderMaterial
-        vertexShader={VERTEX_SHADER}
-        fragmentShader={FRAGMENT_SHADER}
+        vertexShader={VERT}
+        fragmentShader={FRAG}
         uniforms={uniforms}
         transparent
         depthWrite={false}
@@ -348,21 +350,49 @@ function OrbMesh({ state, getAudioData }: OrbMeshProps) {
   )
 }
 
+// ─── BackGlow: halo difuso detrás del orbe ─────────────────────────────────────
+
+function BackGlow({ state }: { state: OrbState }) {
+  const matRef = useRef<THREE.MeshBasicMaterial>(null)
+  const tColor = useRef(new THREE.Color(STATE_CONFIG.idle.colorRim))
+
+  useFrame(() => {
+    tColor.current.set(STATE_CONFIG[state].colorRim)
+    if (matRef.current) {
+      matRef.current.color.lerp(tColor.current, 0.04)
+      matRef.current.opacity =
+        0.06 + STATE_CONFIG[state].bloomIntensity * 0.025
+    }
+  })
+
+  return (
+    <mesh position={[0, 0, -0.15]} scale={[1.45, 1.45, 1]}>
+      <circleGeometry args={[1, 64]} />
+      <meshBasicMaterial
+        ref={matRef}
+        color={STATE_CONFIG.idle.colorRim}
+        transparent
+        opacity={0.08}
+        depthWrite={false}
+      />
+    </mesh>
+  )
+}
+
 // ─── Scene ─────────────────────────────────────────────────────────────────────
 
 function Scene({ state }: { state: OrbState }) {
-  // Mic solo activo en estado listening — se cierra automáticamente al salir
   const getAudioData = useAudioAnalyser(state === 'listening')
-
-  const bloomIntensity = STATE_CONFIG[state]?.bloomIntensity ?? 1.4
+  const bloomIntensity = STATE_CONFIG[state]?.bloomIntensity ?? 1.2
 
   return (
     <>
+      <BackGlow state={state} />
       <OrbMesh state={state} getAudioData={getAudioData} />
       <EffectComposer>
         <Bloom
-          luminanceThreshold={0.22}
-          luminanceSmoothing={0.90}
+          luminanceThreshold={0.15}
+          luminanceSmoothing={0.95}
           intensity={bloomIntensity}
           mipmapBlur
         />
@@ -371,22 +401,20 @@ function Scene({ state }: { state: OrbState }) {
   )
 }
 
-// ─── Fallback SVG — se muestra si WebGL no está disponible ────────────────────
+// ─── Fallback SVG ──────────────────────────────────────────────────────────────
 
 function OrbFallback() {
   return (
-    <div
-      style={{
-        width: '100%', height: '100%', borderRadius: '50%',
-        background: 'radial-gradient(circle at 38% 33%, #C0D8FF 0%, #6690FF 20%, #7B40E0 42%, #D43098 65%, #FF5540 85%, #FF8020 100%)',
-        boxShadow: '0 0 40px rgba(79,124,255,0.4)',
-        animation: 'orbCacheHit 3s ease-in-out infinite',
-      }}
-    />
+    <div style={{
+      width: '100%', height: '100%', borderRadius: '50%',
+      background: 'radial-gradient(circle at 38% 33%, rgba(107,159,255,0.15) 0%, rgba(79,124,255,0.4) 40%, rgba(26,79,214,0.7) 70%, rgba(10,14,42,0.9) 100%)',
+      boxShadow: '0 0 50px rgba(79,124,255,0.35), inset 0 0 30px rgba(10,14,42,0.8)',
+      animation: 'orbCacheHit 3s ease-in-out infinite',
+    }} />
   )
 }
 
-// ─── Componente público — misma interfaz que el Orb.tsx original ───────────────
+// ─── Componente público ────────────────────────────────────────────────────────
 
 export interface NeuralWebGLOrbProps {
   state: OrbState
@@ -395,18 +423,15 @@ export interface NeuralWebGLOrbProps {
 export default function NeuralWebGLOrb({ state }: NeuralWebGLOrbProps) {
   const [webglOk, setWebglOk] = useState<boolean | null>(null)
 
-  // Detectar soporte WebGL2 antes de montar el Canvas
   useEffect(() => {
     try {
       const canvas = document.createElement('canvas')
       const ctx    = canvas.getContext('webgl2') ?? canvas.getContext('webgl')
       setWebglOk(!!ctx)
-    } catch {
-      setWebglOk(false)
-    }
+    } catch { setWebglOk(false) }
   }, [])
 
-  if (webglOk === null) return null   // hidrata sin flash
+  if (webglOk === null) return null
   if (!webglOk) return (
     <div style={{ width: 'clamp(150px, 38vw, 260px)', height: 'clamp(150px, 38vw, 260px)' }}>
       <OrbFallback />
@@ -417,11 +442,7 @@ export default function NeuralWebGLOrb({ state }: NeuralWebGLOrbProps) {
     <div style={{ width: 'clamp(150px, 38vw, 260px)', height: 'clamp(150px, 38vw, 260px)' }}>
       <Canvas
         camera={{ position: [0, 0, 2.8], fov: 45 }}
-        gl={{
-          antialias:       true,
-          alpha:           true,
-          powerPreference: 'high-performance',
-        }}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         dpr={[1, 1.5]}
         style={{ background: 'transparent' }}
       >
