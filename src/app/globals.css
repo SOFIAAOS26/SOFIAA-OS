@@ -70,27 +70,36 @@ html, body {
   height: 100%;
 }
 
-/* Shell exterior — muestra el gradiente de fondo como "marco" */
+/* Shell exterior — centra el panel y muestra el gradiente como marco */
 .sofiaa-root {
   display: flex;
   flex-direction: column;
+  align-items: center;        /* centra el panel horizontalmente */
   overflow: hidden;
   height: 100dvh;
   height: 100vh;
-  /* Margen de seguridad: el gradiente del fondo queda visible alrededor */
-  padding: 10px 10px 0 10px;
+  padding: 12px 12px 0;       /* margen móvil */
 }
 
-/* Panel principal — flota sobre el gradiente con esquinas redondeadas arriba */
+/* En desktop: margen de 30px y el panel se ve claramente flotando */
+@media (min-width: 600px) {
+  .sofiaa-root {
+    padding: 30px 30px 0;
+  }
+}
+
+/* Panel principal — ancho máximo para no estirarse en desktop */
 .sofiaa-panel {
+  width: 100%;
+  max-width: 520px;           /* cap de ancho — centrado en desktop */
   border-radius: 22px 22px 0 0;
   border: 1px solid rgba(255, 255, 255, 0.80);
   border-bottom: none;
   box-shadow:
-    0 -2px 0 rgba(255, 255, 255, 0.95) inset,   /* borde superior brillante */
+    0 -2px 0 rgba(255, 255, 255, 0.95) inset,
     0 12px 40px rgba(100, 100, 200, 0.10),
     0 2px 8px rgba(100, 100, 200, 0.06);
-  overflow: hidden; /* respeta los border-radius en los hijos */
+  overflow: hidden;
 }
 
 /* Burbujas de mensaje — no se salen del ancho en móvil */
