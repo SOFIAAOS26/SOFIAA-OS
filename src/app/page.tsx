@@ -128,13 +128,17 @@ export default function Home() {
   const sentViaVoiceRef   = useRef(false);
   const orbControllerRef  = useRef<OrbController | null>(null);
 
-  // Capa de inteligencia TEC BI: siempre disponible, independiente de la ruta activa
+  // Capa de inteligencia TEC BI: solo cuando la extensión está activa en /tec-bi/*
   useEffect(() => {
+    if (activeExtension?.id !== "tec-bi") {
+      setTecBiSummary(null);
+      return;
+    }
     fetch("/api/tec-bi/summary")
       .then((r) => r.json())
       .then(({ summary }) => { if (summary) setTecBiSummary(summary); })
       .catch(() => { /* no crítico */ });
-  }, []);
+  }, [activeExtension?.id]);
 
   // Inicializar OrbController una vez
   if (!orbControllerRef.current) {
