@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -6,6 +6,16 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
 });
+
+// Viewport separado de metadata (Next.js 14+)
+// interactiveWidget: el teclado virtual REDIMENSIONA el contenido en lugar de sobreponerlo
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  interactiveWidget: "resizes-content",
+};
 
 export const metadata: Metadata = {
   title: "SOFIAA — Intelligent Experience OS",

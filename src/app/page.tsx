@@ -716,7 +716,7 @@ export default function Home() {
             placeholder={isListeningVoice ? "Escuchando..." : "Escribe o habla..."}
             disabled={isLoading || isWelcoming || isListeningVoice || (orbState !== "listening" && !disclosure.inputEnabled)}
             style={glass.input}
-            className="disabled:opacity-60 pr-20 pl-10"
+            className="disabled:opacity-60 pl-12 pr-12"
           />
 
           {/* Botón micrófono — compacto */}
