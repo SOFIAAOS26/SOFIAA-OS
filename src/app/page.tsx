@@ -501,11 +501,11 @@ export default function Home() {
       />
     )}
     <main
-      className="flex-1 flex flex-col overflow-hidden w-full"
+      className="sofiaa-panel flex-1 flex flex-col"
       style={{ background: "linear-gradient(145deg, #EEF1FF 0%, #FAFAFA 55%, #FFF3FC 100%)" }}
     >
-      {/* Header — shrink-0 para que nunca se comprima */}
-      <div className="shrink-0 relative flex flex-col items-center gap-0.5 pt-5 pb-1 w-full px-4">
+      {/* Header */}
+      <div className="shrink-0 relative flex flex-col items-center gap-0.5 pt-5 pb-1 w-full px-5">
         <p className="text-xs tracking-[0.32em] uppercase font-light" style={{ color: "rgba(0,0,0,0.28)" }}>
           SOFIAA LAB
         </p>
@@ -570,7 +570,7 @@ export default function Home() {
 
       {/* Saludo animado — shrink-0 */}
       {showWelcome && (
-        <div className="shrink-0 w-full px-6 pt-2 pb-1 text-center">
+        <div className="shrink-0 w-full px-5 pt-2 pb-1 text-center">
           <p
             style={{
               ...gradientText,
@@ -599,7 +599,7 @@ export default function Home() {
 
       {/* Acciones rápidas — shrink-0 */}
       {showQuickActions && (
-        <div className="shrink-0 flex flex-wrap justify-center gap-2 px-4 py-2 w-full">
+        <div className="shrink-0 flex flex-wrap justify-center gap-2 px-5 py-2 w-full">
           {QUICK_ACTIONS.map(({ label, icon }) => (
             <button
               key={label}
@@ -614,8 +614,8 @@ export default function Home() {
         </div>
       )}
 
-      {/* Mensajes — flex-1 + min-h-0 es clave para scroll correcto en flex */}
-      <div className="flex-1 min-h-0 w-full overflow-y-auto px-3 sm:px-5 space-y-3 py-2">
+      {/* Mensajes */}
+      <div className="flex-1 min-h-0 w-full overflow-y-auto px-4 space-y-3 py-2">
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             <div
@@ -659,9 +659,9 @@ export default function Home() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Chip de confirmación de navegación — shrink-0 */}
+      {/* Chip de confirmación de navegación */}
       {pendingNav && (
-        <div className="shrink-0 w-full px-3 sm:px-5 pb-1 flex items-center gap-2">
+        <div className="shrink-0 w-full px-4 pb-1 flex items-center gap-2">
           <div
             className="flex-1 flex items-center gap-2 px-3 py-2 rounded-2xl text-xs"
             style={{
@@ -682,10 +682,10 @@ export default function Home() {
         </div>
       )}
 
-      {/* Input — shrink-0, siempre visible en la parte inferior */}
+      {/* Input */}
       <div
-        className="shrink-0 w-full px-3 sm:px-5 pt-2"
-        style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom, 1rem))" }}
+        className="shrink-0 w-full px-4 pt-2"
+        style={{ paddingBottom: "max(1.25rem, env(safe-area-inset-bottom, 1.25rem))" }}
       >
         <div className="relative flex items-center">
           <input

@@ -70,13 +70,27 @@ html, body {
   height: 100%;
 }
 
-/* La página principal bloquea scroll — las páginas internas lo heredan libre */
+/* Shell exterior — muestra el gradiente de fondo como "marco" */
 .sofiaa-root {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  height: 100dvh; /* dynamic viewport — se adapta al chrome del navegador móvil */
-  height: 100vh;  /* fallback para navegadores que no soportan dvh */
+  height: 100dvh;
+  height: 100vh;
+  /* Margen de seguridad: el gradiente del fondo queda visible alrededor */
+  padding: 10px 10px 0 10px;
+}
+
+/* Panel principal — flota sobre el gradiente con esquinas redondeadas arriba */
+.sofiaa-panel {
+  border-radius: 22px 22px 0 0;
+  border: 1px solid rgba(255, 255, 255, 0.80);
+  border-bottom: none;
+  box-shadow:
+    0 -2px 0 rgba(255, 255, 255, 0.95) inset,   /* borde superior brillante */
+    0 12px 40px rgba(100, 100, 200, 0.10),
+    0 2px 8px rgba(100, 100, 200, 0.06);
+  overflow: hidden; /* respeta los border-radius en los hijos */
 }
 
 /* Burbujas de mensaje — no se salen del ancho en móvil */
