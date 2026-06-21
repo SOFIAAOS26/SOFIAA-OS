@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { OrbState } from "@/components/orb/orb.states";
+import { useExtension } from "@/hooks/useExtension";
 
 import Orb from "@/components/orb/Orb";
 import AdminPanel from "@/components/admin/AdminPanel";
@@ -107,6 +108,7 @@ const gradientText: React.CSSProperties = {
 
 export default function Home() {
   const router = useRouter();
+  const activeExtension = useExtension();
   const telemetry = useSofiaaTelemetry();
   const [orbState, setOrbState]       = useState<OrbState>("idle");
   const [messages, setMessages]       = useState<Message[]>([]);
@@ -400,6 +402,7 @@ export default function Home() {
           longTermMemory: localStorage.getItem("sofiaa_long_memory") ?? undefined,
           contextualMemory: buildContextualMemoryBlock(5),
           detectedGoal,
+          extensionContext: activeExtension?.contextBlock ?? undefined,
         }),
       });
 
@@ -524,18 +527,57 @@ export default function Home() {
         <p className="text-xs tracking-[0.32em] uppercase font-light" style={{ color: "rgba(0,0,0,0.28)" }}>
           SOFIAA LAB
         </p>
-        <h1
-          style={{
-            ...gradientText,
-            fontSize: "clamp(1.4rem, 6vw, 2.4rem)",
-            fontWeight: 700,
-            letterSpacing: "-0.02em",
-          }}
-        >
-          SOFIAA
-        </h1>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <h1
+            style={{
+              ...gradientText,
+              fontSize: "clamp(1.4rem, 6vw, 2.4rem)",
+              fontWeight: 700,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            SOFIAA
+          </h1>
+          {activeExtension && (
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <span
+                style={{
+                  background: activeExtension.theme.badgeColor,
+                  color: "#fff",
+                  fontSize: 9,
+                  fontWeight: 700,
+                  padding: "2px 7px",
+                  borderRadius: 99,
+                  letterSpacing: "0.5px",
+                  lineHeight: 1.4,
+                }}
+              >
+                {activeExtension.theme.badgeLabel}
+              </span>
+              <button
+                onClick={() => router.push("/")}
+                title="Salir de extensión"
+                style={{
+                  background: "rgba(0,0,0,0.07)",
+                  border: "none",
+                  borderRadius: 99,
+                  width: 16,
+                  height: 16,
+                  fontSize: 9,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#666",
+                }}
+              >
+                ×
+              </button>
+            </div>
+          )}
+        </div>
         <p className="text-xs font-light" style={{ color: "rgba(0,0,0,0.32)" }}>
-          Intelligent Experience OS
+          {activeExtension ? activeExtension.description : "Intelligent Experience OS"}
         </p>
 
         {/* Botón limpiar */}

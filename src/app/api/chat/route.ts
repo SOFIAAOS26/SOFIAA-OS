@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { SOFIAA_PROMPT_KERNEL } from "@/config/system.prompt";
+import { buildSystemPrompt } from "@/config/system.prompt";
 import { AUTH_WORD } from "@/config/navigation";
 import { analyzeMessage, analyzeConversation, logSecurityEvent } from "@/core/guardrails.engine";
 import { getSafetyResponse } from "@/config/safety.response.map";
@@ -8,11 +8,12 @@ import { getGoalContext, type GoalType } from "@/core/goal.engine";
 type Message = { role: "user" | "assistant"; content: string };
 
 export async function POST(req: NextRequest) {
-  const { messages, longTermMemory, contextualMemory, detectedGoal }: {
+  const { messages, longTermMemory, contextualMemory, detectedGoal, extensionContext }: {
     messages: Message[];
     longTermMemory?: string;
     contextualMemory?: string;
     detectedGoal?: GoalType;
+    extensionContext?: string;
   } = await req.json();
 
   if (!messages || !Array.isArray(messages)) {
@@ -96,7 +97,7 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({
       model: "openai/gpt-oss-120b",
       messages: [
-        { role: "system", content: `${SOFIAA_PROMPT_KERNEL}${memoryBlock}${contextualBlock}\n\n${authStatus}${goalBlock}` },
+        { role: "system", content: `${buildSystemPrompt(extensionContext)}${memoryBlock}${contextualBlock}\n\n${authStatus}${goalBlock}` },
         ...messages,
       ],
       temperature: 0.7,

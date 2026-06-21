@@ -7,6 +7,22 @@ export const DESTINATIONS: Record<string, { label: string; url: string; free: bo
   instagram: { label: "Instagram de Abrahan",  url: "https://www.instagram.com/benjacob_urrutia?igsh=NHhpemk3bHhwOWY3&utm_source=qr",                      free: true  },
 };
 
+export const INTERNAL_ROUTES: Record<string, string> = {
+  "/":                  "Chat principal SOFIAA",
+  "/servicios":         "Servicios (SOFIAA LAB, PASCALL, BERRYWORKS)",
+  "/quienes-somos":     "Quiénes somos",
+  "/contacto":          "Contacto",
+  "/tec-bi":            "TEC BI — Dashboard principal",
+  "/tec-bi/proyectos":  "TEC BI — Proyectos",
+  "/tec-bi/briefs":     "TEC BI — Briefs",
+  "/tec-bi/empleados":  "TEC BI — Empleados",
+  "/tec-bi/proveedores":"TEC BI — Proveedores",
+  "/tec-bi/clientes":   "TEC BI — Clientes Internos",
+  "/tec-bi/evaluaciones":"TEC BI — Evaluaciones",
+  "/tec-bi/analisis":   "TEC BI — Análisis de Costos",
+  "/tec-bi/roi":        "TEC BI — Simulador ROI",
+};
+
 export const NAV_INSTRUCTIONS = `
 # NAVEGACIÓN EXTERNA
 

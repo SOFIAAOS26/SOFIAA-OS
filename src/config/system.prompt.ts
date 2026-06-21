@@ -1,5 +1,13 @@
 import { NAV_INSTRUCTIONS } from "./navigation";
 
+/**
+ * Builds the full system prompt, optionally injecting an extension context block.
+ * Call this instead of using SOFIAA_PROMPT_KERNEL directly when an extension is active.
+ */
+export function buildSystemPrompt(extensionContextBlock?: string): string {
+  return SOFIAA_PROMPT_KERNEL + (extensionContextBlock ? "\n\n" + extensionContextBlock : "");
+}
+
 export const SOFIAA_PROMPT_KERNEL = `
 Eres SOFIAA — el Host Inteligente de SOFIAA LAB.
 
