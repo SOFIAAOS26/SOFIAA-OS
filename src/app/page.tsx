@@ -111,6 +111,7 @@ export default function Home() {
   const activeExtension = useExtension();
   const telemetry = useSofiaaTelemetry();
   const [orbState, setOrbState]       = useState<OrbState>("idle");
+  const [tecBiSummary, setTecBiSummary] = useState<string | null>(null);
   const [messages, setMessages]       = useState<Message[]>([]);
   const [welcomeText, setWelcomeText] = useState("");
   const [isWelcoming, setIsWelcoming] = useState(true);
@@ -126,6 +127,18 @@ export default function Home() {
   const recognitionRef    = useRef<any>(null);
   const sentViaVoiceRef   = useRef(false);
   const orbControllerRef  = useRef<OrbController | null>(null);
+
+  // Capa de inteligencia TEC BI: fetch datos en tiempo real cuando la extensión está activa
+  useEffect(() => {
+    if (activeExtension?.id !== "tec-bi") {
+      setTecBiSummary(null);
+      return;
+    }
+    fetch("/api/tec-bi/summary")
+      .then((r) => r.json())
+      .then(({ summary }) => { if (summary) setTecBiSummary(summary); })
+      .catch(() => { /* no crítico */ });
+  }, [activeExtension?.id]);
 
   // Inicializar OrbController una vez
   if (!orbControllerRef.current) {
@@ -402,7 +415,9 @@ export default function Home() {
           longTermMemory: localStorage.getItem("sofiaa_long_memory") ?? undefined,
           contextualMemory: buildContextualMemoryBlock(5),
           detectedGoal,
-          extensionContext: activeExtension?.contextBlock ?? undefined,
+          extensionContext: activeExtension
+            ? (activeExtension.contextBlock + (tecBiSummary ? `\n\n${tecBiSummary}` : ""))
+            : undefined,
         }),
       });
 
