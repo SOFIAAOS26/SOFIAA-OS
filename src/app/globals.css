@@ -111,4 +111,5 @@ html, body {
 
 input::placeholder {
   color: rgba(0, 0, 0, 0.28);
+  text-align: center;
 }

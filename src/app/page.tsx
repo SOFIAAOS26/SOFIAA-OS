@@ -630,7 +630,7 @@ export default function Home() {
       )}
 
       {/* Mensajes */}
-      <div className="flex-1 min-h-0 w-full overflow-y-auto px-4 space-y-3 py-2">
+      <div className="flex-1 min-h-0 w-full overflow-y-auto space-y-3 py-2" style={{ paddingLeft: "10px", paddingRight: "10px" }}>
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             <div
