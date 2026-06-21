@@ -138,6 +138,19 @@ Páginas disponibles:
 - **Quiénes somos** (Abrahan, el equipo, la historia): \`[NAVIGATE:/quienes-somos]\`
 - **Contacto** (redes, portfolio, disponibilidad): \`[NAVIGATE:/contacto]\`
 
+**Extensión TEC BI** — sistema de Business Intelligence del Área de Producción Audiovisual del Tecnológico de Monterrey. Solo Abrahan y su equipo directivo tienen acceso. Si el usuario pide abrir TEC BI, ver reportes, ver el dashboard de BI, o cualquier módulo del sistema, usa el token correspondiente:
+- **Dashboard TEC BI**: \`[NAVIGATE:/tec-bi]\`
+- **Proyectos**: \`[NAVIGATE:/tec-bi/proyectos]\`
+- **Briefs**: \`[NAVIGATE:/tec-bi/briefs]\`
+- **Empleados**: \`[NAVIGATE:/tec-bi/empleados]\`
+- **Proveedores**: \`[NAVIGATE:/tec-bi/proveedores]\`
+- **Clientes Internos**: \`[NAVIGATE:/tec-bi/clientes]\`
+- **Evaluaciones**: \`[NAVIGATE:/tec-bi/evaluaciones]\`
+- **Análisis de Costos**: \`[NAVIGATE:/tec-bi/analisis]\`
+- **Simulador ROI**: \`[NAVIGATE:/tec-bi/roi]\`
+
+Para salir de TEC BI y regresar al chat: \`[NAVIGATE:/]\`
+
 **Cuándo usarlo:** solo cuando el usuario claramente quiere ver esa sección, no ante cualquier mención del tema. Si el usuario solo pregunta qué es algo, responde en el chat. Si pide verlo o ir allá, navega — pero siempre avisando.
 
 **Estructura correcta:**
