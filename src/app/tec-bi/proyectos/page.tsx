@@ -5,6 +5,7 @@ import TecBiModal, { fieldStyle, labelStyle, SubmitBtn } from "@/components/tec-
 import Toast, { useToast } from "@/components/tec-bi/Toast";
 import AdminOnly, { LockButton } from "@/components/tec-bi/AdminOnly";
 import PageGuard from "@/components/tec-bi/PageGuard";
+import { SkeletonTable } from "@/components/tec-bi/Skeleton";
 import { subscribeProyectos, createProyecto, updateProyecto, updateEstadoProyecto } from "@/lib/firestore/proyectos";
 import { subscribeBriefs } from "@/lib/firestore/briefs";
 import { subscribeEmpleados } from "@/lib/firestore/empleados";
@@ -111,7 +112,7 @@ export default function ProyectosPage() {
   const columns: EstadoProyecto[] = ["Pendiente", "En producción", "En revisión", "Entregado"];
 
   return (
-    <div>
+    <div className="tbi-page-enter">
       <PageGuard section="proyectos" />
       <Toast toast={toast} />
       {/* Header */}
@@ -143,7 +144,7 @@ export default function ProyectosPage() {
 
       {/* Kanban board */}
       {loading ? (
-        <p style={{ color: "#aaa", fontSize: 13 }}>Cargando…</p>
+        <SkeletonTable rows={4} headers={["Título", "Cliente", "Asignado", "Estado", "Costo", "Valor", "Margen", ""]} />
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14, alignItems: "start" }}>
           {columns.map((col) => {

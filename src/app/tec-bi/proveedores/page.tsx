@@ -7,6 +7,8 @@ import TecBiModal, {
 import Toast, { useToast } from "@/components/tec-bi/Toast";
 import AdminOnly, { LockButton } from "@/components/tec-bi/AdminOnly";
 import PageGuard from "@/components/tec-bi/PageGuard";
+import { SkeletonTable } from "@/components/tec-bi/Skeleton";
+import { useConfirmDialog } from "@/components/tec-bi/ConfirmDialog";
 import {
   subscribeProveedores, createProveedor, updateProveedor, toggleProveedor,
 } from "@/lib/firestore/proveedores";
@@ -51,6 +53,7 @@ export default function ProveedoresPage() {
   const [form, setForm]           = useState({ ...EMPTY });
   const [saving, setSaving]       = useState(false);
   const { toast, showToast }      = useToast();
+  const { confirm, ConfirmDialog } = useConfirmDialog();
 
   useEffect(() => {
     const unsub = subscribeProveedores((data) => {
@@ -90,9 +93,22 @@ export default function ProveedoresPage() {
       setForm((f) => ({ ...f, [key]: e.target.value })),
   });
 
+  const handleToggle = async (p: Proveedor) => {
+    if (!p.id) return;
+    const ok = await confirm({
+      message: `¿Deseas ${p.activo ? "desactivar" : "activar"} a ${p.nombre}?`,
+      confirmLabel: p.activo ? "Desactivar" : "Activar",
+      danger: p.activo,
+    });
+    if (!ok) return;
+    await toggleProveedor(p.id, !p.activo);
+    showToast(`Proveedor ${p.activo ? "desactivado" : "activado"}`);
+  };
+
   return (
-    <div>
+    <div className="tbi-page-enter">
       <PageGuard section="proveedores" />
+      <ConfirmDialog />
       <Toast toast={toast} />
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
@@ -133,7 +149,7 @@ export default function ProveedoresPage() {
 
       {/* Table */}
       {loading ? (
-        <p style={{ color: "#aaa", fontSize: 13 }}>Cargando…</p>
+        <SkeletonTable rows={4} headers={["Nombre", "Servicio", "Email", "Teléfono", "Proyectos", "Rentabilidad", ""]} />
       ) : filtered.length === 0 ? (
         <div style={{ textAlign: "center", padding: "48px 0", background: "rgba(255,255,255,0.6)", borderRadius: 14, border: "1px dashed rgba(14,165,233,0.2)" }}>
           <div style={{ fontSize: 32, marginBottom: 8 }}>🏢</div>
@@ -179,7 +195,7 @@ export default function ProveedoresPage() {
                   <td style={{ padding: "10px 12px" }}>
                     <div style={{ display: "flex", gap: 6 }}>
                       <button onClick={() => openEdit(p)} style={{ background: "rgba(14,165,233,0.1)", border: "none", borderRadius: 7, padding: "5px 10px", fontSize: 11, cursor: "pointer", color: ACCENT, fontWeight: 600 }}>Editar</button>
-                      <button onClick={() => p.id && toggleProveedor(p.id, !p.activo)} style={{ background: p.activo ? "rgba(255,59,48,0.08)" : "rgba(52,199,89,0.1)", border: "none", borderRadius: 7, padding: "5px 10px", fontSize: 11, cursor: "pointer", color: p.activo ? "#FF3B30" : "#34C759", fontWeight: 600 }}>
+                      <button onClick={() => handleToggle(p)} style={{ background: p.activo ? "rgba(255,59,48,0.08)" : "rgba(52,199,89,0.1)", border: "none", borderRadius: 7, padding: "5px 10px", fontSize: 11, cursor: "pointer", color: p.activo ? "#FF3B30" : "#34C759", fontWeight: 600 }}>
                         {p.activo ? "Desactivar" : "Activar"}
                       </button>
                     </div>

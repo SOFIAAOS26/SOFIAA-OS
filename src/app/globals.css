@@ -57,6 +57,36 @@
   100% { transform: scale(1);    }
 }
 
+/* ── TEC BI animations ──────────────────────────────────────────── */
+@keyframes tbi-fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes tbi-fade-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes tbi-shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+.tbi-page-enter {
+  animation: tbi-fade-up 0.35s ease both;
+}
+
+.tbi-stagger > * {
+  animation: tbi-fade-up 0.3s ease both;
+}
+.tbi-stagger > *:nth-child(1) { animation-delay: 0.04s; }
+.tbi-stagger > *:nth-child(2) { animation-delay: 0.08s; }
+.tbi-stagger > *:nth-child(3) { animation-delay: 0.12s; }
+.tbi-stagger > *:nth-child(4) { animation-delay: 0.16s; }
+.tbi-stagger > *:nth-child(5) { animation-delay: 0.20s; }
+.tbi-stagger > *:nth-child(6) { animation-delay: 0.24s; }
+
 * {
   box-sizing: border-box;
   padding: 0;

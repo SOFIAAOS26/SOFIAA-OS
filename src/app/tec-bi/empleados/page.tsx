@@ -7,6 +7,8 @@ import TecBiModal, {
 import Toast, { useToast } from "@/components/tec-bi/Toast";
 import AdminOnly, { LockButton } from "@/components/tec-bi/AdminOnly";
 import PageGuard from "@/components/tec-bi/PageGuard";
+import { SkeletonTable } from "@/components/tec-bi/Skeleton";
+import { useConfirmDialog } from "@/components/tec-bi/ConfirmDialog";
 import {
   subscribeEmpleados, createEmpleado, updateEmpleado, toggleEmpleado,
 } from "@/lib/firestore/empleados";
@@ -30,6 +32,7 @@ export default function EmpleadosPage() {
   const [form, setForm]           = useState({ ...EMPTY });
   const [saving, setSaving]       = useState(false);
   const { toast, showToast }      = useToast();
+  const { confirm, ConfirmDialog } = useConfirmDialog();
 
   useEffect(() => {
     const unsub = subscribeEmpleados((data) => {
@@ -90,9 +93,23 @@ export default function EmpleadosPage() {
       setForm((f) => ({ ...f, [key]: key === "tarifaHora" || key === "salarioMensual" ? Number(e.target.value) : e.target.value })),
   });
 
+  const handleToggle = async (e: Empleado) => {
+    if (!e.id) return;
+    const action = e.activo ? "desactivar" : "activar";
+    const ok = await confirm({
+      message: `¿Deseas ${action} a ${e.nombre}?`,
+      confirmLabel: e.activo ? "Desactivar" : "Activar",
+      danger: e.activo,
+    });
+    if (!ok) return;
+    await toggleEmpleado(e.id, !e.activo);
+    showToast(`Empleado ${e.activo ? "desactivado" : "activado"}`);
+  };
+
   return (
-    <div>
+    <div className="tbi-page-enter">
       <PageGuard section="empleados" />
+      <ConfirmDialog />
       <Toast toast={toast} />
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
@@ -139,7 +156,7 @@ export default function EmpleadosPage() {
 
       {/* Table */}
       {loading ? (
-        <p style={{ color: "#aaa", fontSize: 13 }}>Cargando…</p>
+        <SkeletonTable rows={5} headers={["Nombre", "Puesto", "Departamento", "Tarifa/h", "Salario", "Proyectos", "Calidad", ""]} />
       ) : filtered.length === 0 ? (
         <div style={{
           textAlign: "center", padding: "48px 0",
@@ -203,7 +220,7 @@ export default function EmpleadosPage() {
                         Editar
                       </button>
                       <button
-                        onClick={() => e.id && toggleEmpleado(e.id, !e.activo)}
+                        onClick={() => handleToggle(e)}
                         style={{ background: e.activo ? "rgba(255,59,48,0.08)" : "rgba(52,199,89,0.1)", border: "none", borderRadius: 7, padding: "5px 10px", fontSize: 11, cursor: "pointer", color: e.activo ? "#FF3B30" : "#34C759", fontWeight: 600 }}
                       >
                         {e.activo ? "Desactivar" : "Activar"}

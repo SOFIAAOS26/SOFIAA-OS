@@ -6,6 +6,7 @@ import { subscribeEvaluaciones, promedioMetricas } from "@/lib/firestore/evaluac
 import { exportEvaluacionesPDF } from "@/lib/exportPDF";
 import AdminOnly, { LockButton } from "@/components/tec-bi/AdminOnly";
 import PageGuard from "@/components/tec-bi/PageGuard";
+import { SkeletonTable } from "@/components/tec-bi/Skeleton";
 import { subscribeProyectos } from "@/lib/firestore/proyectos";
 import StarRating from "@/components/tec-bi/StarRating";
 import { subscribeEmpleados } from "@/lib/firestore/empleados";
@@ -77,7 +78,7 @@ export default function EvaluacionesPage() {
   };
 
   return (
-    <div>
+    <div className="tbi-page-enter">
       <PageGuard section="evaluaciones" />
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
@@ -137,7 +138,7 @@ export default function EvaluacionesPage() {
 
       {/* List */}
       {loading ? (
-        <p style={{ color: "#aaa", fontSize: 13 }}>Cargando…</p>
+        <SkeletonTable rows={4} headers={["Proyecto", "Tipo", "Evaluado", "Calidad", "Costo", "Tiempo", "Unidades", "Versiones"]} />
       ) : filtered.length === 0 ? (
         <div style={{ textAlign: "center", padding: "48px 0", background: "rgba(255,255,255,0.6)", borderRadius: 14, border: "1px dashed rgba(14,165,233,0.2)" }}>
           <div style={{ fontSize: 32, marginBottom: 8 }}>⭐</div>

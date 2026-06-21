@@ -9,6 +9,8 @@ import {
 } from "@/lib/firestore/clientes";
 import type { ClienteInterno, TipoCampus } from "@/extensions/tec-bi/schema";
 import PageGuard from "@/components/tec-bi/PageGuard";
+import { SkeletonTable } from "@/components/tec-bi/Skeleton";
+import { useConfirmDialog } from "@/components/tec-bi/ConfirmDialog";
 
 const ACCENT = "#0EA5E9";
 const TIPOS: TipoCampus[] = ["Nacional", "Campus", "Ambos"];
@@ -42,6 +44,7 @@ export default function ClientesPage() {
   const [editing, setEditing]         = useState<ClienteInterno | null>(null);
   const [form, setForm]               = useState({ ...EMPTY });
   const [saving, setSaving]           = useState(false);
+  const { confirm, ConfirmDialog }    = useConfirmDialog();
 
   useEffect(() => {
     const unsub = subscribeClientes((data) => { setClientes(data); setLoading(false); });
@@ -81,9 +84,21 @@ export default function ClientesPage() {
       setForm((f) => ({ ...f, [key]: e.target.value })),
   });
 
+  const handleToggle = async (c: ClienteInterno) => {
+    if (!c.id) return;
+    const ok = await confirm({
+      message: `¿Deseas ${c.activo ? "desactivar" : "activar"} al cliente ${c.departamento}?`,
+      confirmLabel: c.activo ? "Desactivar" : "Activar",
+      danger: c.activo,
+    });
+    if (!ok) return;
+    await toggleCliente(c.id, !c.activo);
+  };
+
   return (
-    <div>
+    <div className="tbi-page-enter">
       <PageGuard section="clientes" />
+      <ConfirmDialog />
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
         <div>
@@ -117,7 +132,7 @@ export default function ClientesPage() {
 
       {/* Content */}
       {loading ? (
-        <p style={{ color: "#aaa", fontSize: 13 }}>Cargando…</p>
+        <SkeletonTable rows={4} headers={["Departamento", "Tipo", "Responsable", "Email", ""]} />
       ) : filtered.length === 0 ? (
         <div style={{ textAlign: "center", padding: "48px 0", background: "rgba(255,255,255,0.6)", borderRadius: 14, border: "1px dashed rgba(14,165,233,0.2)" }}>
           <div style={{ fontSize: 32, marginBottom: 8 }}>🎓</div>
@@ -148,7 +163,7 @@ export default function ClientesPage() {
                 </div>
                 <div style={{ display: "flex", gap: 5 }}>
                   <button onClick={() => openEdit(c)} style={{ background: "rgba(14,165,233,0.1)", border: "none", borderRadius: 7, padding: "4px 9px", fontSize: 10, cursor: "pointer", color: ACCENT, fontWeight: 600 }}>Editar</button>
-                  <button onClick={() => c.id && toggleCliente(c.id, !c.activo)} style={{ background: c.activo ? "rgba(255,59,48,0.08)" : "rgba(52,199,89,0.1)", border: "none", borderRadius: 7, padding: "4px 9px", fontSize: 10, cursor: "pointer", color: c.activo ? "#FF3B30" : "#34C759", fontWeight: 600 }}>
+                  <button onClick={() => handleToggle(c)} style={{ background: c.activo ? "rgba(255,59,48,0.08)" : "rgba(52,199,89,0.1)", border: "none", borderRadius: 7, padding: "4px 9px", fontSize: 10, cursor: "pointer", color: c.activo ? "#FF3B30" : "#34C759", fontWeight: 600 }}>
                     {c.activo ? "Desactivar" : "Activar"}
                   </button>
                 </div>

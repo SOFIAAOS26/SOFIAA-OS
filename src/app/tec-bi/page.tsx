@@ -81,7 +81,7 @@ export default function TecBiDashboard() {
   ];
 
   return (
-    <div>
+    <div className="tbi-page-enter">
       <PageGuard section="dashboard" />
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
@@ -94,7 +94,7 @@ export default function TecBiDashboard() {
       </div>
 
       {/* KPI cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 32 }}>
+      <div className="tbi-stagger" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 32 }}>
         {kpis.map((kpi) => (
           <div
             key={kpi.label}
