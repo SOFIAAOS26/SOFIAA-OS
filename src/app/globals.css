@@ -88,10 +88,10 @@ html, body {
   }
 }
 
-/* Panel principal — ancho máximo para no estirarse en desktop */
+/* Panel principal — ancho máximo centrado, como una conversación legible */
 .sofiaa-panel {
   width: 100%;
-  max-width: 520px;           /* cap de ancho — centrado en desktop */
+  max-width: 640px;
   border-radius: 22px 22px 0 0;
   border: 1px solid rgba(255, 255, 255, 0.80);
   border-bottom: none;
@@ -102,9 +102,9 @@ html, body {
   overflow: hidden;
 }
 
-/* Burbujas de mensaje — no se salen del ancho en móvil */
+/* Burbujas de mensaje — máximo 78% del panel para que respiren */
 .sofiaa-bubble {
-  max-width: min(22rem, 85vw);
+  max-width: min(26rem, 78%);
   word-break: break-word;
   overflow-wrap: anywhere;
 }
