@@ -128,6 +128,7 @@ export default function Home() {
   const [isLoading, setIsLoading]     = useState(false);
   const [resetKey, setResetKey]         = useState(0);
   const [showSofiaModal, setShowSofiaModal] = useState(false);
+  const [showSeeModal,   setShowSeeModal]   = useState(false);
   const [isDark, setIsDark]             = useState(false);
   const [isListeningVoice, setIsListeningVoice] = useState(false);
   const [showAdmin, setShowAdmin]               = useState(false);
@@ -756,6 +757,229 @@ export default function Home() {
       </div>
     )}
     {/* ─────────────────────────────────────────────────────────────── */}
+
+    {/* ── Modal SEE — SOFIAA Extension Ecosystem ───────────────────── */}
+    {showSeeModal && (
+      <div
+        onClick={(e) => { if (e.target === e.currentTarget) setShowSeeModal(false); }}
+        style={{
+          position: "fixed", inset: 0, zIndex: 9999,
+          background: "rgba(4,4,16,0.72)",
+          backdropFilter: "blur(28px)", WebkitBackdropFilter: "blur(28px)",
+          display: "flex", alignItems: "flex-end", justifyContent: "center",
+          animation: "fadeIn 0.22s ease",
+        }}
+      >
+        <style>{`
+          @keyframes seeSlideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+          }
+          .see-modal::-webkit-scrollbar { width: 0; }
+          .see-card-hover { transition: transform 0.22s, box-shadow 0.22s; }
+          .see-card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.14); }
+          .see-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.11); border-radius: 99px; padding: 5px 14px; }
+        `}</style>
+
+        <div
+          className="see-modal"
+          style={{
+            width: "100%", maxWidth: 560,
+            maxHeight: "96vh",
+            overflowY: "auto",
+            borderRadius: "32px 32px 0 0",
+            background: "linear-gradient(165deg, #08081A 0%, #0D0B22 50%, #100818 100%)",
+            boxShadow: "0 -12px 80px rgba(79,124,255,0.22), 0 -2px 0 rgba(255,255,255,0.06)",
+            animation: "seeSlideUp 0.36s cubic-bezier(0.34,1.35,0.64,1)",
+            paddingBottom: "max(2.5rem, env(safe-area-inset-bottom, 2.5rem))",
+            border: "1px solid rgba(255,255,255,0.07)",
+            borderBottom: "none",
+          }}
+        >
+          {/* Handle */}
+          <div style={{ display: "flex", justifyContent: "center", paddingTop: 14, paddingBottom: 6 }}>
+            <div style={{ width: 44, height: 4, borderRadius: 99, background: "rgba(255,255,255,0.14)" }} />
+          </div>
+
+          {/* Close */}
+          <button onClick={() => setShowSeeModal(false)} style={{
+            position: "absolute", top: 18, right: 20,
+            width: 32, height: 32, borderRadius: 99,
+            background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.10)",
+            color: "rgba(255,255,255,0.45)", fontSize: 16, cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>×</button>
+
+          {/* ── Hero ── */}
+          <div style={{ padding: "1.5rem 2rem 1.2rem", textAlign: "center" }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 7, marginBottom: 14,
+              background: "rgba(79,124,255,0.10)", border: "1px solid rgba(79,124,255,0.22)",
+              borderRadius: 99, padding: "5px 14px" }}>
+              <span style={{ fontSize: 10, fontWeight: 800, color: "#4F7CFF", letterSpacing: "0.5px" }}>SEE</span>
+              <span style={{ width: 1, height: 10, background: "rgba(79,124,255,0.35)" }} />
+              <span style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", letterSpacing: "0.3px" }}>SOFIAA EXTENSION ECOSYSTEM</span>
+            </div>
+
+            <h2 style={{
+              fontSize: "clamp(1.9rem, 8vw, 2.8rem)", fontWeight: 900,
+              letterSpacing: "-0.03em", lineHeight: 1.05, marginBottom: 12,
+              background: "linear-gradient(135deg, #fff 0%, #A78BFA 45%, #4F7CFF 100%)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+            }}>
+              Las posibilidades<br />son infinitas.
+            </h2>
+            <p style={{ fontSize: "0.93rem", color: "rgba(255,255,255,0.52)", lineHeight: 1.7,
+              maxWidth: 400, margin: "0 auto" }}>
+              No importa tu industria, tu tamaño ni tu reto —
+              <strong style={{ color: "rgba(255,255,255,0.82)" }}> SOFIAA construye una extensión a tu medida</strong>,
+              integrada a tu operación en semanas.
+            </p>
+          </div>
+
+          {/* ── Divisor degradado ── */}
+          <div style={{ height: 1, margin: "0 2rem",
+            background: "linear-gradient(90deg, transparent, rgba(79,124,255,0.30), rgba(233,30,140,0.20), transparent)" }} />
+
+          {/* ── Propuesta de valor ── */}
+          <div style={{ padding: "1.4rem 2rem 0.6rem" }}>
+            <p style={{ fontSize: "0.66rem", letterSpacing: "0.32em", textTransform: "uppercase",
+              color: "rgba(255,255,255,0.28)", marginBottom: 14 }}>¿Qué resolvemos?</p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              {[
+                { icon: "⚡", title: "Eficiencia operativa", desc: "Automatizamos flujos repetitivos para que tu equipo se enfoque en lo que importa." },
+                { icon: "📊", title: "Rentabilidad medible", desc: "KPIs en tiempo real. Decisiones basadas en datos, no en suposiciones." },
+                { icon: "🤝", title: "Atención al cliente", desc: "Tu cliente recibe respuestas instantáneas, precisas y personalizadas 24/7." },
+                { icon: "🗂️", title: "Procesos e inventarios", desc: "Gestión centralizada de productos, pedidos, proveedores y clientes." },
+                { icon: "🧠", title: "Información simplificada", desc: "Datos complejos convertidos en dashboards accionables para cualquier rol." },
+                { icon: "🔗", title: "Integración sin fricción", desc: "Se conecta con tus sistemas existentes: ERP, CRM, Excel, WhatsApp y más." },
+              ].map(({ icon, title, desc }) => (
+                <div key={title} className="see-card-hover" style={{
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 16, padding: "14px 16px",
+                }}>
+                  <div style={{ fontSize: 20, marginBottom: 7 }}>{icon}</div>
+                  <p style={{ fontSize: "0.8rem", fontWeight: 700, color: "rgba(255,255,255,0.88)", marginBottom: 4 }}>{title}</p>
+                  <p style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.42)", lineHeight: 1.55 }}>{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Industrias ── */}
+          <div style={{ padding: "1.2rem 2rem 0.6rem" }}>
+            <p style={{ fontSize: "0.66rem", letterSpacing: "0.32em", textTransform: "uppercase",
+              color: "rgba(255,255,255,0.28)", marginBottom: 14 }}>Industrias que atendemos</p>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {[
+                ["🏥","Salud & Clínicas"], ["🏗️","Construcción"],  ["🎓","Educación"],
+                ["🛒","Retail & E-comm"], ["🍽️","Restaurantes"],   ["🏭","Manufactura"],
+                ["⚖️","Despachos legales"],["🏨","Hospitalidad"],   ["💼","Consultoría"],
+                ["🎬","Producción AV"],   ["📦","Logística"],       ["🏢","Corporativo"],
+              ].map(([icon, label]) => (
+                <div key={label as string} style={{
+                  display: "flex", alignItems: "center", gap: 6,
+                  background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)",
+                  borderRadius: 99, padding: "5px 12px",
+                }}>
+                  <span style={{ fontSize: 13 }}>{icon}</span>
+                  <span style={{ fontSize: "0.74rem", color: "rgba(255,255,255,0.62)", fontWeight: 500 }}>{label as string}</span>
+                </div>
+              ))}
+              <div style={{
+                display: "flex", alignItems: "center", gap: 6,
+                background: "linear-gradient(135deg, rgba(79,124,255,0.15), rgba(233,30,140,0.10))",
+                border: "1px solid rgba(79,124,255,0.25)", borderRadius: 99, padding: "5px 12px",
+              }}>
+                <span style={{ fontSize: "0.74rem", color: "#A78BFA", fontWeight: 700 }}>+ la tuya</span>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Quote ── */}
+          <div style={{ margin: "1rem 2rem", borderRadius: 20, padding: "1.2rem 1.5rem",
+            background: "linear-gradient(135deg, rgba(79,124,255,0.09), rgba(138,32,255,0.07), rgba(233,30,140,0.06))",
+            border: "1px solid rgba(79,124,255,0.18)" }}>
+            <p style={{ fontSize: "0.88rem", lineHeight: 1.65, color: "rgba(255,255,255,0.75)", fontStyle: "italic", margin: 0 }}>
+              "No construimos software genérico. Construimos <strong style={{ color: "rgba(255,255,255,0.95)", fontStyle: "normal" }}>la herramienta exacta
+              que tu organización necesita</strong> — integrada con IA, lista en semanas,
+              y diseñada para escalar contigo."
+            </p>
+            <p style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.30)", marginTop: 10, letterSpacing: "0.06em" }}>
+              — SOFIAA Lab · Equipo de Desarrollo
+            </p>
+          </div>
+
+          {/* ── Proceso ── */}
+          <div style={{ padding: "0.6rem 2rem 0.8rem" }}>
+            <p style={{ fontSize: "0.66rem", letterSpacing: "0.32em", textTransform: "uppercase",
+              color: "rgba(255,255,255,0.28)", marginBottom: 14 }}>Cómo funciona</p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+              {[
+                { n: "01", step: "Diagnóstico", desc: "Entendemos tu operación, retos y objetivos en una sesión de 60 min." },
+                { n: "02", step: "Diseño a medida", desc: "Mapeamos los módulos, flujos e integraciones específicos para ti." },
+                { n: "03", step: "Desarrollo ágil", desc: "Primera versión funcional en 2–4 semanas. Iteramos contigo." },
+                { n: "04", step: "Despliegue & soporte", desc: "Live en producción. Soporte continuo y mejoras progresivas." },
+              ].map(({ n, step, desc }, i, arr) => (
+                <div key={n} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+                    <div style={{
+                      width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
+                      background: "linear-gradient(135deg, rgba(79,124,255,0.25), rgba(138,32,255,0.20))",
+                      border: "1px solid rgba(79,124,255,0.30)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "#4F7CFF" }}>{n}</span>
+                    </div>
+                    {i < arr.length - 1 && (
+                      <div style={{ width: 1, height: 28, background: "rgba(79,124,255,0.15)", margin: "4px 0" }} />
+                    )}
+                  </div>
+                  <div style={{ paddingTop: 8, paddingBottom: i < arr.length - 1 ? 0 : 0 }}>
+                    <p style={{ fontSize: "0.82rem", fontWeight: 700, color: "rgba(255,255,255,0.85)", marginBottom: 2 }}>{step}</p>
+                    <p style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.40)", lineHeight: 1.55, marginBottom: 12 }}>{desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── CTA ── */}
+          <div style={{ padding: "0.8rem 2rem 0.5rem", textAlign: "center" }}>
+            <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.35)", marginBottom: 16 }}>
+              ¿Listo para transformar tu área de oportunidad en una ventaja competitiva?
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+              <button
+                onClick={() => {
+                  setShowSeeModal(false);
+                  sendMessage("Quiero saber más sobre las extensiones de SOFIAA para mi empresa");
+                }}
+                style={{
+                  background: "linear-gradient(135deg, #4F7CFF 0%, #8A20FF 60%, #E91E8C 100%)",
+                  border: "none", borderRadius: 99, padding: "0.75rem 2.4rem",
+                  color: "#fff", fontWeight: 800, fontSize: "0.88rem",
+                  cursor: "pointer", letterSpacing: "0.02em",
+                  boxShadow: "0 6px 32px rgba(79,124,255,0.40), 0 2px 0 rgba(255,255,255,0.12) inset",
+                  transition: "transform 0.15s, box-shadow 0.15s",
+                }}
+              >
+                Quiero mi extensión →
+              </button>
+              <p style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.22)", letterSpacing: "0.04em" }}>
+                Conversación sin compromiso · Tiempo de respuesta &lt; 24 hrs
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+    {/* ───────────────────────────────────────────────── */}
+
     {showAdmin && (
       <AdminPanel
         messages={messages}
@@ -955,6 +1179,23 @@ export default function Home() {
               {label}
             </button>
           ))}
+
+          {/* Botón SEE — destacado */}
+          <button
+            onClick={() => { telemetry.trackQuickAction("SEE"); setShowSeeModal(true); }}
+            className="active:scale-95"
+            style={{
+              fontSize: "0.78rem", padding: "0.4rem 1rem",
+              borderRadius: 9999, cursor: "pointer", border: "none",
+              background: "linear-gradient(135deg, #4F7CFF 0%, #8A20FF 60%, #E91E8C 100%)",
+              color: "#fff", fontWeight: 700, letterSpacing: "0.02em",
+              boxShadow: "0 3px 18px rgba(79,124,255,0.35), 0 1px 0 rgba(255,255,255,0.20) inset",
+              display: "flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" as const,
+            }}
+          >
+            <span style={{ fontSize: 11 }}>⚡</span>
+            Necesitas una Extensión? SEE
+          </button>
         </div>
       )}
 
