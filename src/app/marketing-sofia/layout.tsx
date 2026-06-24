@@ -3,6 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
+import ExtHamburger from "@/components/ui/ExtHamburger";
 import { marketingSofiaExtension } from "@/extensions/marketing-sofia/manifest";
 import { useWorkspace } from "@/hooks/useWorkspace";
 
@@ -305,21 +306,12 @@ export default function MarketingSofiaLayout({
         )}
       </main>
 
-      {/* ── Bottom nav (solo móvil) ───────────────────────────── */}
-      <nav
-        className="ext-bottom-nav"
-        style={{ "--ext-accent": P } as React.CSSProperties}
-      >
-        {NAV.map((route) => {
-          const active = pathname === route.path;
-          return (
-            <Link key={route.path} href={route.path} className={active ? "ext-nav-active" : ""}>
-              <span className="nav-icon">{route.icon}</span>
-              <span>{route.label.split(" ")[0]}</span>
-            </Link>
-          );
-        })}
-      </nav>
+      {/* ── Hamburger móvil ──────────────────────────────────── */}
+      <ExtHamburger
+        routes={NAV}
+        accentColor={P}
+        accentBg="rgba(124,58,237,0.10)"
+      />
     </div>
   );
 }

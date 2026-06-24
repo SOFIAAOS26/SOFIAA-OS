@@ -3,6 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { jpMemorialExtension } from "@/extensions/jp-memorial/manifest";
+import ExtHamburger from "@/components/ui/ExtHamburger";
 import JpmChat from "@/components/jp-memorial/JpmChat";
 
 const NAV = jpMemorialExtension.routes;
@@ -106,21 +107,12 @@ export default function JpMemorialLayout({ children }: { children: React.ReactNo
         {children}
       </main>
 
-      {/* ── Bottom nav (solo móvil) ───────────────────────────── */}
-      <nav
-        className="ext-bottom-nav"
-        style={{ "--ext-accent": T.badgeColor } as React.CSSProperties}
-      >
-        {NAV.map((route) => {
-          const active = pathname === route.path;
-          return (
-            <Link key={route.path} href={route.path} className={active ? "ext-nav-active" : ""}>
-              <span className="nav-icon">{route.icon}</span>
-              <span>{route.label.split(" ")[0]}</span>
-            </Link>
-          );
-        })}
-      </nav>
+      {/* ── Hamburger móvil ──────────────────────────────────── */}
+      <ExtHamburger
+        routes={NAV}
+        accentColor={T.badgeColor}
+        accentBg="rgba(74,124,89,0.10)"
+      />
 
       {/* ── SOFIAA Chat Flotante ──────────────────────────────── */}
       <JpmChat />

@@ -3,6 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { tecBiExtension } from "@/extensions/tec-bi/manifest";
+import ExtHamburger from "@/components/ui/ExtHamburger";
 import { useAuth } from "@/contexts/AuthContext";
 import { canView, pathToSection } from "@/lib/permissions";
 
@@ -135,25 +136,12 @@ export default function TecBiLayout({ children }: { children: React.ReactNode })
         {children}
       </main>
 
-      {/* ── Bottom nav (solo móvil) ───────────────────────────── */}
-      <nav
-        className="ext-bottom-nav"
-        style={{ "--ext-accent": "#0EA5E9" } as React.CSSProperties}
-      >
-        {NAV.filter((route) => canView(pathToSection(route.path), profile?.rol ?? null)).map((route) => {
-          const active = pathname === route.path;
-          return (
-            <Link
-              key={route.path}
-              href={route.path}
-              className={active ? "ext-nav-active" : ""}
-            >
-              <span className="nav-icon">{route.icon}</span>
-              <span>{route.label.split(" ")[0]}</span>
-            </Link>
-          );
-        })}
-      </nav>
+      {/* ── Hamburger móvil ──────────────────────────────────── */}
+      <ExtHamburger
+        routes={NAV.filter((r) => canView(pathToSection(r.path), profile?.rol ?? null))}
+        accentColor="#0EA5E9"
+        accentBg="rgba(14,165,233,0.10)"
+      />
     </div>
   );
 }
