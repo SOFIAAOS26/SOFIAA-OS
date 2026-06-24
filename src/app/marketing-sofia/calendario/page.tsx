@@ -275,7 +275,7 @@ export default function CalendarioPage() {
                 <input required placeholder="Ej: Rutina de skincare en 60 segundos" style={field} {...f("titulo")} />
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <div className="ext-form-2" style={{ gap: 10 }}>
                 <div>
                   <span style={lbl}>CLIENTE</span>
                   <select style={field} value={form.clienteId}
@@ -293,7 +293,7 @@ export default function CalendarioPage() {
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+              <div className="ext-form-3" style={{ gap: 10 }}>
                 <div>
                   <span style={lbl}>PLATAFORMA</span>
                   <select style={field} value={form.plataforma}
@@ -317,7 +317,7 @@ export default function CalendarioPage() {
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <div className="ext-form-2" style={{ gap: 10 }}>
                 <div>
                   <span style={lbl}>FECHA PLANIFICADA</span>
                   <input type="date" style={field}

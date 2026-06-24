@@ -251,11 +251,11 @@ export default function CotizadorPage() {
 
       {/* ── TAB SMM ──────────────────────────────────────────────────────────── */}
       {tab === "smm" && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 20, alignItems: "start" }}>
+        <div className="ext-sidebar-layout-340">
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             <div style={{ background:"#fff", borderRadius:16, border:`1px solid ${P}18`, padding:22 }}>
               <h2 style={{ fontSize:14, fontWeight:700, color:"#1D1D1F", margin:"0 0 16px" }}>📋 Datos del Cliente</h2>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+              <div className="ext-form-2" style={{ gap:12 }}>
                 <div><span style={lbl}>CLIENTE / EMPRESA</span>
                   <input value={cliente} onChange={(e)=>setCliente(e.target.value)} placeholder="Clínica Derma Norte…" style={field} /></div>
                 <div><span style={lbl}>MESES DE CONTRATO</span>
@@ -301,7 +301,7 @@ export default function CotizadorPage() {
           </div>
 
           {/* SMM Right */}
-          <div style={{ display:"flex", flexDirection:"column", gap:14, position:"sticky", top:72 }}>
+          <div className="ext-sticky" style={{ display:"flex", flexDirection:"column", gap:14 }}>
             <div style={{ background:`${smmLevel.color}12`, border:`2px solid ${smmLevel.color}30`,
               borderRadius:16, padding:"16px 18px", textAlign:"center" }}>
               <p style={{ fontSize:28, margin:"0 0 4px" }}>{smmLevel.emoji}</p>
@@ -337,7 +337,7 @@ export default function CotizadorPage() {
 
       {/* ── TAB AUDIOVISUAL ───────────────────────────────────────────────────── */}
       {tab === "av" && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20, alignItems: "start" }}>
+        <div className="ext-sidebar-layout">
 
           {/* Left */}
           <div style={{ display:"flex", flexDirection:"column", gap:20 }}>
@@ -440,7 +440,7 @@ export default function CotizadorPage() {
           </div>
 
           {/* Right — summary + chart */}
-          <div style={{ display:"flex", flexDirection:"column", gap:14, position:"sticky", top:72 }}>
+          <div className="ext-sticky" style={{ display:"flex", flexDirection:"column", gap:14 }}>
 
             {/* Totals */}
             <div style={{ background:"#fff", borderRadius:16, border:`1px solid ${AV}22`, padding:20 }}>

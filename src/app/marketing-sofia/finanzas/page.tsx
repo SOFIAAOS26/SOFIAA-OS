@@ -193,7 +193,7 @@ export default function FinanzasPage() {
             </h2>
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <div className="ext-form-2" style={{ gap: 10 }}>
                 <div>
                   <span style={lbl}>CLIENTE</span>
                   <select style={field} value={form.clienteId}
@@ -212,7 +212,7 @@ export default function FinanzasPage() {
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <div className="ext-form-2" style={{ gap: 10 }}>
                 {[
                   ["HONORARIOS MXN",      "honorarios"],
                   ["GASTOS MXN",          "gastos"],
@@ -230,7 +230,7 @@ export default function FinanzasPage() {
 
               {/* Calculated preview */}
               {(form.honorarios > 0 || form.invPubli > 0) && (
-                <div style={{ background: "#F5F3FF", borderRadius: 10, padding: "12px 14px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                <div className="ext-form-3" style={{ background: "#F5F3FF", borderRadius: 10, padding: "12px 14px", gap: 8 }}>
                   {[
                     ["Margen", `$${fmt(form.honorarios - form.gastos)}`],
                     ["ROAS", form.invPubli > 0 ? `${(form.retorno / form.invPubli).toFixed(2)}x` : "—"],

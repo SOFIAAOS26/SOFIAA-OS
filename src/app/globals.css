@@ -176,21 +176,55 @@ input::placeholder {
 /* Bottom nav — oculto en desktop */
 .ext-bottom-nav { display: none; }
 
+/* ── Grids responsivos ─────────────────────────────────────────────────────── */
+
+/* Sidebar layouts: main + aside fijo — colapsan a 1 col en móvil */
+.ext-sidebar-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  align-items: start;
+}
+.ext-sidebar-layout-340 {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  align-items: start;
+}
+.ext-sidebar-layout-rev {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+/* Grids de formularios internos */
+.ext-form-2 { display: grid; grid-template-columns: 1fr 1fr;       gap: 12px; }
+.ext-form-3 { display: grid; grid-template-columns: 1fr 1fr 1fr;   gap: 10px; }
+
+/* Panel sticky que se vuelve estático en móvil */
+.ext-sticky { position: sticky; top: 72px; }
+
 @media (max-width: 599px) {
   /* Ocultar nav y extras del header */
   .ext-header-nav    { display: none !important; }
   .ext-header-extras { display: none !important; }
 
-  /* Reducir padding del contenido y dejar espacio al bottom nav */
+  /* Reducir padding del contenido y dejar espacio al hamburger */
   .ext-main { padding: 14px 12px 80px !important; }
 
-  /* Grids responsivos en páginas de extensiones */
-  .ext-grid-2, .ext-grid-3, .ext-grid-4 {
-    grid-template-columns: 1fr !important;
-  }
-  .ext-grid-2-1 {
-    grid-template-columns: 1fr !important;
-  }
+  /* Sidebar layouts → 1 columna */
+  .ext-sidebar-layout,
+  .ext-sidebar-layout-340,
+  .ext-sidebar-layout-rev { grid-template-columns: 1fr !important; }
+
+  /* Grids de formularios → 1 columna */
+  .ext-grid-2, .ext-grid-3, .ext-grid-4,
+  .ext-grid-2-1,
+  .ext-form-2, .ext-form-3 { grid-template-columns: 1fr !important; }
+
+  /* Panel sticky → fluye normal */
+  .ext-sticky { position: static !important; top: unset !important; }
 }
 
 /* ── Hamburger menu (solo móvil) ─────────────────────────────────────────── */

@@ -129,7 +129,7 @@ function SimuladorImpacto() {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "320px 1fr", gap: 20, alignItems: "start" }}>
+      <div className="ext-sidebar-layout-rev">
         {/* Sliders */}
         <Card>
           <Label>Variables del Área (ajustables)</Label>

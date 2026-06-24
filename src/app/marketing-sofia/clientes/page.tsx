@@ -273,7 +273,7 @@ export default function ClientesPage() {
             </h2>
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div className="ext-form-2" style={{ gap: 12 }}>
                 <div>
                   <span style={label}>EMPRESA / MARCA</span>
                   <input required placeholder="Clínica Derma Norte" style={field} {...f("nombre")} />
@@ -288,7 +288,7 @@ export default function ClientesPage() {
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div className="ext-form-2" style={{ gap: 12 }}>
                 <div>
                   <span style={label}>CONTACTO PRINCIPAL</span>
                   <input placeholder="Dr. Ana García" style={field} {...f("contacto")} />
@@ -332,7 +332,7 @@ export default function ClientesPage() {
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div className="ext-form-2" style={{ gap: 12 }}>
                 <div>
                   <span style={label}>PAQUETE MXN/MES</span>
                   <input

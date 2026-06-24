@@ -115,7 +115,7 @@ export default function TecBiDashboard() {
 
       {/* Costos resumen rápido */}
       {evaluaciones.length > 0 && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 28 }}>
+        <div className="ext-form-2" style={{ gap: 14, marginBottom: 28 }}>
           <div style={{ background: "rgba(255,255,255,0.6)", border: "1px solid rgba(14,165,233,0.15)", borderRadius: 12, padding: "14px 18px" }}>
             <div style={{ fontSize: 10, color: "#888", marginBottom: 4 }}>COSTO TOTAL ACUMULADO</div>
             <div style={{ fontSize: 18, fontWeight: 700, color: "#7B4FE8" }}>{MXN.format(costoTotal)}</div>

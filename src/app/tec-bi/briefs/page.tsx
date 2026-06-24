@@ -322,7 +322,7 @@ export default function BriefsPage() {
               <input style={fieldStyle} placeholder="Links de Drive, referencias visuales…" {...fv("referencias")} />
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div className="ext-form-2" style={{ gap: 12 }}>
               <div>
                 <label style={labelStyle}>FECHA DE SOLICITUD</label>
                 <input required type="date" style={fieldStyle} {...fv("fechaSolicitud")} />

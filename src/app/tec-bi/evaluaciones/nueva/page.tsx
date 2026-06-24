@@ -186,7 +186,7 @@ export default function NuevaEvaluacionPage() {
         {/* 2 — Datos específicos por tipo */}
         {proyectoActual?.tipoAsignacion === "Interno" && (
           <Section title="2 · Datos de producción interna">
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+            <div className="ext-form-2" style={{ gap: 14 }}>
               <div>
                 <label style={labelStyle}>HORAS NORMALES</label>
                 <input type="number" min={0} required style={fieldStyle} value={horasNormales || ""} onChange={(e) => setHorasNormales(Number(e.target.value))} placeholder="0" />
@@ -212,7 +212,7 @@ export default function NuevaEvaluacionPage() {
 
         {proyectoActual?.tipoAsignacion === "Externo" && (
           <Section title="2 · Datos del proveedor externo">
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+            <div className="ext-form-2" style={{ gap: 14, marginBottom: 14 }}>
               <div>
                 <label style={labelStyle}>COSTO COTIZADO (MXN)</label>
                 <input type="number" min={0} required style={fieldStyle} value={costoCotizado || ""} onChange={(e) => setCostoCotizado(Number(e.target.value))} placeholder="0" />
@@ -276,7 +276,7 @@ export default function NuevaEvaluacionPage() {
         {/* 4 — Métricas operativas */}
         {proyectoActual && (
           <Section title="4 · Métricas operativas">
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 }}>
+            <div className="ext-form-2" style={{ gap: 14, marginBottom: 16 }}>
               <div>
                 <label style={labelStyle}>VALOR DEL PROYECTO (MXN)</label>
                 <input type="number" min={0} style={fieldStyle} value={valorProyecto || ""} onChange={(e) => setValorProyecto(Number(e.target.value))} placeholder="0" />

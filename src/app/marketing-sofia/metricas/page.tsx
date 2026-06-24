@@ -238,7 +238,7 @@ export default function MetricasPage() {
             </h2>
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+              <div className="ext-form-3" style={{ gap: 10 }}>
                 <div>
                   <span style={label}>CLIENTE</span>
                   <select style={field} value={form.clienteId}
@@ -264,7 +264,7 @@ export default function MetricasPage() {
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <div className="ext-form-2" style={{ gap: 10 }}>
                 {[
                   ["SEGUIDORES",        "seguidores"],
                   ["NUEVOS SEGS.",      "nuevosSeguidores"],

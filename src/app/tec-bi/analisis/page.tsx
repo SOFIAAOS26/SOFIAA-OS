@@ -206,7 +206,7 @@ export default function AnalisisPage() {
         </Card>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+      <div className="ext-form-2" style={{ gap: 20, marginBottom: 20 }}>
         {/* Pie: horas normales vs extra */}
         {pieData.length > 0 && (
           <Card>

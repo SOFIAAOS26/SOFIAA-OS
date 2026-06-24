@@ -228,7 +228,7 @@ export default function ProyectosPage() {
               <input required style={fieldStyle} placeholder="Ej. Spot Semana i — Edición Final" {...fv("titulo")} />
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div className="ext-form-2" style={{ gap: 12 }}>
               <div>
                 <label style={labelStyle}>ALCANCE</label>
                 <select style={fieldStyle} value={form.tipoAlcance} onChange={(e) => setForm((f) => ({ ...f, tipoAlcance: e.target.value as TipoAlcance }))}>
@@ -253,7 +253,7 @@ export default function ProyectosPage() {
               </select>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div className="ext-form-2" style={{ gap: 12 }}>
               <div>
                 <label style={labelStyle}>VALOR ESTIMADO (MXN)</label>
                 <input type="number" min={0} style={fieldStyle} placeholder="0" {...fv("valorEstimado")} />

@@ -156,7 +156,7 @@ export default function BriefCanvasPage() {
           {clientes.map((c) => <option key={c.id} value={c.id}>{c.departamento}</option>)}
         </select>
       </Field>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+      <div className="ext-form-2" style={{ gap: 14 }}>
         <Field label="Nombre del solicitante">
           <input value={form.contactoSolicitante} onChange={(e) => set("contactoSolicitante", e.target.value)}
             placeholder="Ej. Laura Martínez" style={field} />
@@ -173,7 +173,7 @@ export default function BriefCanvasPage() {
           Sé específico: área + evento/campaña + fecha. Evita "video para mañana".
         </span>
       </Field>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+      <div className="ext-form-2" style={{ gap: 14 }}>
         <Field label="Tipo de proyecto" required>
           <select value={form.tipoProyecto} onChange={(e) => set("tipoProyecto", e.target.value as TipoProyecto)} style={field}>
             {TIPOS.map((t) => <option key={t} value={t}>{t}</option>)}
@@ -211,7 +211,7 @@ export default function BriefCanvasPage() {
         <input value={form.audiencia} onChange={(e) => set("audiencia", e.target.value)}
           placeholder="Ej. Alumnos de preparatoria campus MTY, 15-18 años" style={field} />
       </Field>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+      <div className="ext-form-2" style={{ gap: 14 }}>
         <Field label="Plataforma / distribución">
           <select value={form.plataforma} onChange={(e) => set("plataforma", e.target.value)} style={field}>
             <option value="">— Selecciona —</option>

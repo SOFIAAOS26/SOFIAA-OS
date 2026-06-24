@@ -258,7 +258,7 @@ export default function CopyHooksPage() {
         </div>
 
         {/* Active framework detail */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 220px", gap: 20 }}>
+        <div className="ext-sidebar-layout" style={{ gap: 20 }}>
           <div>
             <p style={{ fontSize: 11, color: "#9CA3AF", margin: "0 0 14px", fontWeight: 600 }}>
               CUÁNDO USAR: <span style={{ color: "#374151", fontWeight: 400 }}>{fw.cuandoUsar}</span>
