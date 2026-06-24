@@ -382,7 +382,7 @@ export default function Home() {
     }
 
     // Frase secreta — abre panel de métricas
-    if (text.toLowerCase() === "modo análisis") {
+    if (text.toLowerCase() === "modo sherlock") {
       setInput("");
       router.push("/metricas");
       return;

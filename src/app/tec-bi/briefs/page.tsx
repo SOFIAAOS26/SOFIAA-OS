@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import TecBiModal, { fieldStyle, labelStyle, SubmitBtn } from "@/components/tec-bi/TecBiModal";
 import Toast, { useToast } from "@/components/tec-bi/Toast";
 import AdminOnly, { LockButton } from "@/components/tec-bi/AdminOnly";
@@ -58,6 +59,7 @@ function MargenBadge({ dias }: { dias: number }) {
 }
 
 export default function BriefsPage() {
+  const router = useRouter();
   const [briefs, setBriefs]       = useState<Brief[]>([]);
   const [clientes, setClientes]   = useState<ClienteInterno[]>([]);
   const [loading, setLoading]     = useState(true);
@@ -161,9 +163,15 @@ export default function BriefsPage() {
           <p style={{ fontSize: 12, color: "#888", marginTop: 2 }}>{filtered.length} solicitudes</p>
         </div>
         <AdminOnly section="briefs" fallback={<LockButton label="Nuevo brief" />}>
-          <button onClick={openNew} style={{ background: ACCENT, color: "#fff", border: "none", borderRadius: 10, padding: "9px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-            + Nuevo brief
-          </button>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={openNew} style={{ background: "rgba(14,165,233,0.1)", color: ACCENT, border: "1.5px solid rgba(14,165,233,0.25)", borderRadius: 10, padding: "9px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+              + Rápido
+            </button>
+            <button onClick={() => router.push("/tec-bi/briefs/nuevo")}
+              style={{ background: ACCENT, color: "#fff", border: "none", borderRadius: 10, padding: "9px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+              📋 Brief Canvas
+            </button>
+          </div>
         </AdminOnly>
       </div>
 
@@ -207,6 +215,15 @@ export default function BriefsPage() {
                       <EstadoBadge estado={b.estado} />
                       <span style={{ background: "rgba(14,165,233,0.08)", color: "#0EA5E9", fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 99 }}>{b.tipoProyecto}</span>
                       {margen !== null && <MargenBadge dias={margen} />}
+                      {b.briefScore !== undefined && (
+                        <span style={{
+                          background: b.briefScore >= 80 ? "rgba(52,199,89,0.12)" : b.briefScore >= 50 ? "rgba(255,159,10,0.12)" : "rgba(255,59,48,0.12)",
+                          color: b.briefScore >= 80 ? "#34C759" : b.briefScore >= 50 ? "#FF9F0A" : "#FF3B30",
+                          fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 99,
+                        }}>
+                          📊 {b.briefScore}/100
+                        </span>
+                      )}
                     </div>
                     <h3 style={{ fontSize: 14, fontWeight: 700, color: "#1D1D1F", margin: "0 0 4px" }}>{b.titulo}</h3>
                     <p style={{ fontSize: 12, color: "#888", margin: 0 }}>🎓 {clienteNombre(b.clienteId)}</p>

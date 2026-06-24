@@ -90,6 +90,15 @@ export type EstadoBrief =
   | "Entregado"
   | "Cancelado";
 
+export interface BriefAssets {
+  logoVectorial:      boolean;
+  guionTexto:         boolean;
+  fotosRef:           boolean;
+  locacionConfirmada: boolean;
+  talentConfirmado:   boolean;
+  editableFile:       boolean;
+}
+
 export interface Brief {
   id?: string;
   clienteId: string;             // ref → clientes_internos
@@ -106,6 +115,16 @@ export interface Brief {
   updatedAt: Date;
   // Calculado
   margenDias?: number;           // fechaLimite - fechaSolicitud en días hábiles
+  // ── Brief Canvas v1.1 ──────────────────────────────────────────────
+  objetivo?:             string;       // ¿Qué quieres lograr?
+  audiencia?:            string;       // ¿A quién va dirigido?
+  plataforma?:           string;       // YouTube, Instagram, Pantallas campus…
+  duracionSeg?:          number;       // Duración estimada (video)
+  contactoSolicitante?:  string;
+  emailSolicitante?:     string;
+  assets?:               BriefAssets;
+  briefScore?:           number;       // 0-100 calculado al guardar
+  mondayItemId?:         string;       // ID del item en Monday.com (sync bidireccional)
 }
 
 // ── Proyectos ─────────────────────────────────────────────────────────────────
@@ -132,6 +151,7 @@ export interface Proyecto {
   notas: string;
   createdAt: Date;
   updatedAt: Date;
+  mondayItemId?:   string;       // ID del item en Monday.com (sync bidireccional)
 }
 
 // ── Evaluaciones ──────────────────────────────────────────────────────────────
