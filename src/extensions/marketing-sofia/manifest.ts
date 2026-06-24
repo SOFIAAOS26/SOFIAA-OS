@@ -7,12 +7,14 @@ export const marketingSofiaExtension: SofiaExtension = {
   baseRoute:   "/marketing-sofia",
 
   routes: [
-    { path: "/marketing-sofia",            label: "Dashboard",  icon: "📊" },
-    { path: "/marketing-sofia/clientes",   label: "Clientes",   icon: "🏢" },
-    { path: "/marketing-sofia/metricas",   label: "Métricas",   icon: "📈" },
-    { path: "/marketing-sofia/calendario", label: "Calendario", icon: "📅" },
-    { path: "/marketing-sofia/finanzas",   label: "Finanzas",   icon: "💰" },
-    { path: "/marketing-sofia/cotizador",  label: "Cotizador",  icon: "🎯" },
+    { path: "/marketing-sofia",                label: "Dashboard",   icon: "📊" },
+    { path: "/marketing-sofia/clientes",       label: "Clientes",    icon: "🏢" },
+    { path: "/marketing-sofia/metricas",       label: "Métricas",    icon: "📈" },
+    { path: "/marketing-sofia/calendario",     label: "Calendario",  icon: "📅" },
+    { path: "/marketing-sofia/finanzas",       label: "Finanzas",    icon: "💰" },
+    { path: "/marketing-sofia/cotizador",      label: "Cotizador",   icon: "🎯" },
+    { path: "/marketing-sofia/copy-hooks",     label: "Copy & Hooks",icon: "✍️" },
+    { path: "/marketing-sofia/ideas-hub",      label: "Ideas Hub",   icon: "💡" },
   ],
 
   contextBlock: `
@@ -27,7 +29,9 @@ Plataforma multi-agencia para gestión de clientes, contenido, métricas y finan
 - **Métricas** — KPIs por cuenta y plataforma: alcance, engagement%, seguidores
 - **Calendario** — Planificador de contenido multi-cliente con estados de flujo
 - **Finanzas** — Honorarios, gastos, ROAS, CPL, margen por cliente
-- **Cotizador** — Generador de propuestas y presupuestos para prospectos
+- **Cotizador** — Generador de propuestas y presupuestos para prospectos (SMM + Producción Audiovisual)
+- **Copy & Hooks** — Banco de hooks de apertura, frameworks (AIDA/PAS/PASTOR/4Ps) y CTAs por objetivo
+- **Ideas Hub** — 35+ ideas de contenido filtradas por industria, formato, objetivo y prioridad
 
 ## Frases de navegación
 - [NAVIGATE:/marketing-sofia] — ir al Dashboard
@@ -36,6 +40,8 @@ Plataforma multi-agencia para gestión de clientes, contenido, métricas y finan
 - [NAVIGATE:/marketing-sofia/calendario] — abrir calendario editorial
 - [NAVIGATE:/marketing-sofia/finanzas] — ver panel financiero
 - [NAVIGATE:/marketing-sofia/cotizador] — abrir cotizador
+- [NAVIGATE:/marketing-sofia/copy-hooks] — abrir banco de copy y hooks
+- [NAVIGATE:/marketing-sofia/ideas-hub] — abrir banco de ideas de contenido
 
 ## Conceptos clave SMM
 - ROAS = Retorno / Inversión publicitaria (meta: ≥ 3x)
