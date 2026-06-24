@@ -395,7 +395,8 @@ export default function BriefCanvasPage() {
     }
   };
 
-  const stepContent = [<Step1 key={0} />, <Step2 key={1} />, <Step3 key={2} />, <Step4 key={3} />];
+  // Llamados como funciones (no como componentes) para evitar unmount en cada render
+  const stepContent = [Step1(), Step2(), Step3(), Step4()];
 
   return (
     <div style={{ maxWidth: 740, margin: "0 auto" }}>
