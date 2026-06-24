@@ -16,6 +16,12 @@
   50% { opacity: 0; }
 }
 
+@keyframes gradientFlow {
+  0%   { background-position: 0%   50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
+
 @keyframes neuronPulse {
   0%, 100% { opacity: 0.2; }
   50% { opacity: 1; }

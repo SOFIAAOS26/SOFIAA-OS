@@ -9,7 +9,7 @@ import { useExtension } from "@/hooks/useExtension";
 import { useAuth } from "@/contexts/AuthContext";
 import LoginModal from "@/components/tec-bi/LoginModal";
 
-import Orb from "@/components/orb/Orb";
+import SofiaWave from "@/components/orb/SofiaWave";
 import AdminPanel from "@/components/admin/AdminPanel";
 import { analyzeMessage } from "@/core/guardrails.engine";
 import { getSafetyResponse } from "@/config/safety.response.map";
@@ -35,10 +35,9 @@ const GREETINGS = [
 ];
 
 const QUICK_ACTIONS = [
-  { label: "¿Quién es Abrahan?",        icon: "✦" },
-  { label: "¿Qué es SOFIAA LAB?",       icon: "◈" },
-  { label: "Necesito una producción",   icon: "◎" },
-  { label: "¿Cómo puedo contactarlos?", icon: "→" },
+  { label: "¿Qué es SOFIAA?",           icon: "◈", modal: true  },
+  { label: "Necesito una producción",   icon: "◎", modal: false },
+  { label: "¿Cómo puedo contactarlos?", icon: "→", modal: false },
 ];
 
 // ─── Liquid Glass — material translúcido estilo iOS 26 ────────────────────────
@@ -125,6 +124,7 @@ export default function Home() {
   const [input, setInput]             = useState("");
   const [isLoading, setIsLoading]     = useState(false);
   const [resetKey, setResetKey]         = useState(0);
+  const [showSofiaModal, setShowSofiaModal] = useState(false);
   const [isListeningVoice, setIsListeningVoice] = useState(false);
   const [showAdmin, setShowAdmin]               = useState(false);
   const [pendingNav, setPendingNav]         = useState<string | null>(null);
@@ -540,10 +540,194 @@ export default function Home() {
       onClose={() => setShowLogin(false)}
       onSuccess={(email) => {
         setShowLogin(false);
-        // El nombre real llega del AuthContext via onAuthStateChanged — usamos email como fallback
         setMessages((prev) => [...prev, { role: "assistant", content: `✅ Sesión iniciada. Bienvenido al sistema TEC BI.` }]);
       }}
     />
+
+    {/* ── Modal SOFIAA — presentación holística ───────────────────── */}
+    {showSofiaModal && (
+      <div
+        onClick={(e) => { if (e.target === e.currentTarget) setShowSofiaModal(false); }}
+        style={{
+          position: "fixed", inset: 0, zIndex: 9999,
+          background: "rgba(10,10,30,0.60)",
+          backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)",
+          display: "flex", alignItems: "flex-end", justifyContent: "center",
+          animation: "fadeIn 0.25s ease",
+        }}
+      >
+        <style>{`
+          @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+          @keyframes slideUp { from { transform:translateY(32px); opacity:0 } to { transform:translateY(0); opacity:1 } }
+          .sofiaa-modal::-webkit-scrollbar { width:0 }
+          .ext-card { transition: transform 0.2s, box-shadow 0.2s; }
+          .ext-card:hover { transform: translateY(-3px); }
+        `}</style>
+
+        <div
+          className="sofiaa-modal"
+          style={{
+            width: "100%", maxWidth: 520,
+            maxHeight: "92vh",
+            overflowY: "auto",
+            borderRadius: "28px 28px 0 0",
+            background: "linear-gradient(160deg, rgba(245,247,255,0.97) 0%, rgba(255,250,255,0.97) 100%)",
+            boxShadow: "0 -8px 60px rgba(79,124,255,0.18), 0 -2px 0 rgba(255,255,255,0.9)",
+            animation: "slideUp 0.32s cubic-bezier(0.34,1.4,0.64,1)",
+            paddingBottom: "max(2rem, env(safe-area-inset-bottom, 2rem))",
+          }}
+        >
+          {/* Handle */}
+          <div style={{ display:"flex", justifyContent:"center", paddingTop:12, paddingBottom:4 }}>
+            <div style={{ width:40, height:4, borderRadius:99, background:"rgba(0,0,0,0.12)" }} />
+          </div>
+
+          {/* Hero */}
+          <div style={{ padding:"1.5rem 1.75rem 1rem", textAlign:"center", position:"relative" }}>
+            <button
+              onClick={() => setShowSofiaModal(false)}
+              style={{
+                position:"absolute", top:16, right:16,
+                width:30, height:30, borderRadius:99,
+                background:"rgba(0,0,0,0.07)", border:"none",
+                display:"flex", alignItems:"center", justifyContent:"center",
+                cursor:"pointer", fontSize:15, color:"rgba(0,0,0,0.4)",
+              }}
+            >×</button>
+
+            <p style={{ fontSize:"0.65rem", letterSpacing:"0.35em", textTransform:"uppercase", color:"rgba(0,0,0,0.28)", marginBottom:6 }}>
+              SOFIAA LAB · 2025 → 2026
+            </p>
+            <h2 style={{
+              ...gradientText,
+              fontSize:"clamp(2rem,10vw,3rem)", fontWeight:800,
+              letterSpacing:"-0.03em", lineHeight:1, marginBottom:10,
+            }}>SOFIAA</h2>
+            <p style={{ fontSize:"0.82rem", fontWeight:600, color:"rgba(0,0,0,0.38)", letterSpacing:"0.06em", marginBottom:14 }}>
+              INTELLIGENT EXPERIENCE OS
+            </p>
+            <p style={{ fontSize:"0.93rem", lineHeight:1.65, color:"#2d2d3a", maxWidth:380, margin:"0 auto" }}>
+              SOFIAA no es un chatbot. Es un sistema operativo de experiencias inteligentes —
+              una plataforma extensible que conecta inteligencia artificial con los procesos
+              reales de organizaciones que quieren pensar diferente.
+            </p>
+          </div>
+
+          {/* Divisor */}
+          <div style={{ height:1, background:"linear-gradient(90deg,transparent,rgba(79,124,255,0.18),transparent)", margin:"0 1.75rem" }} />
+
+          {/* Extensiones */}
+          <div style={{ padding:"1.2rem 1.5rem 0.5rem" }}>
+            <p style={{ fontSize:"0.68rem", letterSpacing:"0.28em", textTransform:"uppercase", color:"rgba(0,0,0,0.30)", marginBottom:12 }}>
+              Extensiones activas
+            </p>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+              {[
+                {
+                  icon:"🏛️", label:"TEC BI",
+                  color:"rgba(79,124,255,0.10)", border:"rgba(79,124,255,0.22)",
+                  desc:"Inteligencia operacional para el Tecnológico de Monterrey. Briefs, proyectos, ROI y sincronización bidireccional con Monday.com.",
+                  badge:"Producción"
+                },
+                {
+                  icon:"📱", label:"Marketing Sofia",
+                  color:"rgba(155,79,217,0.10)", border:"rgba(155,79,217,0.22)",
+                  desc:"Workspace para equipos de redes sociales. Métricas, calendario editorial, finanzas y gestión de clientes en tiempo real.",
+                  badge:"Producción"
+                },
+                {
+                  icon:"💙", label:"JP Memorial",
+                  color:"rgba(14,165,233,0.10)", border:"rgba(14,165,233,0.22)",
+                  desc:"IA de memoria emocional. Una extensión para honrar vidas y preservar memorias de quienes ya no están.",
+                  badge:"Operativa"
+                },
+                {
+                  icon:"⚡", label:"Próximas ext.",
+                  color:"rgba(255,107,53,0.08)", border:"rgba(255,107,53,0.18)",
+                  desc:"La arquitectura SEE permite agregar extensiones nuevas sin tocar el núcleo. Cada organización puede tener la suya.",
+                  badge:"SEE Ecosystem"
+                },
+              ].map(({ icon, label, color, border, desc, badge }) => (
+                <div key={label} className="ext-card" style={{
+                  background: color,
+                  border: `1px solid ${border}`,
+                  borderRadius: 18, padding:"1rem",
+                }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:6 }}>
+                    <span style={{ fontSize:18 }}>{icon}</span>
+                    <div>
+                      <p style={{ fontWeight:700, fontSize:"0.83rem", color:"#1d1d2e", lineHeight:1 }}>{label}</p>
+                      <p style={{ fontSize:"0.62rem", color:"rgba(0,0,0,0.35)", letterSpacing:"0.08em", marginTop:2 }}>{badge}</p>
+                    </div>
+                  </div>
+                  <p style={{ fontSize:"0.75rem", color:"rgba(0,0,0,0.55)", lineHeight:1.55 }}>{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Cómo es posible */}
+          <div style={{ padding:"1.2rem 1.5rem 0.5rem" }}>
+            <p style={{ fontSize:"0.68rem", letterSpacing:"0.28em", textTransform:"uppercase", color:"rgba(0,0,0,0.30)", marginBottom:12 }}>
+              ¿Cómo es posible?
+            </p>
+            <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
+              {[
+                { label:"Next.js 16 + React 19",  note:"velocidad nativa" },
+                { label:"Firebase + Firestore",    note:"datos en tiempo real" },
+                { label:"Groq + LLaMA 3",          note:"conversación IA" },
+                { label:"SEE Architecture",        note:"extensiones modulares" },
+                { label:"Monday.com API",           note:"sincronización bidireccional" },
+                { label:"Tailwind CSS v4",          note:"diseño adaptable" },
+              ].map(({ label, note }) => (
+                <div key={label} style={{
+                  background:"rgba(255,255,255,0.85)",
+                  border:"1px solid rgba(0,0,0,0.08)",
+                  borderRadius:99, padding:"0.35rem 0.85rem",
+                  display:"flex", alignItems:"center", gap:6,
+                }}>
+                  <span style={{ fontSize:"0.78rem", fontWeight:600, color:"#2d2d3a" }}>{label}</span>
+                  <span style={{ fontSize:"0.68rem", color:"rgba(0,0,0,0.32)" }}>· {note}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Visión */}
+          <div style={{ margin:"1.2rem 1.5rem 0.5rem", borderRadius:20, padding:"1.1rem 1.25rem",
+            background:"linear-gradient(135deg, rgba(79,124,255,0.08), rgba(233,30,140,0.06))",
+            border:"1px solid rgba(79,124,255,0.14)" }}>
+            <p style={{ fontSize:"0.68rem", letterSpacing:"0.28em", textTransform:"uppercase", color:"rgba(0,0,0,0.28)", marginBottom:8 }}>
+              Visión · Oct–Nov 2026
+            </p>
+            <p style={{ fontSize:"0.90rem", lineHeight:1.6, color:"#2d2d3a", fontStyle:"italic" }}>
+              "La inteligencia no debería ser un privilegio — debería ser
+              infraestructura. SOFIAA es el camino hacia organizaciones que
+              piensan, deciden y crean mejor."
+            </p>
+          </div>
+
+          {/* CTA cerrar */}
+          <div style={{ padding:"1rem 1.5rem 0.5rem", textAlign:"center" }}>
+            <button
+              onClick={() => setShowSofiaModal(false)}
+              style={{
+                background:"linear-gradient(135deg,#4F7CFF,#9B4FD9)",
+                border:"none", borderRadius:99, padding:"0.65rem 2rem",
+                color:"#fff", fontWeight:700, fontSize:"0.84rem",
+                cursor:"pointer", boxShadow:"0 4px 18px rgba(79,124,255,0.30)",
+              }}
+            >
+              Entendido
+            </button>
+            <p style={{ fontSize:"0.70rem", color:"rgba(0,0,0,0.28)", marginTop:10 }}>
+              Pregúntame cualquier cosa para empezar
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
+    {/* ─────────────────────────────────────────────────────────────── */}
     {showAdmin && (
       <AdminPanel
         messages={messages}
@@ -582,9 +766,11 @@ export default function Home() {
           <h1
             style={{
               ...gradientText,
-              fontSize: "clamp(1.4rem, 6vw, 2.4rem)",
+              fontSize: "clamp(1.75rem, 7.5vw, 3rem)",
               fontWeight: 700,
-              letterSpacing: "-0.02em",
+              letterSpacing: "0.18em",
+              backgroundSize: "300% 300%",
+              animation: "gradientFlow 9s ease infinite",
             }}
           >
             SOFIAA
@@ -678,10 +864,12 @@ export default function Home() {
         )}
       </div>
 
-      {/* Orb — shrink-0 */}
-      <div className="shrink-0 flex flex-col items-center gap-1 py-1">
-        <Orb state={orbState} />
-        <p className="text-xs tracking-wide font-light h-4 transition-all duration-300"
+      {/* SofiaWave — reemplaza al Orb */}
+      <div className="shrink-0 w-full px-5 py-1" style={{ maxWidth: 480, margin: "0 auto" }}>
+        <div style={{ width: "100%", height: 88, position: "relative" }}>
+          <SofiaWave state={orbState} />
+        </div>
+        <p className="text-xs tracking-wide font-light h-4 text-center transition-all duration-300 mt-0.5"
           style={{ color: disclosure.showStateLabel ? disclosure.stateLabelColor : "rgba(0,0,0,0.30)" }}>
           {disclosure.showStateLabel ? disclosure.stateLabel : (
             orbState === "listening" ? "Te escucho..." :
@@ -722,10 +910,14 @@ export default function Home() {
       {/* Acciones rápidas — shrink-0 */}
       {showQuickActions && (
         <div className="shrink-0 flex flex-wrap justify-center gap-2 px-5 py-2 w-full">
-          {QUICK_ACTIONS.map(({ label, icon }) => (
+          {QUICK_ACTIONS.map(({ label, icon, modal }) => (
             <button
               key={label}
-              onClick={() => { telemetry.trackQuickAction(label); sendMessage(label); }}
+              onClick={() => {
+                telemetry.trackQuickAction(label);
+                if (modal) { setShowSofiaModal(true); }
+                else { sendMessage(label); }
+              }}
               style={{ ...glass.chip, fontSize: "0.78rem", padding: "0.4rem 0.85rem" }}
               className="active:scale-95"
             >
