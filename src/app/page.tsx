@@ -42,60 +42,63 @@ const QUICK_ACTIONS = [
 
 // ─── Liquid Glass — material translúcido estilo iOS 26 ────────────────────────
 const LG = {
-  // Fondo ultra-translúcido + blur agresivo + highlight especular en el borde superior
-  base: (opacity = 0.38) =>
-    `rgba(255,255,255,${opacity})`,
+  base: (opacity = 0.38) => `rgba(255,255,255,${opacity})`,
   blur: "blur(52px) saturate(220%)",
   border: "1px solid rgba(255,255,255,0.88)",
-  // La línea brillante en el borde superior es la firma del liquid glass
   highlight: "inset 0 1.5px 0 rgba(255,255,255,0.98), inset 0 -1px 0 rgba(200,210,255,0.12)",
 };
 
 const glass = {
   assistant: {
     background: LG.base(0.38),
-    backdropFilter: LG.blur,
-    WebkitBackdropFilter: LG.blur,
+    backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
     border: LG.border,
     boxShadow: `0 4px 20px rgba(100,100,200,0.07), ${LG.highlight}`,
     color: "#1D1D1F",
   } as React.CSSProperties,
   user: {
     background: "linear-gradient(135deg, rgba(91,138,255,0.92), rgba(123,79,232,0.88))",
-    backdropFilter: "blur(20px)",
-    WebkitBackdropFilter: "blur(20px)",
+    backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
     border: "1px solid rgba(255,255,255,0.28)",
     boxShadow: "0 4px 18px rgba(79,124,255,0.28), inset 0 1.5px 0 rgba(255,255,255,0.40)",
     color: "#FFFFFF",
   } as React.CSSProperties,
   input: {
-    background: LG.base(0.52),
-    backdropFilter: LG.blur,
-    WebkitBackdropFilter: LG.blur,
-    border: LG.border,
-    boxShadow: `0 2px 16px rgba(100,100,200,0.07), ${LG.highlight}`,
-    borderRadius: "9999px",
-    // Más compacto: padding reducido
-    padding: "0.5rem 0.9rem",
-    color: "#1D1D1F",
-    fontSize: "0.82rem",
-    outline: "none",
-    width: "100%",
-    transition: "box-shadow 0.25s",
+    background: LG.base(0.52), backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
+    border: LG.border, boxShadow: `0 2px 16px rgba(100,100,200,0.07), ${LG.highlight}`,
+    borderRadius: "9999px", padding: "0.5rem 0.9rem", color: "#1D1D1F",
+    fontSize: "0.82rem", outline: "none", width: "100%", transition: "box-shadow 0.25s",
   } as React.CSSProperties,
   chip: {
-    background: LG.base(0.45),
-    backdropFilter: LG.blur,
-    WebkitBackdropFilter: LG.blur,
-    border: LG.border,
-    boxShadow: `0 2px 10px rgba(100,100,200,0.06), ${LG.highlight}`,
-    borderRadius: "9999px",
-    padding: "0.38rem 0.9rem",
-    fontSize: "0.79rem",
-    color: "#3D3D3F",
-    cursor: "pointer",
-    transition: "all 0.2s",
-    whiteSpace: "nowrap" as const,
+    background: LG.base(0.45), backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
+    border: LG.border, boxShadow: `0 2px 10px rgba(100,100,200,0.06), ${LG.highlight}`,
+    borderRadius: "9999px", padding: "0.38rem 0.9rem", fontSize: "0.79rem",
+    color: "#3D3D3F", cursor: "pointer", transition: "all 0.2s", whiteSpace: "nowrap" as const,
+  } as React.CSSProperties,
+};
+
+// ─── Dark Glass ────────────────────────────────────────────────────────────────
+const darkGlass = {
+  assistant: {
+    background: "rgba(255,255,255,0.06)", backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
+    border: "1px solid rgba(255,255,255,0.10)",
+    boxShadow: "0 4px 24px rgba(0,0,0,0.35), inset 0 1.5px 0 rgba(255,255,255,0.07)",
+    color: "#ECECF1",
+  } as React.CSSProperties,
+  user: glass.user,
+  input: {
+    background: "rgba(255,255,255,0.07)", backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
+    border: "1px solid rgba(255,255,255,0.11)",
+    boxShadow: "0 2px 16px rgba(0,0,0,0.30), inset 0 1.5px 0 rgba(255,255,255,0.05)",
+    borderRadius: "9999px", padding: "0.5rem 0.9rem", color: "#ECECF1",
+    fontSize: "0.82rem", outline: "none", width: "100%", transition: "box-shadow 0.25s",
+  } as React.CSSProperties,
+  chip: {
+    background: "rgba(255,255,255,0.07)", backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
+    border: "1px solid rgba(255,255,255,0.11)",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.05)",
+    borderRadius: "9999px", padding: "0.38rem 0.9rem", fontSize: "0.79rem",
+    color: "rgba(255,255,255,0.72)", cursor: "pointer", transition: "all 0.2s", whiteSpace: "nowrap" as const,
   } as React.CSSProperties,
 };
 
@@ -125,6 +128,7 @@ export default function Home() {
   const [isLoading, setIsLoading]     = useState(false);
   const [resetKey, setResetKey]         = useState(0);
   const [showSofiaModal, setShowSofiaModal] = useState(false);
+  const [isDark, setIsDark]             = useState(false);
   const [isListeningVoice, setIsListeningVoice] = useState(false);
   const [showAdmin, setShowAdmin]               = useState(false);
   const [pendingNav, setPendingNav]         = useState<string | null>(null);
@@ -134,6 +138,16 @@ export default function Home() {
   const recognitionRef    = useRef<any>(null);
   const sentViaVoiceRef   = useRef(false);
   const orbControllerRef  = useRef<OrbController | null>(null);
+
+  // Tema: init desde localStorage + sincronizar con document
+  useEffect(() => {
+    const saved = localStorage.getItem("sofiaa_theme");
+    if (saved === "dark") { setIsDark(true); document.documentElement.dataset.theme = "dark"; }
+  }, []);
+  useEffect(() => {
+    localStorage.setItem("sofiaa_theme", isDark ? "dark" : "light");
+    document.documentElement.dataset.theme = isDark ? "dark" : "light";
+  }, [isDark]);
 
   // Capa de inteligencia TEC BI: solo cuando la extensión está activa en /tec-bi/*
   useEffect(() => {
@@ -352,6 +366,20 @@ export default function Home() {
         return;
       }
       // Si no confirmó, procesar el mensaje normalmente (sin navegar)
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // ── Tema oscuro / claro ───────────────────────────────────────────────────
+    const lc = text.toLowerCase().trim();
+    if (["dark mode","modo oscuro","modo dark","dark","oscuro"].includes(lc)) {
+      setInput(""); setIsDark(true);
+      setMessages((prev) => [...prev, { role: "user", content: text }, { role: "assistant", content: "🌙 Modo oscuro activado. Escribe *light mode* para volver al claro." }]);
+      return;
+    }
+    if (["light mode","modo claro","modo light","light","claro"].includes(lc)) {
+      setInput(""); setIsDark(false);
+      setMessages((prev) => [...prev, { role: "user", content: text }, { role: "assistant", content: "☀️ Modo claro activado." }]);
+      return;
     }
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -755,11 +783,13 @@ export default function Home() {
     )}
     <main
       className="sofiaa-panel flex-1 flex flex-col"
-      style={{ background: "linear-gradient(145deg, #EEF1FF 0%, #FAFAFA 55%, #FFF3FC 100%)" }}
+      style={{ background: isDark
+        ? "linear-gradient(145deg, #0D0D1A 0%, #0F0F18 55%, #130D1A 100%)"
+        : "linear-gradient(145deg, #EEF1FF 0%, #FAFAFA 55%, #FFF3FC 100%)" }}
     >
       {/* Header */}
       <div className="shrink-0 relative flex flex-col items-center gap-0.5 pt-5 pb-1 w-full px-5">
-        <p className="text-xs tracking-[0.32em] uppercase font-light" style={{ color: "rgba(0,0,0,0.28)" }}>
+        <p className="text-xs tracking-[0.32em] uppercase font-light" style={{ color: isDark ? "rgba(255,255,255,0.28)" : "rgba(0,0,0,0.28)" }}>
           SOFIAA LAB
         </p>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -813,7 +843,7 @@ export default function Home() {
             </div>
           )}
         </div>
-        <p className="text-xs font-light" style={{ color: "rgba(0,0,0,0.32)" }}>
+        <p className="text-xs font-light" style={{ color: isDark ? "rgba(255,255,255,0.32)" : "rgba(0,0,0,0.32)" }}>
           {activeExtension ? activeExtension.description : "Intelligent Experience OS"}
         </p>
 
@@ -870,7 +900,7 @@ export default function Home() {
           <SofiaWave state={orbState} />
         </div>
         <p className="text-xs tracking-wide font-light h-4 text-center transition-all duration-300 mt-0.5"
-          style={{ color: disclosure.showStateLabel ? disclosure.stateLabelColor : "rgba(0,0,0,0.30)" }}>
+          style={{ color: disclosure.showStateLabel ? disclosure.stateLabelColor : isDark ? "rgba(255,255,255,0.30)" : "rgba(0,0,0,0.30)" }}>
           {disclosure.showStateLabel ? disclosure.stateLabel : (
             orbState === "listening" ? "Te escucho..." :
             orbState === "thinking"  ? "Procesando..." : ""
@@ -918,7 +948,7 @@ export default function Home() {
                 if (modal) { setShowSofiaModal(true); }
                 else { sendMessage(label); }
               }}
-              style={{ ...glass.chip, fontSize: "0.78rem", padding: "0.4rem 0.85rem" }}
+              style={{ ...(isDark ? darkGlass.chip : glass.chip), fontSize: "0.78rem", padding: "0.4rem 0.85rem" }}
               className="active:scale-95"
             >
               <span className="mr-1 opacity-50">{icon}</span>
@@ -936,7 +966,7 @@ export default function Home() {
               className={`sofiaa-bubble rounded-3xl px-4 py-3 text-sm leading-relaxed ${
                 msg.role === "user" ? "rounded-br-md" : "rounded-bl-md"
               }`}
-              style={msg.role === "user" ? glass.user : glass.assistant}
+              style={msg.role === "user" ? glass.user : (isDark ? darkGlass.assistant : glass.assistant)}
             >
               {msg.role === "user" ? (
                 msg.content
@@ -1014,7 +1044,7 @@ export default function Home() {
             onKeyDown={(e) => { if (e.key === "Enter") sendMessage(); }}
             placeholder={isListeningVoice ? "Escuchando..." : "Escribe o habla..."}
             disabled={isLoading || isWelcoming || isListeningVoice || (orbState !== "listening" && !disclosure.inputEnabled)}
-            style={glass.input}
+            style={isDark ? darkGlass.input : glass.input}
             className="disabled:opacity-60 pl-11 pr-11"
           />
 

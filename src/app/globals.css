@@ -149,6 +149,24 @@ input::placeholder {
   color: rgba(0, 0, 0, 0.28);
 }
 
+/* ── Dark mode ───────────────────────────────────────────────────────────── */
+[data-theme="dark"] html,
+[data-theme="dark"] body {
+  background: linear-gradient(145deg, #0D0D1A 0%, #0F0F18 55%, #130D1A 100%);
+}
+
+[data-theme="dark"] .sofiaa-panel {
+  border-color: rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 -2px 0 rgba(255, 255, 255, 0.05) inset,
+    0 12px 40px rgba(0, 0, 0, 0.50),
+    0 2px 8px rgba(0, 0, 0, 0.30);
+}
+
+[data-theme="dark"] input::placeholder {
+  color: rgba(255, 255, 255, 0.22);
+}
+
 /* ── Extensiones: modo móvil ─────────────────────────────────────────────── */
 
 /* Nav horizontal en header — visible en desktop, oculto en móvil */
