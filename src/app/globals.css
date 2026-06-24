@@ -148,3 +148,72 @@ html, body {
 input::placeholder {
   color: rgba(0, 0, 0, 0.28);
 }
+
+/* ── Extensiones: modo móvil ─────────────────────────────────────────────── */
+
+/* Nav horizontal en header — visible en desktop, oculto en móvil */
+.ext-header-nav   { display: flex; gap: 2px; overflow-x: auto; flex: 1; scrollbar-width: none; }
+.ext-header-extras { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+/* Bottom nav — oculto en desktop */
+.ext-bottom-nav { display: none; }
+
+@media (max-width: 599px) {
+  /* Ocultar nav y extras del header */
+  .ext-header-nav    { display: none !important; }
+  .ext-header-extras { display: none !important; }
+
+  /* Reducir padding del contenido y dejar espacio al bottom nav */
+  .ext-main { padding: 14px 12px 80px !important; }
+
+  /* Bottom navigation bar */
+  .ext-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 58px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+    z-index: 100;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    align-items: stretch;
+  }
+  .ext-bottom-nav::-webkit-scrollbar { display: none; }
+
+  .ext-bottom-nav a {
+    flex: 0 0 auto;
+    min-width: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 0 6px;
+    text-decoration: none;
+    color: #bbb;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: color 0.15s;
+    border-bottom: 2px solid transparent;
+  }
+  .ext-bottom-nav a .nav-icon { font-size: 20px; line-height: 1; }
+  .ext-bottom-nav a.ext-nav-active {
+    color: var(--ext-accent, #4F7CFF);
+    border-bottom-color: var(--ext-accent, #4F7CFF);
+    font-weight: 700;
+  }
+
+  /* Grids responsivos en páginas de extensiones */
+  .ext-grid-2, .ext-grid-3, .ext-grid-4 {
+    grid-template-columns: 1fr !important;
+  }
+  .ext-grid-2-1 {
+    grid-template-columns: 1fr !important;
+  }
+}

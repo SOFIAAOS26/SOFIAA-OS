@@ -57,8 +57,8 @@ export default function JpMemorialLayout({ children }: { children: React.ReactNo
           </span>
         </div>
 
-        {/* Nav */}
-        <nav style={{ display: "flex", gap: 2, overflowX: "auto", flex: 1, scrollbarWidth: "none" }}>
+        {/* Nav (solo desktop) */}
+        <nav className="ext-header-nav">
           {NAV.map((route) => {
             const active = pathname === route.path;
             return (
@@ -66,18 +66,12 @@ export default function JpMemorialLayout({ children }: { children: React.ReactNo
                 key={route.path}
                 href={route.path}
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 5,
-                  padding: "5px 10px",
-                  borderRadius: 8,
-                  fontSize: 12,
+                  display: "flex", alignItems: "center", gap: 5,
+                  padding: "5px 10px", borderRadius: 8, fontSize: 12,
                   fontWeight: active ? 600 : 400,
                   color: active ? T.badgeColor : "#555",
                   background: active ? "rgba(74,124,89,0.10)" : "transparent",
-                  textDecoration: "none",
-                  whiteSpace: "nowrap",
-                  transition: "all 0.15s",
+                  textDecoration: "none", whiteSpace: "nowrap", transition: "all 0.15s",
                 }}
               >
                 <span style={{ fontSize: 13 }}>{route.icon}</span>
@@ -108,9 +102,25 @@ export default function JpMemorialLayout({ children }: { children: React.ReactNo
       </header>
 
       {/* ── Page content ─────────────────────────────────────── */}
-      <main style={{ flex: 1, padding: "24px 20px", maxWidth: 1100, width: "100%", margin: "0 auto" }}>
+      <main className="ext-main" style={{ flex: 1, padding: "24px 20px", maxWidth: 1100, width: "100%", margin: "0 auto" }}>
         {children}
       </main>
+
+      {/* ── Bottom nav (solo móvil) ───────────────────────────── */}
+      <nav
+        className="ext-bottom-nav"
+        style={{ "--ext-accent": T.badgeColor } as React.CSSProperties}
+      >
+        {NAV.map((route) => {
+          const active = pathname === route.path;
+          return (
+            <Link key={route.path} href={route.path} className={active ? "ext-nav-active" : ""}>
+              <span className="nav-icon">{route.icon}</span>
+              <span>{route.label.split(" ")[0]}</span>
+            </Link>
+          );
+        })}
+      </nav>
 
       {/* ── SOFIAA Chat Flotante ──────────────────────────────── */}
       <JpmChat />

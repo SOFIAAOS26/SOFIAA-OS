@@ -59,16 +59,8 @@ export default function TecBiLayout({ children }: { children: React.ReactNode })
           </span>
         </div>
 
-        {/* Nav links — filtrado por rol */}
-        <nav
-          style={{
-            display: "flex",
-            gap: 2,
-            overflowX: "auto",
-            flex: 1,
-            scrollbarWidth: "none",
-          }}
-        >
+        {/* Nav links — filtrado por rol (solo desktop) */}
+        <nav className="ext-header-nav">
           {NAV.filter((route) => {
             const section = pathToSection(route.path);
             return canView(section, profile?.rol ?? null);
@@ -79,18 +71,12 @@ export default function TecBiLayout({ children }: { children: React.ReactNode })
                 key={route.path}
                 href={route.path}
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 5,
-                  padding: "5px 10px",
-                  borderRadius: 8,
-                  fontSize: 12,
+                  display: "flex", alignItems: "center", gap: 5,
+                  padding: "5px 10px", borderRadius: 8, fontSize: 12,
                   fontWeight: active ? 600 : 400,
                   color: active ? tecBiExtension.theme.badgeColor : "#555",
                   background: active ? "rgba(14,165,233,0.1)" : "transparent",
-                  textDecoration: "none",
-                  whiteSpace: "nowrap",
-                  transition: "all 0.15s",
+                  textDecoration: "none", whiteSpace: "nowrap", transition: "all 0.15s",
                 }}
               >
                 <span style={{ fontSize: 13 }}>{route.icon}</span>
@@ -100,9 +86,9 @@ export default function TecBiLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        {/* User chip */}
+        {/* User chip (solo desktop) */}
         {profile && (
-          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+          <div className="ext-header-extras">
             <div style={{
               background: "rgba(14,165,233,0.1)", border: "1px solid rgba(14,165,233,0.25)",
               borderRadius: 99, padding: "3px 10px", display: "flex", alignItems: "center", gap: 5,
@@ -145,9 +131,29 @@ export default function TecBiLayout({ children }: { children: React.ReactNode })
       </header>
 
       {/* ── Page content ─────────────────────────────────────── */}
-      <main style={{ flex: 1, padding: "24px 20px", maxWidth: 1200, width: "100%", margin: "0 auto" }}>
+      <main className="ext-main" style={{ flex: 1, padding: "24px 20px", maxWidth: 1200, width: "100%", margin: "0 auto" }}>
         {children}
       </main>
+
+      {/* ── Bottom nav (solo móvil) ───────────────────────────── */}
+      <nav
+        className="ext-bottom-nav"
+        style={{ "--ext-accent": "#0EA5E9" } as React.CSSProperties}
+      >
+        {NAV.filter((route) => canView(pathToSection(route.path), profile?.rol ?? null)).map((route) => {
+          const active = pathname === route.path;
+          return (
+            <Link
+              key={route.path}
+              href={route.path}
+              className={active ? "ext-nav-active" : ""}
+            >
+              <span className="nav-icon">{route.icon}</span>
+              <span>{route.label.split(" ")[0]}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 }
