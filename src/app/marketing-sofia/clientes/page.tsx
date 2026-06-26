@@ -265,16 +265,17 @@ export default function ClientesPage() {
         <div
           style={{
             position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            zIndex: 999, padding: 20,
+            display: "flex", alignItems: "flex-start", justifyContent: "center",
+            zIndex: 999, padding: "24px 16px 40px", overflowY: "auto",
           }}
           onClick={(e) => e.target === e.currentTarget && setModalOpen(false)}
         >
           <div
             style={{
               background: "#fff", borderRadius: 20, padding: 28,
-              width: "100%", maxWidth: 560, maxHeight: "90vh",
-              overflowY: "auto", boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
+              width: "100%", maxWidth: 560,
+              boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
+              margin: "auto",
             }}
           >
             <h2 style={{ fontSize: 18, fontWeight: 800, color: "#1D1D1F", margin: "0 0 24px" }}>
