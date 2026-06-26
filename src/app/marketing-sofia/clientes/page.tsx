@@ -56,6 +56,7 @@ export default function ClientesPage() {
   const [editing,   setEditing]   = useState<SmmCliente | null>(null);
   const [form,      setForm]      = useState({ ...EMPTY });
   const [saving,    setSaving]    = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [deleting,  setDeleting]  = useState<string | null>(null);
 
   useEffect(() => {
@@ -77,7 +78,7 @@ export default function ClientesPage() {
     );
   });
 
-  const openNew  = () => { setEditing(null); setForm({ ...EMPTY }); setModalOpen(true); };
+  const openNew  = () => { setEditing(null); setForm({ ...EMPTY }); setSaveError(null); setModalOpen(true); };
   const openEdit = (c: SmmCliente) => {
     setEditing(c);
     setForm({
@@ -86,19 +87,27 @@ export default function ClientesPage() {
       paqueteMXN: c.paqueteMXN, estado: c.estado, fechaInicio: c.fechaInicio,
       notas: c.notas, scoreEst: c.scoreEst,
     });
+    setSaveError(null);
     setModalOpen(true);
   };
 
   const handleSubmit = async (ev: FormEvent) => {
     ev.preventDefault();
-    if (!activeWorkspaceId) return;
+    setSaveError(null);
+    if (!activeWorkspaceId) {
+      setSaveError("No hay workspace activo. Selecciona uno en el menú superior.");
+      return;
+    }
     setSaving(true);
     try {
       if (editing?.id) await updateCliente(activeWorkspaceId, editing.id, form);
       else             await createCliente(activeWorkspaceId, form);
       setModalOpen(false);
-    } catch (err) { console.error(err); }
-    finally { setSaving(false); }
+    } catch (err: unknown) {
+      console.error("Error guardando cliente:", err);
+      const msg = err instanceof Error ? err.message : String(err);
+      setSaveError(`Error al guardar: ${msg}`);
+    } finally { setSaving(false); }
   };
 
   const handleDelete = async (c: SmmCliente) => {
@@ -383,6 +392,12 @@ export default function ClientesPage() {
                   onChange={(e) => setForm((p) => ({ ...p, notas: e.target.value }))}
                 />
               </div>
+
+              {saveError && (
+                <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: 8, padding: "10px 14px", fontSize: 12, color: "#DC2626" }}>
+                  ⚠️ {saveError}
+                </div>
+              )}
 
               <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", marginTop: 8 }}>
                 <button
