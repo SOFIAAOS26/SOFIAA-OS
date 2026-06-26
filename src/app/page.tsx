@@ -23,6 +23,7 @@ import { getDisclosure } from "@/core/experience.disclosure";
 import GenerativeUI from "@/components/chat/GenerativeUI";
 import { parseUIBlocks } from "@/types/generative-ui";
 import type { UIBlock } from "@/types/generative-ui";
+import { detectUIBlock } from "@/core/ui.intent";
 
 interface Message {
   role: "user" | "assistant";
@@ -520,24 +521,31 @@ export default function Home() {
         try { speakText(fullResponse); } catch { /* audio no crítico */ }
       }
 
-      // ── Parsear UI blocks + limpiar tokens del texto ─────────────────────
-      const { clean: cleanedResponse, blocks: uiBlocks } = parseUIBlocks(fullResponse);
-      const hasUIorNav = cleanedResponse !== fullResponse || /\[NAVIGATE:/.test(cleanedResponse);
+      // ── Parsear UI blocks del modelo + detector de intención client-side ──
+      const { clean: cleanedResponse, blocks: modelUIBlocks } = parseUIBlocks(fullResponse);
 
-      if (hasUIorNav || uiBlocks.length > 0) {
-        setMessages((prev) => {
-          const updated = [...prev];
-          const last = updated[updated.length - 1];
-          if (last.role === "assistant") {
-            updated[updated.length - 1] = {
-              ...last,
-              content: cleanedResponse.replace(/\[NAVIGATE:[^\]]+\]\n?/g, "").trim(),
-              ui: uiBlocks.length > 0 ? uiBlocks : last.ui,
-            };
-          }
-          return updated;
-        });
-      }
+      // Si el modelo no generó bloques, intentar inferirlos del intent
+      const inferredBlock = modelUIBlocks.length === 0
+        ? detectUIBlock(text, fullResponse)
+        : null;
+
+      const finalUIBlocks: UIBlock[] = modelUIBlocks.length > 0
+        ? modelUIBlocks
+        : inferredBlock ? [inferredBlock] : [];
+
+      setMessages((prev) => {
+        const updated = [...prev];
+        const last = updated[updated.length - 1];
+        if (last.role === "assistant") {
+          updated[updated.length - 1] = {
+            ...last,
+            content: cleanedResponse.replace(/\[NAVIGATE:[^\]]+\]\n?/g, "").trim(),
+            ui: finalUIBlocks.length > 0 ? finalUIBlocks : undefined,
+          };
+        }
+        return updated;
+      });
+      // ─────────────────────────────────────────────────────────────────────
       // ─────────────────────────────────────────────────────────────────────
 
       // Detectar comando de navegación al terminar el stream
