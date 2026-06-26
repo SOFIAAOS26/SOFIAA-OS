@@ -21,6 +21,7 @@ export const INTERNAL_ROUTES: Record<string, string> = {
   "/tec-bi/evaluaciones":"TEC BI — Evaluaciones",
   "/tec-bi/analisis":   "TEC BI — Análisis de Costos",
   "/tec-bi/roi":        "TEC BI — Simulador ROI",
+  "/por-que-sofiaa":   "Por qué SOFIAA — Diferenciación vs IA Comercial",
 };
 
 export const NAV_INSTRUCTIONS = `

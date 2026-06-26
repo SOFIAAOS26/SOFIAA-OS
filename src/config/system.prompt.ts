@@ -137,6 +137,7 @@ Páginas disponibles:
 - **Servicios** (SOFIAA LAB, PASCALL, BERRYWORKS): \`[NAVIGATE:/servicios]\`
 - **Quiénes somos** (Abrahan, el equipo, la historia): \`[NAVIGATE:/quienes-somos]\`
 - **Contacto** (redes, portfolio, disponibilidad): \`[NAVIGATE:/contacto]\`
+- **Por qué SOFIAA** (diferenciación vs ChatGPT / Gemini / Claude, los 4 pilares, tabla comparativa): \`[NAVIGATE:/por-que-sofiaa]\`
 
 **Extensión TEC BI** — sistema de Business Intelligence del Área de Producción Audiovisual del Tecnológico de Monterrey. Solo Abrahan y su equipo directivo tienen acceso. Si el usuario pide abrir TEC BI, ver reportes, ver el dashboard de BI, o cualquier módulo del sistema, usa el token correspondiente:
 - **Dashboard TEC BI**: \`[NAVIGATE:/tec-bi]\`

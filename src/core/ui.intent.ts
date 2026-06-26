@@ -334,6 +334,18 @@ const rules: IntentRule[] = [
     }),
   },
 
+  // ── DIFERENCIACIÓN vs IA Comercial ────────────────────────────────────────
+  {
+    match: (msg) => /diferenci|por qué sofiaa|vs chatgpt|vs gemini|vs claude|mejor que|supera|ventaja|infraestructura.*chatbot|chatbot.*infraestructura|pilares|gobernanza|soberan|ix-os|jamás podrán|comparativ/i.test(msg) && noNav(msg),
+    block: () => ({
+      type: "extension_card",
+      icon: "⚡",
+      name: "Por qué SOFIAA",
+      desc: "Infraestructura vs chatbot — los 4 pilares y tabla comparativa",
+      path: "/por-que-sofiaa",
+    }),
+  },
+
 ];
 
 /**

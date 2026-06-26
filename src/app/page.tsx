@@ -24,6 +24,7 @@ import GenerativeUI from "@/components/chat/GenerativeUI";
 import { parseUIBlocks } from "@/types/generative-ui";
 import type { UIBlock } from "@/types/generative-ui";
 import { detectUIBlock } from "@/core/ui.intent";
+import OnboardingSlides from "@/components/onboarding/OnboardingSlides";
 
 interface Message {
   role: "user" | "assistant";
@@ -138,6 +139,7 @@ export default function Home() {
   const [isListeningVoice, setIsListeningVoice] = useState(false);
   const [showAdmin, setShowAdmin]               = useState(false);
   const [pendingNav, setPendingNav]         = useState<string | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const messagesEndRef  = useRef<HTMLDivElement>(null);
   const inputRef        = useRef<HTMLInputElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -149,6 +151,11 @@ export default function Home() {
   useEffect(() => {
     const saved = localStorage.getItem("sofiaa_theme");
     if (saved === "dark") { setIsDark(true); document.documentElement.dataset.theme = "dark"; }
+  }, []);
+  // Onboarding: mostrar solo la primera vez
+  useEffect(() => {
+    const seen = localStorage.getItem("sofiaa_intro_seen");
+    if (!seen) setShowOnboarding(true);
   }, []);
   useEffect(() => {
     localStorage.setItem("sofiaa_theme", isDark ? "dark" : "light");
@@ -375,8 +382,15 @@ export default function Home() {
     }
     // ─────────────────────────────────────────────────────────────────────────
 
-    // ── Tema oscuro / claro ───────────────────────────────────────────────────
+    // ── Presentación / onboarding ─────────────────────────────────────────────
     const lc = text.toLowerCase().trim();
+    if (/preséntate|presentate|presentación|quien eres sofiaa|quién eres sofiaa|muéstrate|muestrate|intro sofiaa|abre la presentación|abre la presentacion/.test(lc)) {
+      setInput("");
+      setMessages((prev) => [...prev, { role: "user", content: text }, { role: "assistant", content: "Con gusto ✨" }]);
+      setShowOnboarding(true);
+      return;
+    }
+    // ── Tema oscuro / claro ───────────────────────────────────────────────────
     if (["dark mode","modo oscuro","modo dark","dark","oscuro"].includes(lc)) {
       setInput(""); setIsDark(true);
       setMessages((prev) => [...prev, { role: "user", content: text }, { role: "assistant", content: "🌙 Modo oscuro activado. Escribe *light mode* para volver al claro." }]);
@@ -583,6 +597,14 @@ export default function Home() {
 
   return (
     <div className="sofiaa-root">
+    {showOnboarding && (
+      <OnboardingSlides
+        onDone={() => {
+          localStorage.setItem("sofiaa_intro_seen", "1");
+          setShowOnboarding(false);
+        }}
+      />
+    )}
     <LoginModal
       isOpen={showLogin}
       onClose={() => setShowLogin(false)}
