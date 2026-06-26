@@ -20,10 +20,14 @@ import { addTimelineEntry, buildContextualMemoryBlock } from "@/core/memory.time
 import { generateSessionTitle, extractTags, detectTopGoal } from "@/core/memory.summary";
 import { OrbController } from "@/components/orb/orb.controller";
 import { getDisclosure } from "@/core/experience.disclosure";
+import GenerativeUI from "@/components/chat/GenerativeUI";
+import { parseUIBlocks } from "@/types/generative-ui";
+import type { UIBlock } from "@/types/generative-ui";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
+  ui?: UIBlock[];
 }
 
 const GREETINGS = [
@@ -516,24 +520,31 @@ export default function Home() {
         try { speakText(fullResponse); } catch { /* audio no crítico */ }
       }
 
-      // Detectar comando de navegación al terminar el stream
-      const navMatch = fullResponse.match(/\[NAVIGATE:([^\]]+)\]/);
-      if (navMatch) {
-        const dest = navMatch[1].trim();
-        // Limpiar el token del mensaje
+      // ── Parsear UI blocks + limpiar tokens del texto ─────────────────────
+      const { clean: cleanedResponse, blocks: uiBlocks } = parseUIBlocks(fullResponse);
+      const hasUIorNav = cleanedResponse !== fullResponse || /\[NAVIGATE:/.test(cleanedResponse);
+
+      if (hasUIorNav || uiBlocks.length > 0) {
         setMessages((prev) => {
           const updated = [...prev];
           const last = updated[updated.length - 1];
           if (last.role === "assistant") {
             updated[updated.length - 1] = {
               ...last,
-              content: last.content.replace(/\[NAVIGATE:[^\]]+\]\n?/g, "").trim(),
+              content: cleanedResponse.replace(/\[NAVIGATE:[^\]]+\]\n?/g, "").trim(),
+              ui: uiBlocks.length > 0 ? uiBlocks : last.ui,
             };
           }
           return updated;
         });
+      }
+      // ─────────────────────────────────────────────────────────────────────
+
+      // Detectar comando de navegación al terminar el stream
+      const navMatch = fullResponse.match(/\[NAVIGATE:([^\]]+)\]/);
+      if (navMatch) {
+        const dest = navMatch[1].trim();
         if (dest.startsWith("/")) {
-          // Guardar destino — esperamos confirmación del usuario antes de navegar
           setPendingNav(dest);
         } else {
           window.open(dest, "_blank", "noopener,noreferrer");
@@ -1202,7 +1213,7 @@ export default function Home() {
       {/* Mensajes */}
       <div className="flex-1 min-h-0 w-full overflow-y-auto space-y-3 py-2" style={{ paddingLeft: "10px", paddingRight: "10px" }}>
         {messages.map((msg, i) => (
-          <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+          <div key={i} className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}>
             <div
               className={`sofiaa-bubble rounded-3xl px-4 py-3 text-sm leading-relaxed ${
                 msg.role === "user" ? "rounded-br-md" : "rounded-bl-md"
@@ -1239,6 +1250,16 @@ export default function Home() {
                 />
               )}
             </div>
+            {/* Generative UI — renderiza debajo de la burbuja de SOFIAA */}
+            {msg.role === "assistant" && msg.ui && msg.ui.length > 0 && (
+              <div style={{ maxWidth: "85%", width: "100%" }}>
+                <GenerativeUI
+                  blocks={msg.ui}
+                  onSend={(text) => sendMessage(text)}
+                  isDark={isDark}
+                />
+              </div>
+            )}
           </div>
         ))}
         <div ref={messagesEndRef} />
