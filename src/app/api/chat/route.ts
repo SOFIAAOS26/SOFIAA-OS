@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { resolveModules, describeModules } from "@/core/prompt.resolver";
+import { resolveModules, resolveExtensionPrompt, describeModules } from "@/core/prompt.resolver";
 import { assemblePrompt } from "@/config/prompt.modules";
 import { AUTH_WORD } from "@/config/navigation";
 import { analyzeMessage, analyzeConversation, logSecurityEvent } from "@/core/guardrails.engine";
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     contextualMemory?: string;
     detectedGoal?: GoalType;
     activePath?: string | null;
-    extensionData?: string;
+    extensionData?: string; // datos dinámicos opcionales (ej. TEC BI summary)
   } = await req.json();
 
   if (!messages || !Array.isArray(messages)) {
@@ -90,13 +90,17 @@ export async function POST(req: NextRequest) {
     : "";
   // ─────────────────────────────────────────────────────────────────────────
 
-  // ── Modular Prompt Assembly ───────────────────────────────────────────────
+  // ── Modular Prompt Assembly (v1.1.4 — Registry agnóstico) ────────────────
   const modules = resolveModules({
     activePath: activePath ?? null,
     userMessage: lastUserMsg?.content ?? "",
   });
-  console.log("[SOFIAA prompt]", describeModules(modules));
-  const systemPrompt = assemblePrompt(modules, extensionData);
+  // El Registry resuelve la extensión activa por contrato formal — sin if/else
+  const registryExtPrompt = resolveExtensionPrompt(activePath ?? "");
+  // extensionData = datos dinámicos del cliente (ej. TEC BI summary en tiempo real)
+  const finalExtData = [registryExtPrompt, extensionData].filter(Boolean).join("\n\n") || undefined;
+  console.log("[SOFIAA]", describeModules(modules), registryExtPrompt ? `+ ext:${activePath}` : "");
+  const systemPrompt = assemblePrompt(modules, finalExtData);
   // ─────────────────────────────────────────────────────────────────────────
 
   const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
