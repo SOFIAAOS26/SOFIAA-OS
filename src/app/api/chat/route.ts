@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
-import { buildSystemPrompt } from "@/config/system.prompt";
+import { resolveModules, describeModules } from "@/core/prompt.resolver";
+import { assemblePrompt } from "@/config/prompt.modules";
 import { AUTH_WORD } from "@/config/navigation";
 import { analyzeMessage, analyzeConversation, logSecurityEvent } from "@/core/guardrails.engine";
 import { getSafetyResponse } from "@/config/safety.response.map";
@@ -8,12 +9,13 @@ import { getGoalContext, type GoalType } from "@/core/goal.engine";
 type Message = { role: "user" | "assistant"; content: string };
 
 export async function POST(req: NextRequest) {
-  const { messages, longTermMemory, contextualMemory, detectedGoal, extensionContext }: {
+  const { messages, longTermMemory, contextualMemory, detectedGoal, activePath, extensionData }: {
     messages: Message[];
     longTermMemory?: string;
     contextualMemory?: string;
     detectedGoal?: GoalType;
-    extensionContext?: string;
+    activePath?: string | null;
+    extensionData?: string;
   } = await req.json();
 
   if (!messages || !Array.isArray(messages)) {
@@ -88,6 +90,15 @@ export async function POST(req: NextRequest) {
     : "";
   // ─────────────────────────────────────────────────────────────────────────
 
+  // ── Modular Prompt Assembly ───────────────────────────────────────────────
+  const modules = resolveModules({
+    activePath: activePath ?? null,
+    userMessage: lastUserMsg?.content ?? "",
+  });
+  console.log("[SOFIAA prompt]", describeModules(modules));
+  const systemPrompt = assemblePrompt(modules, extensionData);
+  // ─────────────────────────────────────────────────────────────────────────
+
   const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -97,8 +108,8 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({
       model: "llama-3.3-70b-versatile",
       messages: [
-        { role: "system", content: `${buildSystemPrompt(extensionContext)}${memoryBlock}${contextualBlock}\n\n${authStatus}${goalBlock}` },
-        ...messages,
+        { role: "system", content: `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}${goalBlock}` },
+        ...messages.map(({ role, content }: { role: string; content: string }) => ({ role, content })),
       ],
       temperature: 0.7,
       max_tokens: 1024,

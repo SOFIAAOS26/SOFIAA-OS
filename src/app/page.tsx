@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { OrbState } from "@/components/orb/orb.states";
@@ -118,6 +118,7 @@ const gradientText: React.CSSProperties = {
 
 export default function Home() {
   const router = useRouter();
+  const pathname = usePathname();
   const activeExtension = useExtension();
   const telemetry = useSofiaaTelemetry();
   const [orbState, setOrbState]       = useState<OrbState>("idle");
@@ -489,10 +490,8 @@ export default function Home() {
           longTermMemory: localStorage.getItem("sofiaa_long_memory") ?? undefined,
           contextualMemory: buildContextualMemoryBlock(5),
           detectedGoal,
-          extensionContext: [
-            activeExtension?.contextBlock,
-            tecBiSummary,
-          ].filter(Boolean).join("\n\n") || undefined,
+          activePath: pathname,
+          extensionData: tecBiSummary || undefined,
         }),
       });
 
