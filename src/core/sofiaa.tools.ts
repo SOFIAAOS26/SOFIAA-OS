@@ -1,41 +1,18 @@
 /**
  * SOFIAA 1.1.4 — Groq Function Calling definitions
  *
- * Reemplaza el parseo de strings [NAVIGATE:url] y [UI:tipo:json]
- * con Function Calling nativo de Groq/LLaMA 3.3.
+ * navigate: INTENCIONALMENTE excluido de Function Calling.
+ * La navegación usa tokens de texto [NAVIGATE:url] — mecanismo probado
+ * que funciona con el sistema de confirmación en page.tsx (pendingNav).
+ * Function Calling para navigate se activará en Sprint D (Client-Side FC).
  *
- * Un corchete roto del LLM ya no rompe la interfaz del cliente.
- * La respuesta llega estructurada por contrato — no por regex.
+ * show_ui: usa Function Calling nativo — el LLM devuelve JSON estructurado
+ * para UI generativa sin riesgo de corchetes malformados.
  */
 
 // ── Definiciones de tools para Groq ──────────────────────────────────────
 
 export const SOFIAA_TOOLS = [
-  {
-    type: "function" as const,
-    function: {
-      name: "navigate",
-      description:
-        "Navega al usuario a una página interna o URL externa. " +
-        "Usar cuando el usuario quiera ir a una sección o el contexto lo requiera. " +
-        "SIEMPRE incluir en el texto de la respuesta un aviso natural antes de navegar.",
-      parameters: {
-        type: "object",
-        properties: {
-          destination: {
-            type: "string",
-            description:
-              "Ruta interna (ej. /servicios, /tec-bi) o URL externa (ej. https://...)",
-          },
-          isExternal: {
-            type: "boolean",
-            description: "true si es URL externa, false si es ruta interna",
-          },
-        },
-        required: ["destination", "isExternal"],
-      },
-    },
-  },
   {
     type: "function" as const,
     function: {
