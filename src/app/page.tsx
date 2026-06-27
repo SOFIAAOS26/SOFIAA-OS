@@ -513,7 +513,9 @@ export default function Home() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: updatedMessages.map(({ role, content }) => ({ role, content })),
+          messages: updatedMessages
+            .filter(m => !m.content.startsWith("Llevándote a "))  // excluir confirmaciones sintéticas de nav
+            .map(({ role, content }) => ({ role, content })),
           longTermMemory: localStorage.getItem("sofiaa_long_memory") ?? undefined,
           contextualMemory: buildContextualMemoryBlock(5),
           detectedGoal,
