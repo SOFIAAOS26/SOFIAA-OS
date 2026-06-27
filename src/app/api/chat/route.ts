@@ -11,6 +11,7 @@
 
 import { NextRequest } from "next/server";
 import { resolveModules, resolveExtensionPrompt, describeModules } from "@/core/prompt.resolver";
+import { extensionRegistry } from "@/core/extension.registry";
 import { assemblePrompt } from "@/config/prompt.modules";
 import { AUTH_WORD } from "@/config/navigation";
 import { analyzeMessage, analyzeConversation, logSecurityEvent } from "@/core/guardrails.engine";
@@ -123,11 +124,32 @@ export async function POST(req: NextRequest) {
   const registryExtPrompt = resolveExtensionPrompt(path);
   const finalExtData = [registryExtPrompt, extensionData].filter(Boolean).join("\n\n") || undefined;
 
-  const activeExtId = registryExtPrompt ? path.split("/")[1] : null;
+  const resolvedExt = registryExtPrompt
+    ? extensionRegistry.resolve(path)
+    : null;
+  const activeExtId = resolvedExt?.extension.manifest.id ?? null;
+
   tracer.log("prompt_assembly", "ok", "info", {
     modules: describeModules(modules),
     ext: activeExtId,
   });
+
+  // Registrar hooks de la extensión activa en el EventBus (Sprint C3)
+  if (resolvedExt?.extension.hooks) {
+    const extCtx = {
+      traceId: tracer.id,
+      extensionId: activeExtId ?? "",
+      activePath: path,
+      userMessage: lastUserMsg?.content ?? "",
+      timestamp: Date.now(),
+    };
+    bus.registerExtensionHooks(resolvedExt.extension.hooks, extCtx);
+
+    // onInitialize: fire-and-forget al inicio del request
+    if (resolvedExt.extension.hooks.onInitialize) {
+      resolvedExt.extension.hooks.onInitialize(extCtx).catch(() => {});
+    }
+  }
 
   const systemPrompt = assemblePrompt(modules, finalExtData);
   // ─────────────────────────────────────────────────────────────────────

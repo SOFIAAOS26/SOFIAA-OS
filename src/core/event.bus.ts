@@ -1,30 +1,26 @@
 /**
- * SOFIAA 1.1.4 — Async Event Bus
+ * SOFIAA 1.1.4 — Async Event Bus v2
  *
- * El stream SSE llega al usuario sin esperar por ningún side effect.
- * Al terminar el stream, dispatch() encola las tareas asíncronas
- * y las ejecuta en segundo plano via waitUntil().
+ * Sprint C3: Lifecycle hooks por extensión.
+ * El Bus ahora puede ejecutar hooks registrados por la extensión activa
+ * (onGoalDetected, onStreamFinished) además de los handlers base del Core.
  *
- * Principio: el usuario nunca paga latencia por logs, memoria o Monday sync.
- *
- * Uso en route.ts:
- *   const bus = createEventBus(traceId, extensionId);
- *   // ... stream terminado ...
- *   bus.dispatch("stream_finished", { response: fullResponse });
- *   await bus.flush(waitUntil); // o bus.flushBackground() sin waitUntil
+ * Principio: el usuario nunca paga latencia por logs, memoria o webhooks.
+ * Todo corre después del stream via waitUntil() o fire-and-forget.
  */
 
 import type { Tracer } from "@/core/tracer";
+import type { ExtensionHooks, ExtensionContext } from "@/types/sofiaa-platform";
 
-// ── Tipos de eventos ──────────────────────────────────────────────────────
+// ── Tipos de eventos ──────────────────────────────────────────────────────────
 
 export type SofiaaEventType =
-  | "stream_finished"     // el LLM terminó de responder
-  | "goal_detected"       // el Goal Engine clasificó una intención
-  | "action_executed"     // un tool handler ejecutó una acción
-  | "memory_updated"      // la memoria long-term fue actualizada
-  | "nav_triggered"       // el usuario va a navegar
-  | "guardrail_triggered";// un guardrail bloqueó el mensaje
+  | "stream_finished"      // el LLM terminó de responder
+  | "goal_detected"        // el Goal Engine clasificó una intención
+  | "action_executed"      // un tool handler ejecutó una acción
+  | "memory_updated"       // la memoria long-term fue actualizada
+  | "nav_triggered"        // el usuario va a navegar
+  | "guardrail_triggered"; // un guardrail bloqueó el mensaje
 
 export interface SofiaaEvent {
   type: SofiaaEventType;
@@ -34,24 +30,20 @@ export interface SofiaaEvent {
   payload: Record<string, unknown>;
 }
 
-// ── Handler type ──────────────────────────────────────────────────────────
+// ── Handler type ──────────────────────────────────────────────────────────────
 
 type EventHandler = (event: SofiaaEvent) => Promise<void>;
 
-// ── Handlers registrados por evento ──────────────────────────────────────
-// Cada extensión puede registrar sus propios handlers en Sprint C (lifecycle hooks).
-// El Core registra los handlers base aquí.
+// ── Handlers base del Core ────────────────────────────────────────────────────
+// Siempre activos — independientes de la extensión montada.
 
 const BASE_HANDLERS: Partial<Record<SofiaaEventType, EventHandler[]>> = {
   stream_finished: [
-    // Actualizar memoria contextual tras cada respuesta
     async (event) => {
       try {
         const { addTimelineEntry } = await import("@/core/memory.timeline");
-        // Solo persiste si hay suficiente contenido
         const response = event.payload.response as string;
         if (response && response.length > 50) {
-          // Timeline entry ligera — sin bloquear
           void addTimelineEntry({
             sessionId: event.traceId,
             timestamp: event.timestamp,
@@ -67,7 +59,7 @@ const BASE_HANDLERS: Partial<Record<SofiaaEventType, EventHandler[]>> = {
   ],
 };
 
-// ── EventBus ─────────────────────────────────────────────────────────────
+// ── EventBus ──────────────────────────────────────────────────────────────────
 
 export class EventBus {
   private queue: SofiaaEvent[] = [];
@@ -75,10 +67,28 @@ export class EventBus {
   private extensionId: string | null;
   private tracer?: Tracer;
 
+  /** Hooks de la extensión activa — se inyectan al crear el bus */
+  private extensionHooks?: ExtensionHooks;
+
+  /** Contexto de ejecución para los hooks — se inyecta desde route.ts */
+  private extensionContext?: ExtensionContext;
+
   constructor(traceId: string, extensionId: string | null, tracer?: Tracer) {
     this.traceId = traceId;
     this.extensionId = extensionId;
     this.tracer = tracer;
+  }
+
+  /**
+   * Registra los hooks de la extensión activa y el contexto de ejecución.
+   * Llamar desde route.ts después de resolver la extensión.
+   *
+   * @param hooks   - ExtensionHooks del SofiaaExtension resuelto (puede ser undefined)
+   * @param context - ExtensionContext con traceId, userId, activePath, etc.
+   */
+  registerExtensionHooks(hooks: ExtensionHooks | undefined, context: ExtensionContext): void {
+    this.extensionHooks = hooks;
+    this.extensionContext = context;
   }
 
   /** Encola un evento para procesamiento asíncrono */
@@ -94,8 +104,7 @@ export class EventBus {
 
   /**
    * Ejecuta todos los handlers en segundo plano.
-   * Si el entorno soporta waitUntil (Vercel Edge), úsalo.
-   * Si no, fire-and-forget con Promise.allSettled.
+   * Soporta waitUntil (Vercel Edge) o fire-and-forget (Node.js).
    */
   async flush(waitUntilFn?: (p: Promise<unknown>) => void): Promise<void> {
     if (this.queue.length === 0) return;
@@ -103,10 +112,8 @@ export class EventBus {
     const work = this.processQueue();
 
     if (waitUntilFn) {
-      // Vercel Edge: el runtime mantiene viva la función hasta que termine
       waitUntilFn(work);
     } else {
-      // Node.js serverless: fire-and-forget
       work.catch((err) =>
         console.error("[SOFIAA][EVENT_BUS] flush error:", err)
       );
@@ -115,16 +122,69 @@ export class EventBus {
 
   private async processQueue(): Promise<void> {
     for (const event of this.queue) {
-      const handlers = BASE_HANDLERS[event.type] ?? [];
-      await Promise.allSettled(handlers.map((h) => h(event)));
+      // 1. Handlers base del Core
+      const baseHandlers = BASE_HANDLERS[event.type] ?? [];
+      await Promise.allSettled(baseHandlers.map((h) => h(event)));
+
+      // 2. Lifecycle hooks de la extensión activa (Sprint C3)
+      await this.runExtensionHooks(event);
+
       this.tracer?.log(`event:${event.type}`, "ok", "info");
     }
+
     // Flush tracer logs a Firestore al final de todo
     await this.tracer?.flush();
   }
+
+  /**
+   * Ejecuta el hook correspondiente de la extensión activa si existe.
+   * Falla silenciosamente — nunca propaga errores de hooks al Core.
+   */
+  private async runExtensionHooks(event: SofiaaEvent): Promise<void> {
+    if (!this.extensionHooks || !this.extensionContext) return;
+
+    const hooks = this.extensionHooks;
+    const ctx = this.extensionContext;
+
+    try {
+      switch (event.type) {
+        case "stream_finished": {
+          if (hooks.onStreamFinished) {
+            const response = (event.payload.response as string) ?? "";
+            await hooks.onStreamFinished(response, ctx);
+            this.tracer?.log("ext_hook:onStreamFinished", "ok", "info", {
+              extId: this.extensionId,
+            });
+          }
+          break;
+        }
+        case "goal_detected": {
+          if (hooks.onGoalDetected) {
+            const goal = (event.payload.goal as string) ?? "general";
+            await hooks.onGoalDetected(goal, ctx);
+            this.tracer?.log("ext_hook:onGoalDetected", "ok", "info", {
+              extId: this.extensionId,
+              goal,
+            });
+          }
+          break;
+        }
+        // onInitialize se llama desde route.ts al inicio del request, no aquí
+      }
+    } catch (err) {
+      // Los hooks de extensión nunca rompen el Core
+      console.error(
+        `[SOFIAA][EVENT_BUS] extension hook error (${event.type}):`,
+        err
+      );
+      this.tracer?.log(`ext_hook:${event.type}`, "failed", "warn", {
+        extId: this.extensionId,
+      });
+    }
+  }
 }
 
-// ── Factory ───────────────────────────────────────────────────────────────
+// ── Factory ───────────────────────────────────────────────────────────────────
 
 export function createEventBus(
   traceId: string,

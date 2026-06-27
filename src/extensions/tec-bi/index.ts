@@ -4,16 +4,18 @@
  * Área de Producción Audiovisual, Tecnológico de Monterrey.
  * Solo equipo directivo autorizado.
  *
- * Implementa el contrato SofiaaExtension. El Core nunca ve más que esto.
+ * v1.3.0: Tool handlers activos (crear_brief, actualizar_proyecto, sincronizar_monday)
+ * v1.2.0: Manifest + promptModule base
  */
 
 import type { SofiaaExtension } from "@/types/sofiaa-platform";
+import { tecBiTools } from "./tools";
 
 export const tecBiExtension: SofiaaExtension = {
   manifest: {
     id: "tec-bi",
     name: "TEC Business Intelligence",
-    version: "1.2.0",
+    version: "1.3.0",
     description: "Inteligencia operacional para el Área de Producción Audiovisual del Tec de Monterrey.",
     routePrefix: "/tec-bi",
     capabilities: ["conversation", "bi", "actions"],
@@ -29,8 +31,11 @@ Rutas: /tec-bi · /tec-bi/proyectos · /tec-bi/briefs · /tec-bi/empleados · /t
     policies: [
       "Solo usuarios con rol director, admin o coordinador pueden acceder a estos datos.",
       "No compartas información de empleados, costos ni proyectos con usuarios no autorizados.",
+      "Tienes herramientas para crear briefs, actualizar proyectos y sincronizar con Monday.com. Úsalas cuando el usuario lo solicite explícitamente.",
     ],
   },
 
-  // tools y hooks se implementan en Sprint C
+  tools: tecBiTools,
+
+  // hooks se implementan en Sprint C3
 };
