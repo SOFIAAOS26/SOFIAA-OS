@@ -37,10 +37,10 @@ ABRAHAN CRUZ URRUTIA (Benjacob): +15 años en producción audiovisual, estrategi
 
   // ── Siempre: navegación interna (~95 tokens) ────────────────────────────────
   nav_core: `
-NAVEGACIÓN INTERNA: Antes de navegar SIEMPRE anuncia adónde vas con una frase natural. Token al final en su propia línea.
+NAVEGACIÓN INTERNA: Cuando el usuario quiera ir a una sección, escribe tu aviso Y el token [NAVIGATE:/ruta] en la MISMA respuesta — sin esperar confirmación verbal. El cliente muestra automáticamente un chip de confirmación al usuario. No pidas "¿confirmas?" — el chip lo hace.
 Páginas públicas: /servicios · /quienes-somos · /contacto · /por-que-sofiaa · / (chat)
-Extensiones (se activan al navegar): /tec-bi · /jp-memorial · /marketing-sofia
-Navega solo cuando el usuario claramente quiera ir. Formato: [aviso]\n[NAVIGATE:/ruta]
+Extensiones (requieren login): /tec-bi · /jp-memorial · /marketing-sofia
+Formato obligatorio (token en su propia línea al final): [tu aviso natural]\n[NAVIGATE:/ruta]
 `.trim(),
 
   // ── Siempre: links externos (~80 tokens) ────────────────────────────────────

@@ -373,13 +373,40 @@ export default function Home() {
     if (pendingNav) {
       const normalized = text.toLowerCase().trim();
       const confirmed = AFFIRMATIVE.some((w) => normalized === w || normalized.startsWith(w + " ") || normalized.endsWith(" " + w));
+      const dest = pendingNav;
       setPendingNav(null);
       setInput("");
       if (confirmed) {
-        router.push(pendingNav);
+        // Mostrar "sí" en chat antes de navegar — evita que el mensaje desaparezca (Bug 2)
+        setMessages((prev) => [...prev,
+          { role: "user", content: text },
+          { role: "assistant", content: `Llevándote a ${dest}…` }
+        ]);
+        setTimeout(() => router.push(dest), 400);
         return;
       }
-      // Si no confirmó, procesar el mensaje normalmente (sin navegar)
+      // Si no confirmó, continuar procesando el mensaje normalmente
+    }
+
+    // ── Fallback: afirmativo sin pendingNav — escanear último mensaje del asistente ──
+    // Cubre el caso donde el LLM preguntó "¿quieres ir?" sin emitir [NAVIGATE] (Bug 3)
+    const normalizedText = text.toLowerCase().trim();
+    const isAffirmative = AFFIRMATIVE.some((w) => normalizedText === w || normalizedText.startsWith(w + " "));
+    if (isAffirmative) {
+      const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
+      if (lastAssistant) {
+        const routeMatch = lastAssistant.content.match(/\/(tec-bi|jp-memorial|marketing-sofia|servicios|quienes-somos|contacto|por-que-sofiaa)/);
+        if (routeMatch) {
+          const dest = "/" + routeMatch[1];
+          setInput("");
+          setMessages((prev) => [...prev,
+            { role: "user", content: text },
+            { role: "assistant", content: `Llevándote a ${dest}…` }
+          ]);
+          setTimeout(() => router.push(dest), 400);
+          return;
+        }
+      }
     }
     // ─────────────────────────────────────────────────────────────────────────
 
