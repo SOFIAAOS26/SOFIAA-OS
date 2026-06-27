@@ -519,6 +519,7 @@ export default function Home() {
           detectedGoal,
           activePath: pathname,
           extensionData: tecBiSummary || undefined,
+          userRole: profile?.rol ?? null,
         }),
       });
 

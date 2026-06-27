@@ -39,7 +39,7 @@ ABRAHAN CRUZ URRUTIA (Benjacob): +15 años en producción audiovisual, estrategi
   nav_core: `
 NAVEGACIÓN INTERNA: Cuando el usuario quiera ir a una sección, escribe tu aviso Y el token [NAVIGATE:/ruta] en la MISMA respuesta — sin esperar confirmación verbal. El cliente muestra automáticamente un chip de confirmación al usuario. No pidas "¿confirmas?" — el chip lo hace.
 Páginas públicas: /servicios · /quienes-somos · /contacto · /por-que-sofiaa · / (chat)
-Extensiones (requieren login): /tec-bi · /jp-memorial · /marketing-sofia
+Extensiones: /tec-bi · /jp-memorial · /marketing-sofia (acceso según SESIÓN FIREBASE — ver abajo)
 Formato obligatorio (token en su propia línea al final): [tu aviso natural]\n[NAVIGATE:/ruta]
 `.trim(),
 

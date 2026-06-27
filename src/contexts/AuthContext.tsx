@@ -35,6 +35,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  /** Escribe el cookie sofiaa_role que lee el Edge Middleware para RBAC */
+  const setRoleCookie = (rol: string) => {
+    document.cookie = `sofiaa_role=${rol}; path=/; SameSite=Lax; Max-Age=86400`;
+  };
+
+  /** Borra el cookie de rol al cerrar sesión */
+  const clearRoleCookie = () => {
+    document.cookie = "sofiaa_role=; path=/; Max-Age=0";
+  };
+
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
@@ -42,16 +52,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           const snap = await getDoc(doc(db, "usuarios", u.uid));
           if (snap.exists()) {
-            setProfile(snap.data() as UserProfile);
+            const data = snap.data() as UserProfile;
+            setProfile(data);
+            setRoleCookie(data.rol); // ← Edge Middleware RBAC
           } else {
-            // Si no hay documento, asignamos vp por defecto (rol mínimo)
             setProfile({ nombre: u.email ?? "Usuario", rol: "vp" });
+            setRoleCookie("vp");
           }
         } catch {
           setProfile({ nombre: u.email ?? "Usuario", rol: "vp" });
+          setRoleCookie("vp");
         }
       } else {
         setProfile(null);
+        clearRoleCookie(); // ← limpiar al cerrar sesión
       }
       setLoading(false);
     });

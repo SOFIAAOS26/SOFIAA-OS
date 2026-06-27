@@ -29,13 +29,14 @@ export async function POST(req: NextRequest) {
   const bus    = createEventBus(tracer.id, null, tracer);
   // ─────────────────────────────────────────────────────────────────────
 
-  const { messages, longTermMemory, contextualMemory, detectedGoal, activePath, extensionData }: {
+  const { messages, longTermMemory, contextualMemory, detectedGoal, activePath, extensionData, userRole }: {
     messages: Message[];
     longTermMemory?: string;
     contextualMemory?: string;
     detectedGoal?: GoalType;
     activePath?: string | null;
     extensionData?: string;
+    userRole?: string | null;
   } = await req.json();
 
   if (!messages || !Array.isArray(messages)) {
@@ -114,6 +115,11 @@ export async function POST(req: NextRequest) {
     ? "ESTADO DE AUTORIZACIÓN: El usuario YA proporcionó la palabra de autorización."
     : "ESTADO DE AUTORIZACIÓN: El usuario NO está autorizado para sitios externos aún.";
 
+  // Estado de sesión Firebase — determina si puede acceder a extensiones protegidas
+  const firebaseStatus = userRole
+    ? `SESIÓN FIREBASE: Usuario autenticado con rol "${userRole}". PUEDE navegar a extensiones protegidas (/tec-bi, /marketing-sofia, /jp-memorial) directamente. NO le pidas que inicie sesión.`
+    : `SESIÓN FIREBASE: Sin sesión activa. Las extensiones protegidas (/tec-bi, /marketing-sofia) requieren login antes de navegar.`;
+
   const goalBlock = detectedGoal && detectedGoal !== "general"
     ? `\n\n${getGoalContext(detectedGoal)}`
     : "";
@@ -168,7 +174,7 @@ export async function POST(req: NextRequest) {
         messages: [
           {
             role: "system",
-            content: `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}${goalBlock}`,
+            content: `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}`,
           },
           ...messages.map(({ role, content }) => ({ role, content })),
         ],
