@@ -20,6 +20,8 @@ import { getGoalContext, type GoalType } from "@/core/goal.engine";
 import { createTracer } from "@/core/tracer";
 import { createEventBus } from "@/core/event.bus";
 import { SOFIAA_TOOLS, parseToolCalls, serializeToolResults } from "@/core/sofiaa.tools";
+import { orchestrator } from "@/core/llm.orchestrator";
+import type { LLMStreamChunk } from "@/core/llm.client";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -96,11 +98,6 @@ export async function POST(req: NextRequest) {
   }
   // ─────────────────────────────────────────────────────────────────────
 
-  const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey) {
-    return new Response(JSON.stringify({ error: "API key no configurada" }), { status: 500 });
-  }
-
   const isAuthorized = messages.some(
     (m) => m.role === "user" && m.content.toLowerCase().includes(AUTH_WORD)
   );
@@ -160,73 +157,53 @@ export async function POST(req: NextRequest) {
   const systemPrompt = assemblePrompt(modules, finalExtData);
   // ─────────────────────────────────────────────────────────────────────
 
-  // ── Groq API — con Function Calling ──────────────────────────────────
-  let groqResponse: Response;
-  try {
-    groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
+  // ── LLM Orchestrator — elige el mejor provider disponible ────────────
+  const llmRequest = {
+    messages: [
+      {
+        role: "system" as const,
+        content: `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}`,
       },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        messages: [
-          {
-            role: "system",
-            content: `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}`,
-          },
-          ...messages.map(({ role, content }) => ({ role, content })),
-        ],
-        tools: SOFIAA_TOOLS,
-        tool_choice: "auto",
-        temperature: 0.7,
-        max_tokens: 1024,
-        stream: true,
-      }),
-    });
-  } catch (fetchErr) {
-    tracer.log("groq_fetch", "failed", "error", { error: String(fetchErr) });
-    await bus.flush();
-    return new Response(JSON.stringify({ error: "No se pudo conectar con Groq" }), { status: 502 });
-  }
+      ...messages.map(({ role, content }) => ({ role, content })),
+    ],
+    tools: SOFIAA_TOOLS as unknown as import("@/core/llm.client").LLMTool[],
+    tool_choice: "auto" as const,
+    temperature: 0.7,
+    max_tokens: 1024,
+    stream: true,
+  };
 
-  if (!groqResponse.ok) {
-    const err = await groqResponse.text();
-    tracer.log("groq_response", "failed", "error", { status: groqResponse.status });
-    await bus.flush();
-    console.error("Groq API Error:", groqResponse.status, err);
-    return new Response(JSON.stringify({ error: `Groq ${groqResponse.status}: ${err}` }), { status: 500 });
-  }
+  let llmStream: ReadableStream<LLMStreamChunk>;
+  let usedProvider: string;
 
-  tracer.log("groq_stream_start", "ok", "info");
+  try {
+    const result = await orchestrator.complete(llmRequest);
+    llmStream    = result.stream;
+    usedProvider = result.provider;
+    tracer.log("orchestrator_selected", "ok", "info", { provider: usedProvider });
+  } catch (err) {
+    tracer.log("orchestrator_failed", "failed", "error", { error: String(err) });
+    await bus.flush();
+    return new Response(JSON.stringify({ error: "No se pudo conectar con el motor de inteligencia" }), { status: 502 });
+  }
   // ─────────────────────────────────────────────────────────────────────
 
-  // ── Streaming SSE con manejo de tool calls ────────────────────────────
+  // ── Streaming con manejo de tool calls ───────────────────────────────
   const encoder = new TextEncoder();
-  const decoder = new TextDecoder();
 
   const stream = new ReadableStream({
     async start(controller) {
-      const reader = groqResponse.body!.getReader();
-      let buffer = "";
+      const reader = llmStream.getReader();
       let fullText = "";
 
-      // Acumuladores para tool calls (llegan en deltas)
+      // Acumuladores para tool calls (llegan en deltas desde Groq)
       const toolCallAccumulators: Record<number, { name: string; args: string }> = {};
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+      try {
+        while (true) {
+          const { done, value: chunk } = await reader.read();
 
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
-
-        for (const line of lines) {
-          if (!line.startsWith("data: ")) continue;
-          const data = line.slice(6).trim();
-          if (data === "[DONE]") {
+          if (done) {
             // ── Procesar tool calls acumulados ──────────────────────────
             const toolCallList = Object.values(toolCallAccumulators).map((tc) => ({
               function: { name: tc.name, arguments: tc.args },
@@ -234,7 +211,7 @@ export async function POST(req: NextRequest) {
 
             if (toolCallList.length > 0) {
               const toolResults = parseToolCalls(toolCallList);
-              const serialized = serializeToolResults(toolResults);
+              const serialized  = serializeToolResults(toolResults);
               if (serialized) {
                 fullText += "\n" + serialized;
                 controller.enqueue(encoder.encode("\n" + serialized));
@@ -244,47 +221,39 @@ export async function POST(req: NextRequest) {
             // ── Event Bus: despachar stream_finished ────────────────────
             bus.dispatch("stream_finished", {
               response: fullText,
-              goal: detectedGoal,
-              ext: activeExtId,
-              traceMs: tracer.elapsedMs,
+              goal:     detectedGoal,
+              ext:      activeExtId,
+              traceMs:  tracer.elapsedMs,
+              provider: usedProvider,
             });
-            // fire-and-forget — el cliente ya tiene todo
             bus.flush().catch(() => {});
 
             controller.close();
             return;
           }
 
-          try {
-            const json = JSON.parse(data);
-            const delta = json.choices?.[0]?.delta;
+          // Texto normal → enviar al cliente
+          if (chunk.content) {
+            fullText += chunk.content;
+            controller.enqueue(encoder.encode(chunk.content));
+          }
 
-            // Texto normal → enviar al cliente inmediatamente
-            if (delta?.content) {
-              fullText += delta.content;
-              controller.enqueue(encoder.encode(delta.content));
-            }
-
-            // Tool call delta → acumular (pueden llegar en múltiples chunks)
-            if (delta?.tool_calls) {
-              for (const tc of delta.tool_calls) {
-                const idx: number = tc.index ?? 0;
-                if (!toolCallAccumulators[idx]) {
-                  toolCallAccumulators[idx] = { name: "", args: "" };
-                }
-                if (tc.function?.name) {
-                  toolCallAccumulators[idx].name += tc.function.name;
-                }
-                if (tc.function?.arguments) {
-                  toolCallAccumulators[idx].args += tc.function.arguments;
-                }
+          // Tool call deltas → acumular
+          if (chunk.tool_calls) {
+            for (const tc of chunk.tool_calls) {
+              const idx = tc.index ?? 0;
+              if (!toolCallAccumulators[idx]) {
+                toolCallAccumulators[idx] = { name: "", args: "" };
               }
+              if (tc.function?.name)      toolCallAccumulators[idx].name += tc.function.name;
+              if (tc.function?.arguments) toolCallAccumulators[idx].args += tc.function.arguments;
             }
-          } catch { /* chunk malformado — ignorar */ }
+          }
         }
+      } catch (err) {
+        console.error("[SOFIAA][stream] error leyendo chunks:", err);
+        controller.close();
       }
-
-      controller.close();
     },
   });
 
@@ -292,7 +261,8 @@ export async function POST(req: NextRequest) {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
       "Transfer-Encoding": "chunked",
-      "x-sofiaa-trace": tracer.id,
+      "x-sofiaa-trace":    tracer.id,
+      "x-sofiaa-provider": usedProvider,
     },
   });
 }
