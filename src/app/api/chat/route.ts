@@ -22,6 +22,10 @@ import { createEventBus } from "@/core/event.bus";
 import { SOFIAA_TOOLS, parseToolCalls, serializeToolResults } from "@/core/sofiaa.tools";
 import { orchestrator } from "@/core/llm.orchestrator";
 import type { LLMStreamChunk } from "@/core/llm.client";
+import type { GoalState } from "@/core/goal.state";
+import { buildGoalPromptBlock } from "@/core/goal.state";
+import { getPoliciesForContext, buildPolicyBlock } from "@/core/cognitive.policy";
+import { evaluateResponse, reportToEventPayload } from "@/core/policy.evaluator";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -31,7 +35,7 @@ export async function POST(req: NextRequest) {
   const bus    = createEventBus(tracer.id, null, tracer);
   // ─────────────────────────────────────────────────────────────────────
 
-  const { messages, longTermMemory, contextualMemory, detectedGoal, activePath, extensionData, userRole }: {
+  const { messages, longTermMemory, contextualMemory, detectedGoal, activePath, extensionData, userRole, activeGoal }: {
     messages: Message[];
     longTermMemory?: string;
     contextualMemory?: string;
@@ -39,6 +43,7 @@ export async function POST(req: NextRequest) {
     activePath?: string | null;
     extensionData?: string;
     userRole?: string | null;
+    activeGoal?: GoalState | null;
   } = await req.json();
 
   if (!messages || !Array.isArray(messages)) {
@@ -121,6 +126,11 @@ export async function POST(req: NextRequest) {
     ? `\n\n${getGoalContext(detectedGoal)}`
     : "";
 
+  // Goal State Machine — contexto del paso activo (Sprint D-A)
+  const goalStateBlock = activeGoal?.status === "active"
+    ? `\n\n${buildGoalPromptBlock(activeGoal)}`
+    : "";
+
   // ── Modular Prompt Assembly — Registry agnóstico ──────────────────────
   const path = activePath ?? "";
   const modules = resolveModules({ activePath: path, userMessage: lastUserMsg?.content ?? "" });
@@ -155,6 +165,18 @@ export async function POST(req: NextRequest) {
   }
 
   const systemPrompt = assemblePrompt(modules, finalExtData);
+
+  // ── Cognitive Policy Engine — Sprint D-D ─────────────────────────────
+  const policyCtx = {
+    activePath:    path || undefined,
+    extensionId:   activeExtId,
+    userRole:      userRole ?? null,
+    isGoalActive:  activeGoal?.status === "active",
+    userMessage:   lastUserMsg?.content ?? "",
+  };
+  const activePolicies = getPoliciesForContext(policyCtx);
+  const policyBlock    = buildPolicyBlock(activePolicies);
+  tracer.log("cpe_policies", "ok", "info", { count: activePolicies.length });
   // ─────────────────────────────────────────────────────────────────────
 
   // ── LLM Orchestrator — elige el mejor provider disponible ────────────
@@ -162,7 +184,7 @@ export async function POST(req: NextRequest) {
     messages: [
       {
         role: "system" as const,
-        content: `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}`,
+        content: `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${policyBlock}`,
       },
       ...messages.map(({ role, content }) => ({ role, content })),
     ],
@@ -226,6 +248,21 @@ export async function POST(req: NextRequest) {
               traceMs:  tracer.elapsedMs,
               provider: usedProvider,
             });
+
+            // ── CPE: evaluar respuesta post-stream (fire-and-forget) ────
+            try {
+              const report = evaluateResponse(fullText, activePolicies, policyCtx);
+              if (report.violations.length > 0) {
+                bus.dispatch("cpe_violation", reportToEventPayload(
+                  report, tracer.id, usedProvider, activeExtId
+                ));
+                tracer.log("cpe_eval", "ok", report.hasErrors ? "error" : "warn", {
+                  score: report.score,
+                  summary: report.summary,
+                });
+              }
+            } catch { /* evaluación nunca debe romper el stream */ }
+
             bus.flush().catch(() => {});
 
             controller.close();

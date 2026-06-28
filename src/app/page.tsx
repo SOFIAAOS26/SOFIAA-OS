@@ -24,12 +24,17 @@ import GenerativeUI from "@/components/chat/GenerativeUI";
 import { parseUIBlocks } from "@/types/generative-ui";
 import type { UIBlock } from "@/types/generative-ui";
 import { detectUIBlock } from "@/core/ui.intent";
+import IntentDrivenUI from "@/components/chat/IntentDrivenUI";
+import { parseIntentToken, INTENT_TOKEN_REGEX } from "@/types/intent";
+import type { UIIntent } from "@/types/intent";
+import { useGoalState } from "@/hooks/useGoalState";
 import OnboardingSlides from "@/components/onboarding/OnboardingSlides";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
   ui?: UIBlock[];
+  intent?: UIIntent;
 }
 
 const GREETINGS = [
@@ -121,6 +126,7 @@ export default function Home() {
   const pathname = usePathname();
   const activeExtension = useExtension();
   const telemetry = useSofiaaTelemetry();
+  const goalState = useGoalState(activeExtension?.id);
   const [orbState, setOrbState]       = useState<OrbState>("idle");
   const [tecBiSummary, setTecBiSummary]   = useState<string | null>(null);
   const [showLogin, setShowLogin]         = useState(false);
@@ -522,6 +528,7 @@ export default function Home() {
           activePath: pathname,
           extensionData: tecBiSummary || undefined,
           userRole: profile?.rol ?? null,
+          activeGoal: goalState.goal,
         }),
       });
 
@@ -576,14 +583,26 @@ export default function Home() {
         ? modelUIBlocks
         : inferredBlock ? [inferredBlock] : [];
 
+      // ── Parsear [INTENT:] token — Sprint D-B ──────────────────────────────
+      const intentMatch = fullResponse.match(INTENT_TOKEN_REGEX);
+      const parsedIntent = intentMatch ? parseIntentToken(fullResponse) : null;
+
+      // Detectar si la respuesta dispara un goal multi-step — Sprint D-A
+      goalState.detectAndStart(text);
+      // ─────────────────────────────────────────────────────────────────────
+
       setMessages((prev) => {
         const updated = [...prev];
         const last = updated[updated.length - 1];
         if (last.role === "assistant") {
           updated[updated.length - 1] = {
             ...last,
-            content: cleanedResponse.replace(/\[NAVIGATE:[^\]]+\]\n?/g, "").trim(),
-            ui: finalUIBlocks.length > 0 ? finalUIBlocks : undefined,
+            content: cleanedResponse
+              .replace(/\[NAVIGATE:[^\]]+\]\n?/g, "")
+              .replace(INTENT_TOKEN_REGEX, "")
+              .trim(),
+            ui:     finalUIBlocks.length > 0 ? finalUIBlocks : undefined,
+            intent: parsedIntent ?? undefined,
           };
         }
         return updated;
@@ -1367,6 +1386,17 @@ export default function Home() {
               <div style={{ maxWidth: "85%", width: "100%" }}>
                 <GenerativeUI
                   blocks={msg.ui}
+                  onSend={(text) => sendMessage(text)}
+                  isDark={isDark}
+                />
+              </div>
+            )}
+
+            {/* Intent-Driven UI — Sprint D-B: componentes declarados por el LLM */}
+            {msg.role === "assistant" && msg.intent && (
+              <div style={{ maxWidth: "85%", width: "100%" }}>
+                <IntentDrivenUI
+                  intent={msg.intent}
                   onSend={(text) => sendMessage(text)}
                   isDark={isDark}
                 />

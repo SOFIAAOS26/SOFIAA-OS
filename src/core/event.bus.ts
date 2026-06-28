@@ -20,7 +20,8 @@ export type SofiaaEventType =
   | "action_executed"      // un tool handler ejecutó una acción
   | "memory_updated"       // la memoria long-term fue actualizada
   | "nav_triggered"        // el usuario va a navegar
-  | "guardrail_triggered"; // un guardrail bloqueó el mensaje
+  | "guardrail_triggered"  // un guardrail bloqueó el mensaje
+  | "cpe_violation";       // el CPE detectó una violación de política
 
 export interface SofiaaEvent {
   type: SofiaaEventType;

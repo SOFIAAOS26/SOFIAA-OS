@@ -100,7 +100,10 @@
 }
 
 html, body {
-  background: linear-gradient(145deg, #EEF1FF 0%, #FAFAFA 55%, #FFF3FC 100%);
+  /* Marco exterior — gradiente animado, ~15% más saturado que el panel interior */
+  background: linear-gradient(-45deg, #B8CBFF, #EDF0FF, #E5D2FF, #FFD2EE, #D8E6FF, #FFF0FB);
+  background-size: 400% 400%;
+  animation: gradientFlow 22s ease infinite;
   color: #1D1D1F;
   font-family: "Inter", "SF Pro Display", system-ui, sans-serif;
   height: 100%;
@@ -129,12 +132,12 @@ html, body {
   width: 100%;
   max-width: 640px;
   border-radius: 22px 22px 0 0;
-  border: 1px solid rgba(255, 255, 255, 0.80);
+  border: 1.5px solid rgba(148, 90, 220, 0.22);
   border-bottom: none;
   box-shadow:
-    0 -2px 0 rgba(255, 255, 255, 0.95) inset,
-    0 12px 40px rgba(100, 100, 200, 0.10),
-    0 2px 8px rgba(100, 100, 200, 0.06);
+    0 -2px 0 rgba(255, 255, 255, 0.92) inset,
+    0 12px 48px rgba(100, 80, 200, 0.12),
+    0 2px 8px rgba(100, 100, 200, 0.07);
   overflow: hidden;
 }
 
