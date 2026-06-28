@@ -7,6 +7,7 @@
  * - Prompt modular via ExtensionRegistry (agnóstico)
  * - Function Calling para navegación y UI generativa (blindado)
  * - Event Bus asíncrono vía waitUntil (sin latencia extra)
+ * - Capability Runtime Layer (Sprint E) — datos en tiempo real bajo demanda
  */
 
 import { NextRequest } from "next/server";
@@ -26,6 +27,17 @@ import type { GoalState } from "@/core/goal.state";
 import { buildGoalPromptBlock } from "@/core/goal.state";
 import { getPoliciesForContext, buildPolicyBlock } from "@/core/cognitive.policy";
 import { evaluateResponse, reportToEventPayload } from "@/core/policy.evaluator";
+import { capabilityGateway } from "@/core/capability.gateway";
+import { capabilityRuntime } from "@/core/capability.runtime";
+import type { CapabilityContext } from "@/core/capability.runtime";
+import { buildCapabilityMenuBlock } from "@/core/capability.registry";
+import { firestoreProvider } from "@/core/providers/firestore.provider";
+import { mockProvider } from "@/core/providers/mock.provider";
+
+// ── Registro de providers (módulo, se ejecuta una vez) ────────────────────
+const _useMock = process.env.NEXT_PUBLIC_MOCK_CAPABILITIES === "true";
+capabilityRuntime.registerProvider(_useMock ? mockProvider : firestoreProvider);
+// ─────────────────────────────────────────────────────────────────────────
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -83,16 +95,28 @@ export async function POST(req: NextRequest) {
   const bus    = createEventBus(tracer.id, null, tracer);
   // ─────────────────────────────────────────────────────────────────────
 
-  const { messages, longTermMemory, contextualMemory, detectedGoal, activePath, extensionData, userRole, activeGoal, graphContext }: {
-    messages: Message[];
-    longTermMemory?: string;
+  const {
+    messages,
+    longTermMemory,
+    contextualMemory,
+    detectedGoal,
+    activePath,
+    extensionData,
+    userRole,
+    activeGoal,
+    graphContext,
+    userId,
+  }: {
+    messages:          Message[];
+    longTermMemory?:   string;
     contextualMemory?: string;
-    detectedGoal?: GoalType;
-    activePath?: string | null;
-    extensionData?: string;
-    userRole?: string | null;
-    activeGoal?: GoalState | null;
-    graphContext?: { nodes: Record<string, { type: string; label: string; weight: number; hits: number }> } | null;
+    detectedGoal?:     GoalType;
+    activePath?:       string | null;
+    extensionData?:    string;
+    userRole?:         string | null;
+    activeGoal?:       GoalState | null;
+    graphContext?:     { nodes: Record<string, { type: string; label: string; weight: number; hits: number }> } | null;
+    userId?:           string | null;
   } = await req.json();
 
   if (!messages || !Array.isArray(messages)) {
@@ -229,14 +253,22 @@ export async function POST(req: NextRequest) {
   const activePolicies = getPoliciesForContext(policyCtx);
   const policyBlock    = buildPolicyBlock(activePolicies);
   tracer.log("cpe_policies", "ok", "info", { count: activePolicies.length });
+
+  // ── Capability Menu Block — Sprint E ─────────────────────────────────
+  // Solo se incluye si hay capabilities disponibles para la extensión activa
+  const capabilityMenuBlock = activeExtId
+    ? buildCapabilityMenuBlock(activeExtId)
+    : "";
   // ─────────────────────────────────────────────────────────────────────
 
   // ── LLM Orchestrator — elige el mejor provider disponible ────────────
+  const systemContent = `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${policyBlock}${capabilityMenuBlock}`;
+
   const llmRequest = {
     messages: [
       {
         role: "system" as const,
-        content: `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${policyBlock}`,
+        content: systemContent,
       },
       ...messages.map(({ role, content }) => ({ role, content })),
     ],
@@ -262,6 +294,14 @@ export async function POST(req: NextRequest) {
   }
   // ─────────────────────────────────────────────────────────────────────
 
+  // Contexto de capability (Sprint E) — se resuelve aquí para usarse dentro del stream
+  const capCtxBase: CapabilityContext = {
+    userId:      userId ?? "anonymous",
+    userRole:    userRole ?? "guest",
+    extensionId: activeExtId ?? "",
+    activePath:  path,
+  };
+
   // ── Streaming con manejo de tool calls ───────────────────────────────
   const encoder = new TextEncoder();
 
@@ -285,10 +325,67 @@ export async function POST(req: NextRequest) {
 
             if (toolCallList.length > 0) {
               const toolResults = parseToolCalls(toolCallList);
-              const serialized  = serializeToolResults(toolResults);
-              if (serialized) {
-                fullText += "\n" + serialized;
-                controller.enqueue(encoder.encode("\n" + serialized));
+
+              // ── Capability Runtime (Sprint E) — re-run LLM con datos ──
+              if (toolResults.capabilityRequest && activeExtId) {
+                const { capability_id, params } = toolResults.capabilityRequest;
+                const capCtx: CapabilityContext = { ...capCtxBase, params };
+
+                try {
+                  tracer.log("capability_request", "ok", "info", { capability_id });
+                  const { promptBlock } = await capabilityGateway.execute(capability_id, capCtx);
+
+                  // Construir segundo turno con el resultado de la capability
+                  const capMessages = [
+                    { role: "system" as const, content: systemContent },
+                    ...messages.map(({ role, content }) => ({ role, content })),
+                    {
+                      role: "user" as const,
+                      content: `RESULTADO DE CAPABILITY (no menciones que consultaste una fuente — simplemente responde con los datos):\n${promptBlock}`,
+                    },
+                  ];
+
+                  // Re-run sin tools para evitar loops
+                  const capResult = await orchestrator.complete({
+                    ...llmRequest,
+                    messages:    capMessages,
+                    tools:       undefined,
+                    tool_choice: undefined,
+                  });
+
+                  const capReader = capResult.stream.getReader();
+                  while (true) {
+                    const { done: capDone, value: capChunk } = await capReader.read();
+                    if (capDone) break;
+                    if (capChunk.content) {
+                      fullText += capChunk.content;
+                      controller.enqueue(encoder.encode(capChunk.content));
+                    }
+                  }
+
+                  bus.dispatch("capability_executed", {
+                    capability_id,
+                    extensionId: activeExtId,
+                    userId: userId ?? "anonymous",
+                  });
+                  tracer.log("capability_done", "ok", "info", { capability_id });
+
+                } catch (capErr) {
+                  // Capability falló — notificar al usuario con gracia
+                  const errMsg = "\n\nNo pude obtener los datos en este momento. Por favor intenta de nuevo o verifica tu conexión.";
+                  fullText += errMsg;
+                  controller.enqueue(encoder.encode(errMsg));
+                  console.error("[SOFIAA][capability] error:", capErr);
+                  tracer.log("capability_error", "failed", "error", { capability_id, error: String(capErr) });
+                }
+
+              } else {
+                // Tool calls normales (show_ui, navigate)
+                const serialized = serializeToolResults(toolResults);
+                if (serialized) {
+                  fullText += "\n" + serialized;
+                  controller.enqueue(encoder.encode("\n" + serialized));
+                }
               }
             }
 

@@ -532,6 +532,7 @@ export default function Home() {
           userRole:     profile?.rol ?? null,
           activeGoal:   goalState.goal,
           graphContext: expGraph.getAPIPayload(),
+          userId:       user?.uid ?? null,
         }),
       });
 

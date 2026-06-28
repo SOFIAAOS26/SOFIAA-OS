@@ -16,6 +16,35 @@ export const SOFIAA_TOOLS = [
   {
     type: "function" as const,
     function: {
+      name: "request_capability",
+      description:
+        "Solicita datos en tiempo real de una fuente empresarial verificada. " +
+        "Úsalo SOLO cuando el usuario pida información específica de clientes, proveedores, " +
+        "proyectos, empleados o métricas operativas que no están en tu conocimiento base. " +
+        "El sistema verifica automáticamente los permisos del usuario antes de responder.",
+      parameters: {
+        type: "object",
+        properties: {
+          capability_id: {
+            type: "string",
+            description:
+              "ID exacto de la capability del menú disponible " +
+              "(ej: ConsultarClientes, ResumenProveedores, ResumenROI, ResumenEmpleados, ResumenBriefs)",
+          },
+          params: {
+            type: "object",
+            description:
+              "Filtros opcionales: campo (string), valor (any), " +
+              "ordenarPor (string), orden ('asc'|'desc')",
+          },
+        },
+        required: ["capability_id"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
       name: "show_ui",
       description:
         "Muestra un componente visual al final de la respuesta. " +
@@ -54,6 +83,11 @@ export interface ToolCallResult {
     type: "quick_actions" | "info_card" | "extension_card";
     payload: Record<string, unknown>;
   };
+  /** Solicitud de capability — manejada server-side, no se serializa al cliente */
+  capabilityRequest?: {
+    capability_id: string;
+    params?: Record<string, unknown>;
+  };
 }
 
 // ── Parser de tool calls desde la respuesta de Groq ──────────────────────
@@ -71,6 +105,13 @@ export function parseToolCalls(
         result.navigate = {
           destination: args.destination as string,
           isExternal: Boolean(args.isExternal),
+        };
+      }
+
+      if (call.function.name === "request_capability") {
+        result.capabilityRequest = {
+          capability_id: args.capability_id as string,
+          params:        args.params as Record<string, unknown> | undefined,
         };
       }
 
