@@ -72,8 +72,8 @@ const glass = {
   input: {
     background: LG.base(0.52), backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
     border: LG.border, boxShadow: `0 2px 16px rgba(100,100,200,0.07), ${LG.highlight}`,
-    borderRadius: "9999px", padding: "0.5rem 0.9rem", color: "#1D1D1F",
-    fontSize: "0.82rem", outline: "none", width: "100%", transition: "box-shadow 0.25s",
+    borderRadius: "9999px", padding: "0.38rem 0.9rem", color: "#1D1D1F",
+    fontSize: "0.80rem", outline: "none", width: "100%", transition: "box-shadow 0.25s",
   } as React.CSSProperties,
   chip: {
     background: LG.base(0.45), backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
@@ -1273,42 +1273,95 @@ export default function Home() {
       <div className="flex-1 min-h-0 w-full overflow-y-auto space-y-3 py-2" style={{ paddingLeft: "10px", paddingRight: "10px" }}>
         {messages.map((msg, i) => (
           <div key={i} className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}>
-            <div
-              className={`sofiaa-bubble rounded-3xl px-4 py-3 text-sm leading-relaxed ${
-                msg.role === "user" ? "rounded-br-md" : "rounded-bl-md"
-              }`}
-              style={msg.role === "user" ? glass.user : (isDark ? darkGlass.assistant : glass.assistant)}
-            >
-              {msg.role === "user" ? (
-                msg.content
-              ) : (
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    p:      ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
-                    strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                    em:     ({ children }) => <em className="italic opacity-70">{children}</em>,
-                    ul:     ({ children }) => <ul className="list-disc list-inside space-y-1 mt-1">{children}</ul>,
-                    ol:     ({ children }) => <ol className="list-decimal list-inside space-y-1 mt-1">{children}</ol>,
-                    li:     ({ children }) => <li className="opacity-80">{children}</li>,
-                    code:   ({ children }) => (
-                      <code className="rounded px-1 py-0.5 text-xs font-mono" style={{ background: "rgba(0,0,0,0.06)", color: "#4F7CFF" }}>{children}</code>
-                    ),
-                    pre:    ({ children }) => (
-                      <pre className="rounded-lg p-3 mt-2 text-xs font-mono overflow-x-auto" style={{ background: "rgba(0,0,0,0.05)" }}>{children}</pre>
-                    ),
+
+            {/* Sender label */}
+            <div style={{
+              fontSize: "0.60rem",
+              fontWeight: 800,
+              letterSpacing: "0.09em",
+              textTransform: "uppercase" as const,
+              marginBottom: 3,
+              paddingLeft: msg.role === "user" ? 0 : 10,
+              paddingRight: msg.role === "user" ? 10 : 0,
+              background: msg.role === "user"
+                ? "linear-gradient(135deg, #9B4FD9, #E91E8C)"
+                : "linear-gradient(135deg, #4F7CFF, #9B4FD9)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>
+              {msg.role === "user" ? (profile?.nombre ?? "tú") : "SOFIAA"}
+            </div>
+
+            {/* Burbuja con borde degradado */}
+            {msg.role === "assistant" ? (
+              /* Assistant: borde gradiente rosa→azul */
+              <div
+                className="sofiaa-bubble"
+                style={{
+                  background: "linear-gradient(135deg, rgba(79,124,255,0.50), rgba(233,30,140,0.38))",
+                  borderRadius: "1.5rem 1.5rem 1.5rem 0.4rem",
+                  padding: "1.5px",
+                }}
+              >
+                <div
+                  className="px-4 py-3 text-sm leading-relaxed"
+                  style={{
+                    ...(isDark ? darkGlass.assistant : glass.assistant),
+                    borderRadius: "calc(1.5rem - 1.5px) calc(1.5rem - 1.5px) calc(1.5rem - 1.5px) calc(0.4rem - 1.5px)",
+                    fontWeight: 500,
+                  }}
+                >
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      p:      ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
+                      strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                      em:     ({ children }) => <em className="italic opacity-70">{children}</em>,
+                      ul:     ({ children }) => <ul className="list-disc list-inside space-y-1 mt-1">{children}</ul>,
+                      ol:     ({ children }) => <ol className="list-decimal list-inside space-y-1 mt-1">{children}</ol>,
+                      li:     ({ children }) => <li className="opacity-80">{children}</li>,
+                      code:   ({ children }) => (
+                        <code className="rounded px-1 py-0.5 text-xs font-mono" style={{ background: "rgba(0,0,0,0.06)", color: "#4F7CFF" }}>{children}</code>
+                      ),
+                      pre:    ({ children }) => (
+                        <pre className="rounded-lg p-3 mt-2 text-xs font-mono overflow-x-auto" style={{ background: "rgba(0,0,0,0.05)" }}>{children}</pre>
+                      ),
+                    }}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
+                  {isLoading && i === messages.length - 1 && (
+                    <span
+                      className="inline-block w-0.5 h-3.5 ml-0.5 align-middle"
+                      style={{ background: "rgba(0,0,0,0.35)", animation: "cursorBlink 1s step-end infinite" }}
+                    />
+                  )}
+                </div>
+              </div>
+            ) : (
+              /* User: borde blanco semitransparente sobre gradiente */
+              <div
+                className="sofiaa-bubble"
+                style={{
+                  background: "linear-gradient(135deg, rgba(255,255,255,0.45), rgba(255,255,255,0.18))",
+                  borderRadius: "1.5rem 1.5rem 0.4rem 1.5rem",
+                  padding: "1.5px",
+                }}
+              >
+                <div
+                  className="px-4 py-3 text-sm leading-relaxed"
+                  style={{
+                    ...glass.user,
+                    borderRadius: "calc(1.5rem - 1.5px) calc(1.5rem - 1.5px) calc(0.4rem - 1.5px) calc(1.5rem - 1.5px)",
+                    fontWeight: 600,
                   }}
                 >
                   {msg.content}
-                </ReactMarkdown>
-              )}
-              {msg.role === "assistant" && isLoading && i === messages.length - 1 && (
-                <span
-                  className="inline-block w-0.5 h-3.5 ml-0.5 align-middle"
-                  style={{ background: "rgba(0,0,0,0.35)", animation: "cursorBlink 1s step-end infinite" }}
-                />
-              )}
-            </div>
+                </div>
+              </div>
+            )}
+
             {/* Generative UI — renderiza debajo de la burbuja de SOFIAA */}
             {msg.role === "assistant" && msg.ui && msg.ui.length > 0 && (
               <div style={{ maxWidth: "85%", width: "100%" }}>
@@ -1349,41 +1402,31 @@ export default function Home() {
 
       {/* Input */}
       <div
-        className="shrink-0 w-full px-4 pt-2"
-        style={{ paddingBottom: "max(1.25rem, env(safe-area-inset-bottom, 1.25rem))" }}
+        className="shrink-0 w-full pt-3"
+        style={{
+          paddingLeft: "1.5rem",
+          paddingRight: "1.5rem",
+          paddingBottom: "max(1.6rem, env(safe-area-inset-bottom, 1.6rem))",
+        }}
       >
-        <div className="relative flex items-center">
-          <input
-            ref={inputRef}
-            type="text"
-            inputMode="text"
-            enterKeyHint="send"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onFocus={() => { if (!isWelcoming) orb.transition("listening"); }}
-            onBlur={() => { if (!input && orbState === "listening") orb.transition("idle"); }}
-            onKeyDown={(e) => { if (e.key === "Enter") sendMessage(); }}
-            placeholder={isListeningVoice ? "Escuchando..." : "Escribe o habla..."}
-            disabled={isLoading || isWelcoming || isListeningVoice || (orbState !== "listening" && !disclosure.inputEnabled)}
-            style={isDark ? darkGlass.input : glass.input}
-            className="disabled:opacity-60 pl-11 pr-11"
-          />
+        {/* Input row — micrófono afuera a la izquierda */}
+        <div className="flex items-center gap-2">
 
-          {/* Botón micrófono — compacto */}
+          {/* Botón micrófono — fuera del input */}
           <button
             onClick={toggleVoice}
             disabled={isLoading || isWelcoming}
-            className="absolute left-1.5 flex items-center justify-center w-8 h-8 rounded-full disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95"
+            className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95"
             style={{
               background: isListeningVoice
                 ? "linear-gradient(135deg, #E91E8C, #FF6B35)"
-                : LG.base(0.75),
+                : LG.base(0.80),
               backdropFilter: "blur(20px)",
               WebkitBackdropFilter: "blur(20px)",
               boxShadow: isListeningVoice
-                ? "0 0 16px rgba(233,30,140,0.45)"
-                : `0 1px 6px rgba(100,100,200,0.10), inset 0 1px 0 rgba(255,255,255,0.95)`,
-              border: isListeningVoice ? "none" : "1px solid rgba(255,255,255,0.9)",
+                ? "0 0 18px rgba(233,30,140,0.50)"
+                : `0 2px 10px rgba(100,100,200,0.12), inset 0 1px 0 rgba(255,255,255,0.95)`,
+              border: isListeningVoice ? "none" : "1px solid rgba(255,255,255,0.90)",
               animation: isListeningVoice ? "waveExpand 1.5s ease-out infinite" : "none",
             }}
             aria-label="Hablar"
@@ -1392,31 +1435,80 @@ export default function Home() {
               fill="none"
               stroke={isListeningVoice ? "white" : "#9B4FD9"}
               strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
-              style={{ width: "13px", height: "13px" }}>
+              style={{ width: "14px", height: "14px" }}>
               <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3Z" />
               <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
               <line x1="12" y1="19" x2="12" y2="22" />
             </svg>
           </button>
 
-          {/* Botón enviar — compacto */}
-          <button
-            onClick={() => sendMessage()}
-            disabled={isLoading || isWelcoming || !input.trim()}
-            className="absolute right-1.5 flex items-center justify-center w-8 h-8 rounded-full disabled:opacity-35 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95"
-            style={{
-              background: "linear-gradient(135deg, #4F7CFF, #9B4FD9)",
-              boxShadow: "0 2px 12px rgba(79,124,255,0.35), inset 0 1px 0 rgba(255,255,255,0.25)",
-            }}
-            aria-label="Enviar"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-              fill="none" stroke="white" strokeWidth={2.5}
-              strokeLinecap="round" strokeLinejoin="round"
-              style={{ width: "13px", height: "13px" }}>
-              <path d="M12 19V5M5 12l7-7 7 7" />
-            </svg>
-          </button>
+          {/* Input + botón enviar */}
+          <div className="relative flex-1">
+            <input
+              ref={inputRef}
+              type="text"
+              inputMode="text"
+              enterKeyHint="send"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onFocus={() => { if (!isWelcoming) orb.transition("listening"); }}
+              onBlur={() => { if (!input && orbState === "listening") orb.transition("idle"); }}
+              onKeyDown={(e) => { if (e.key === "Enter") sendMessage(); }}
+              placeholder={isListeningVoice ? "Escuchando..." : "Escribe algo..."}
+              disabled={isLoading || isWelcoming || isListeningVoice || (orbState !== "listening" && !disclosure.inputEnabled)}
+              style={isDark ? darkGlass.input : glass.input}
+              className="disabled:opacity-60 pr-11"
+            />
+
+            {/* Botón enviar */}
+            <button
+              onClick={() => sendMessage()}
+              disabled={isLoading || isWelcoming || !input.trim()}
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full disabled:opacity-35 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95"
+              style={{
+                background: "linear-gradient(135deg, #4F7CFF, #9B4FD9)",
+                boxShadow: "0 2px 12px rgba(79,124,255,0.35), inset 0 1px 0 rgba(255,255,255,0.25)",
+              }}
+              aria-label="Enviar"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                fill="none" stroke="white" strokeWidth={2.5}
+                strokeLinecap="round" strokeLinejoin="round"
+                style={{ width: "13px", height: "13px" }}>
+                <path d="M12 19V5M5 12l7-7 7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Atajos de extensiones */}
+        <div className="flex justify-center gap-2 mt-2.5">
+          {[
+            { label: "TEC BI", icon: "🏛️", path: "/tec-bi",         color: "rgba(79,124,255,0.14)",  border: "rgba(79,124,255,0.32)"  },
+            { label: "MK-s",   icon: "📱", path: "/marketing-sofia", color: "rgba(155,79,217,0.14)", border: "rgba(155,79,217,0.32)" },
+            { label: "JP",     icon: "💙", path: "/jp-memorial",     color: "rgba(14,165,233,0.14)", border: "rgba(14,165,233,0.32)" },
+          ].map(({ label, icon, path, color, border }) => (
+            <button
+              key={path}
+              onClick={() => router.push(path)}
+              className="active:scale-95 transition-transform"
+              style={{
+                display: "flex", alignItems: "center", gap: 4,
+                fontSize: "0.67rem", fontWeight: 700, letterSpacing: "0.04em",
+                padding: "5px 13px", borderRadius: 99,
+                background: color,
+                backdropFilter: "blur(16px)",
+                WebkitBackdropFilter: "blur(16px)",
+                border: `1px solid ${border}`,
+                color: isDark ? "rgba(255,255,255,0.72)" : "#444",
+                cursor: "pointer",
+                whiteSpace: "nowrap" as const,
+              }}
+            >
+              <span style={{ fontSize: 10 }}>{icon}</span>
+              {label}
+            </button>
+          ))}
         </div>
       </div>
     </main>
