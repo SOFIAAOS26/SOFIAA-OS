@@ -28,6 +28,7 @@ import IntentDrivenUI from "@/components/chat/IntentDrivenUI";
 import { parseIntentToken, INTENT_TOKEN_REGEX } from "@/types/intent";
 import type { UIIntent } from "@/types/intent";
 import { useGoalState } from "@/hooks/useGoalState";
+import { useExperienceGraph } from "@/hooks/useExperienceGraph";
 import OnboardingSlides from "@/components/onboarding/OnboardingSlides";
 
 interface Message {
@@ -125,12 +126,13 @@ export default function Home() {
   const router = useRouter();
   const pathname = usePathname();
   const activeExtension = useExtension();
-  const telemetry = useSofiaaTelemetry();
-  const goalState = useGoalState(activeExtension?.id);
+  const telemetry   = useSofiaaTelemetry();
+  const goalState   = useGoalState(activeExtension?.id);
+  const { profile, signOut, user }        = useAuth();
+  const expGraph    = useExperienceGraph(user?.uid ?? null);
   const [orbState, setOrbState]       = useState<OrbState>("idle");
   const [tecBiSummary, setTecBiSummary]   = useState<string | null>(null);
   const [showLogin, setShowLogin]         = useState(false);
-  const { profile, signOut }              = useAuth();
 
   const LOGIN_TRIGGERS = ["login", "iniciar sesión", "iniciar sesion", "quiero hacer login",
     "ingresar", "acceder", "autenticar", "identificarme", "quiero loguearme"];
@@ -527,8 +529,9 @@ export default function Home() {
           detectedGoal,
           activePath: pathname,
           extensionData: tecBiSummary || undefined,
-          userRole: profile?.rol ?? null,
-          activeGoal: goalState.goal,
+          userRole:     profile?.rol ?? null,
+          activeGoal:   goalState.goal,
+          graphContext: expGraph.getAPIPayload(),
         }),
       });
 
@@ -589,6 +592,9 @@ export default function Home() {
 
       // Detectar si la respuesta dispara un goal multi-step — Sprint D-A
       goalState.detectAndStart(text);
+
+      // Actualizar Experience Graph — Sprint D-E
+      expGraph.recordTurn(text, pathname ?? undefined);
       // ─────────────────────────────────────────────────────────────────────
 
       setMessages((prev) => {

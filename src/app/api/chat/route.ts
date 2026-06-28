@@ -29,13 +29,61 @@ import { evaluateResponse, reportToEventPayload } from "@/core/policy.evaluator"
 
 type Message = { role: "user" | "assistant"; content: string };
 
+// ── Helper: convierte el graphContext serializado en bloque de prompt ─────
+function buildGraphBlockFromPayload(
+  ctx?:        { nodes: Record<string, { type: string; label: string; weight: number; hits: number }> } | null,
+  activePath?: string
+): string {
+  if (!ctx?.nodes) return "";
+
+  const nodes = Object.values(ctx.nodes);
+  if (nodes.length === 0) return "";
+
+  const topics = nodes
+    .filter(n => n.type === "topic" && n.weight >= 0.15)
+    .sort((a, b) => b.weight - a.weight)
+    .slice(0, 5);
+
+  const extensions = nodes
+    .filter(n => n.type === "extension" && n.weight >= 0.15)
+    .sort((a, b) => b.weight - a.weight)
+    .slice(0, 3);
+
+  const lines: string[] = [];
+
+  if (topics.length > 0) {
+    lines.push(`Áreas de mayor interés: ${topics.map(t => `${t.label} (×${t.hits})`).join(", ")}.`);
+  }
+  if (extensions.length > 0) {
+    lines.push(`Extensiones frecuentes: ${extensions.map(e => e.label).join(", ")}.`);
+  }
+
+  // Afinidad con la extensión activa
+  if (activePath) {
+    const pathMap: Record<string, string> = {
+      "/tec-bi": "ext:tec-bi",
+      "/marketing-sofia": "ext:marketing-sofia",
+      "/jp-memorial": "ext:jp-memorial",
+    };
+    const extNodeId = Object.entries(pathMap).find(([p]) => activePath.startsWith(p))?.[1];
+    const extNode = extNodeId ? ctx.nodes[extNodeId] : null;
+    if (extNode && extNode.weight >= 0.5) {
+      lines.push(`Alta familiaridad con esta extensión (${(extNode.weight * 100).toFixed(0)}%).`);
+    }
+  }
+
+  return lines.length > 0
+    ? `\n\nCONTEXTO DE EXPERIENCIA DEL USUARIO:\n${lines.join("\n")}`
+    : "";
+}
+
 export async function POST(req: NextRequest) {
   // ── Tracer: genera traceId único para este request ────────────────────
   const tracer = createTracer();
   const bus    = createEventBus(tracer.id, null, tracer);
   // ─────────────────────────────────────────────────────────────────────
 
-  const { messages, longTermMemory, contextualMemory, detectedGoal, activePath, extensionData, userRole, activeGoal }: {
+  const { messages, longTermMemory, contextualMemory, detectedGoal, activePath, extensionData, userRole, activeGoal, graphContext }: {
     messages: Message[];
     longTermMemory?: string;
     contextualMemory?: string;
@@ -44,6 +92,7 @@ export async function POST(req: NextRequest) {
     extensionData?: string;
     userRole?: string | null;
     activeGoal?: GoalState | null;
+    graphContext?: { nodes: Record<string, { type: string; label: string; weight: number; hits: number }> } | null;
   } = await req.json();
 
   if (!messages || !Array.isArray(messages)) {
@@ -131,6 +180,9 @@ export async function POST(req: NextRequest) {
     ? `\n\n${buildGoalPromptBlock(activeGoal)}`
     : "";
 
+  // Experience Graph — contexto estructurado del usuario (Sprint D-E)
+  const graphBlock = buildGraphBlockFromPayload(graphContext, activePath ?? "");
+
   // ── Modular Prompt Assembly — Registry agnóstico ──────────────────────
   const path = activePath ?? "";
   const modules = resolveModules({ activePath: path, userMessage: lastUserMsg?.content ?? "" });
@@ -184,7 +236,7 @@ export async function POST(req: NextRequest) {
     messages: [
       {
         role: "system" as const,
-        content: `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${policyBlock}`,
+        content: `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${policyBlock}`,
       },
       ...messages.map(({ role, content }) => ({ role, content })),
     ],
