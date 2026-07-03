@@ -33,6 +33,9 @@ import type { CapabilityContext } from "@/core/capability.runtime";
 import { buildCapabilityMenuBlock } from "@/core/capability.registry";
 import { firestoreProvider } from "@/core/providers/firestore.provider";
 import { mockProvider } from "@/core/providers/mock.provider";
+import { AgentRuntime }  from "@/core/agent.runtime";
+import { AGENT_TOOLS }   from "@/core/agent.tools";
+import type { AgentContext } from "@/core/agent.types";
 
 // ── Registro de providers (módulo, se ejecuta una vez) ────────────────────
 const _useMock = process.env.NEXT_PUBLIC_MOCK_CAPABILITIES === "true";
@@ -91,8 +94,9 @@ function buildGraphBlockFromPayload(
 
 export async function POST(req: NextRequest) {
   // ── Tracer: genera traceId único para este request ────────────────────
-  const tracer = createTracer();
-  const bus    = createEventBus(tracer.id, null, tracer);
+  const tracer   = createTracer();
+  const bus      = createEventBus(tracer.id, null, tracer);
+  const encoder  = new TextEncoder();
   // ─────────────────────────────────────────────────────────────────────
 
   const {
@@ -106,6 +110,7 @@ export async function POST(req: NextRequest) {
     activeGoal,
     graphContext,
     userId,
+    agentMode,
   }: {
     messages:          Message[];
     longTermMemory?:   string;
@@ -117,6 +122,7 @@ export async function POST(req: NextRequest) {
     activeGoal?:       GoalState | null;
     graphContext?:     { nodes: Record<string, { type: string; label: string; weight: number; hits: number }> } | null;
     userId?:           string | null;
+    agentMode?:        boolean;
   } = await req.json();
 
   if (!messages || !Array.isArray(messages)) {
@@ -264,6 +270,61 @@ export async function POST(req: NextRequest) {
   // ── LLM Orchestrator — elige el mejor provider disponible ────────────
   const systemContent = `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${policyBlock}${capabilityMenuBlock}`;
 
+  // ── Sprint G: Agent Runtime — ReAct loop para tareas multi-paso ──────
+  if (agentMode) {
+    const agentCtx: AgentContext = {
+      userId:        userId        ?? "anonymous",
+      userRole:      userRole      ?? "guest",
+      extensionId:   activeExtId  ?? "",
+      activePath:    path,
+      systemContent,
+      messages: messages.map(({ role, content }) => ({ role, content })),
+      traceId: tracer.id,
+    };
+
+    const goal    = lastUserMsg?.content ?? "";
+    const runtime = new AgentRuntime(AGENT_TOOLS);
+
+    const agentStream = new ReadableStream<Uint8Array>({
+      async start(controller) {
+        try {
+          const result = await runtime.run(goal, agentCtx, controller, encoder);
+          tracer.log("agent_done", "ok", "info", {
+            iterations: result.iterations,
+            totalMs:    result.totalMs,
+            stopped:    result.stopped,
+          });
+          bus.dispatch("stream_finished", {
+            response: result.finalAnswer,
+            goal:     detectedGoal,
+            ext:      activeExtId,
+            traceMs:  tracer.elapsedMs,
+            provider: "agent",
+          });
+          bus.flush().catch(() => {});
+        } catch (err) {
+          console.error("[SOFIAA][agent] fatal error:", err);
+          tracer.log("agent_error", "failed", "error", { error: String(err) });
+        } finally {
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(agentStream, {
+      headers: {
+        "Content-Type":        "text/plain; charset=utf-8",
+        "Transfer-Encoding":   "chunked",
+        "x-sofiaa-trace":      tracer.id,
+        "x-sofiaa-provider":   "agent",
+        "x-sofiaa-tasktype":   "automation",
+        "x-sofiaa-confidence": "1.00",
+        "x-sofiaa-agent":      "react-v1",
+      },
+    });
+  }
+  // ─────────────────────────────────────────────────────────────────────
+
   const llmRequest = {
     messages: [
       {
@@ -307,8 +368,6 @@ export async function POST(req: NextRequest) {
   };
 
   // ── Streaming con manejo de tool calls ───────────────────────────────
-  const encoder = new TextEncoder();
-
   const stream = new ReadableStream({
     async start(controller) {
       const reader = llmStream.getReader();
