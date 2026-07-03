@@ -12,6 +12,19 @@ interface IntentRule {
 const u = (pattern: RegExp) => (msg: string) => pattern.test(msg);
 const noNav = (msg: string) => !/navegar|ir a|abrir|llévame|llevar/i.test(msg);
 
+/**
+ * Rechaza mensajes con contexto técnico / programación para evitar
+ * falsos positivos en términos como "hooks", "copy", "proyectos", etc.
+ */
+const noCode = (msg: string) =>
+  !/\breact\b|\bvue\b|\bangular\b|\bjavascript\b|\btypescript\b|\bpython\b|\bnpm\b|\byarn\b|\bgit\b|\bcomponent[e]?\b|\bfunci[oó]n\b|\bm[eé]todo\b|\bcódigo\b|\brefactor\b|\bdeploy\b|\bbuild\b|\btest\b|\bdebug\b|\bsyntax\b|\blibrer[íi]a\b|\bframework\b|\bclase\b|\binterfaz\b|\btype\b|\binterface\b|\bimport\b|\bexport\b/i.test(msg);
+
+/**
+ * Confirma que la respuesta del asistente también habla del tema,
+ * evitando tarjetas que aparecen sin que la IA haya mencionado la extensión.
+ */
+const about = (pattern: RegExp) => (_: string, a: string) => pattern.test(a);
+
 const rules: IntentRule[] = [
 
   // ── SALUDOS / primera interacción ────────────────────────────────────────
@@ -57,7 +70,8 @@ const rules: IntentRule[] = [
 
   // ── TEC BI — brief / canvas ──────────────────────────────────────────────
   {
-    match: (msg) => /brief|brief canvas|brief score|captura.*solicitud|solicitud.*video/i.test(msg) && noNav(msg),
+    match: (msg, a) => /brief|brief canvas|brief score|captura.*solicitud|solicitud.*video/i.test(msg) && noNav(msg)
+      && about(/tec.?bi|brief canvas|brief score|\/tec-bi/i)(msg, a),
     block: () => ({
       type: "extension_card",
       icon: "📋",
@@ -69,7 +83,8 @@ const rules: IntentRule[] = [
 
   // ── TEC BI — ROI / simulador ─────────────────────────────────────────────
   {
-    match: (msg) => /roi|retorno.*inversi[oó]n|simulador|ahorro.*anual|impacto.*institucional|cuánto.*ahorra/i.test(msg) && noNav(msg),
+    match: (msg, a) => /roi|retorno.*inversi[oó]n|simulador|ahorro.*anual|impacto.*institucional|cuánto.*ahorra/i.test(msg) && noNav(msg)
+      && about(/tec.?bi|simulador.*impacto|brief.*deficiente|ahorro.*institucional|\/tec-bi/i)(msg, a),
     block: () => ({
       type: "extension_card",
       icon: "📊",
@@ -81,7 +96,8 @@ const rules: IntentRule[] = [
 
   // ── TEC BI — proyectos / monday ──────────────────────────────────────────
   {
-    match: (msg) => /proyectos|monday\.?com|sincronizaci[oó]n|gestión.*proyecto|flujo.*trabajo|kanban/i.test(msg) && noNav(msg),
+    match: (msg, a) => /proyectos|monday\.?com|sincronizaci[oó]n|gestión.*proyecto|flujo.*trabajo|kanban/i.test(msg) && noNav(msg)
+      && about(/tec.?bi|monday\.?com|webhook|brief|\/tec-bi/i)(msg, a),
     block: () => ({
       type: "extension_card",
       icon: "🏛",
@@ -93,7 +109,8 @@ const rules: IntentRule[] = [
 
   // ── TEC BI — evaluaciones ────────────────────────────────────────────────
   {
-    match: (msg) => /evaluaci[oó]n(es)?|desempe[nñ]o|calificaci[oó]n|scoring.*colaborador/i.test(msg) && noNav(msg),
+    match: (msg, a) => /evaluaci[oó]n(es)?|desempe[nñ]o|calificaci[oó]n|scoring.*colaborador/i.test(msg) && noNav(msg)
+      && about(/tec.?bi|evaluaci[oó]n.*colaborador|scoring.*proyecto|\/tec-bi\/evaluaciones/i)(msg, a),
     block: () => ({
       type: "extension_card",
       icon: "⭐",
@@ -105,7 +122,8 @@ const rules: IntentRule[] = [
 
   // ── TEC BI — directorio / empleados ─────────────────────────────────────
   {
-    match: (msg) => /empleados?|directorio|proveedores?|equipo.*tec|colaboradores?|personal/i.test(msg) && noNav(msg),
+    match: (msg, a) => /empleados?|directorio|proveedores?|equipo.*tec|colaboradores?/i.test(msg) && noNav(msg)
+      && about(/tec.?bi|directorio|empleados.*tec|proveedores.*tec|\/tec-bi/i)(msg, a),
     block: () => ({
       type: "extension_card",
       icon: "👥",
@@ -129,7 +147,9 @@ const rules: IntentRule[] = [
 
   // ── MARKETING — copy & hooks ─────────────────────────────────────────────
   {
-    match: (msg) => /copy|hooks?|redacci[oó]n|copywriting|aida|pas |pastor|4ps|cta(s)?|caption/i.test(msg) && noNav(msg),
+    match: (msg, a) => /copywriting|redacci[oó]n.*marketing|hooks?.*contenido|copy.*redes|aida|pas |pastor|4ps|cta(s)?|caption/i.test(msg)
+      && noNav(msg) && noCode(msg)
+      && about(/marketing sofia|copy.*hook|banco de hook|\/marketing-sofia/i)(msg, a),
     block: () => ({
       type: "extension_card",
       icon: "✍️",
@@ -141,7 +161,8 @@ const rules: IntentRule[] = [
 
   // ── MARKETING — ideas de contenido ──────────────────────────────────────
   {
-    match: (msg) => /ideas.*contenido|contenido.*ideas|ideas.*post|ideas.*redes|ideas.*publicaci[oó]n|ideas hub/i.test(msg) && noNav(msg),
+    match: (msg, a) => /ideas.*contenido|contenido.*ideas|ideas.*post|ideas.*redes|ideas.*publicaci[oó]n|ideas hub/i.test(msg) && noNav(msg)
+      && about(/marketing sofia|ideas hub|\/marketing-sofia/i)(msg, a),
     block: () => ({
       type: "extension_card",
       icon: "💡",
@@ -165,7 +186,8 @@ const rules: IntentRule[] = [
 
   // ── MARKETING — métricas / KPIs ──────────────────────────────────────────
   {
-    match: (msg) => /m[eé]tricas?|kpi(s)?|estad[íi]sticas?|analytics|alcance|engagement|seguidores|rendimiento.*cuenta/i.test(msg) && noNav(msg),
+    match: (msg, a) => /m[eé]tricas?|kpi(s)?|estad[íi]sticas?|analytics|alcance|engagement|seguidores|rendimiento.*cuenta/i.test(msg) && noNav(msg)
+      && about(/marketing sofia|m[eé]tricas.*cliente|kpi.*plataforma|roas|cpl|\/marketing-sofia/i)(msg, a),
     block: () => ({
       type: "extension_card",
       icon: "📈",
@@ -177,7 +199,8 @@ const rules: IntentRule[] = [
 
   // ── MARKETING — calendario editorial ────────────────────────────────────
   {
-    match: (msg) => /calendario|editorial|planificador|programar.*post|agenda.*contenido|publicaci[oó]n.*fecha/i.test(msg) && noNav(msg),
+    match: (msg, a) => /calendario|editorial|planificador|programar.*post|agenda.*contenido|publicaci[oó]n.*fecha/i.test(msg) && noNav(msg)
+      && about(/marketing sofia|calendario.*editorial|flujo.*publicaci[oó]n|\/marketing-sofia/i)(msg, a),
     block: () => ({
       type: "extension_card",
       icon: "📅",
@@ -189,7 +212,8 @@ const rules: IntentRule[] = [
 
   // ── MARKETING — finanzas / ingresos ──────────────────────────────────────
   {
-    match: (msg) => /finanzas|ingresos|gastos|facturaci[oó]n|honorarios|margen|rentabilidad.*agencia/i.test(msg) && noNav(msg),
+    match: (msg, a) => /finanzas|ingresos|gastos|facturaci[oó]n|honorarios|margen|rentabilidad.*agencia/i.test(msg) && noNav(msg)
+      && about(/marketing sofia|honorarios.*agencia|margen neto.*cliente|inversi[oó]n publicitaria|\/marketing-sofia/i)(msg, a),
     block: () => ({
       type: "extension_card",
       icon: "💰",
@@ -299,7 +323,8 @@ const rules: IntentRule[] = [
 
   // ── REDES SOCIALES / INSTAGRAM / TIKTOK ─────────────────────────────────
   {
-    match: (msg) => /instagram|tiktok|facebook|youtube|linkedin|redes sociales|social media/i.test(msg) && noNav(msg),
+    match: (msg, a) => /instagram|tiktok|facebook|youtube|linkedin|redes sociales|social media/i.test(msg) && noNav(msg)
+      && about(/marketing sofia|agencia|smm|dashboard.*cliente|\/marketing-sofia/i)(msg, a),
     block: () => ({
       type: "extension_card",
       icon: "📱",
