@@ -2,6 +2,7 @@
 
 import CognitiveDashboard from "./CognitiveDashboard";
 import TimelineUI from "./TimelineUI";
+import PipelineObserver from "./PipelineObserver";
 
 interface Message {
   role: "user" | "assistant";
@@ -175,6 +176,14 @@ export default function AdminPanel({
             Historial de sesiones
           </p>
           <TimelineUI onResumeSession={(summary) => { onResumeSession(summary); onClose(); }} />
+        </div>
+
+        {/* Pipeline Observer — F-3 */}
+        <div style={card}>
+          <p className="text-xs font-semibold tracking-wide uppercase mb-3" style={{ color: "rgba(0,0,0,0.35)" }}>
+            Pipeline Observer
+          </p>
+          <PipelineObserver />
         </div>
 
         {/* Panel Cognitivo */}

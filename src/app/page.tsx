@@ -15,6 +15,8 @@ import { analyzeMessage } from "@/core/guardrails.engine";
 import { getSafetyResponse } from "@/config/safety.response.map";
 import { useSofiaaTelemetry } from "@/hooks/useSofiaaTelemetry";
 import { getCachedResponse, setCachedResponse } from "@/core/response-cache";
+import { getSemanticCache, setSemanticCache } from "@/core/semantic-cache";
+import { recordPipelineEvent } from "@/core/pipeline-observer";
 import { detectGoal } from "@/core/goal.engine";
 import { addTimelineEntry, buildContextualMemoryBlock } from "@/core/memory.timeline";
 import { generateSessionTitle, extractTags, detectTopGoal } from "@/core/memory.summary";
@@ -494,10 +496,16 @@ export default function Home() {
     const detectedGoal = detectGoal(text);
     // ─────────────────────────────────────────────────────────────────────
 
-    // ── Response Cache: check antes de llamar al modelo ───────────────────
+    // ── Response Cache: exact match O(1) ─────────────────────────────────
+    const pipelineStart = Date.now();
     const cachedReply = getCachedResponse(text);
     if (cachedReply) {
       orb.flashCacheHit();
+      recordPipelineEvent({
+        messageSnippet: text.slice(0, 60),
+        taskType: "unknown", provider: "cache", confidence: 1,
+        cacheLayer: "exact", latencyMs: Date.now() - pipelineStart,
+      });
       setMessages([...updatedMessages, { role: "assistant", content: cachedReply }]);
       setWelcomeText("");
       setInput("");
@@ -505,6 +513,26 @@ export default function Home() {
       if (sentViaVoiceRef.current) {
         sentViaVoiceRef.current = false;
         try { speakText(cachedReply); } catch { /* no crítico */ }
+      }
+      return;
+    }
+
+    // ── Semantic Cache: vector similarity O(n) — Sprint F-2 ──────────────
+    const semanticReply = await getSemanticCache(text);
+    if (semanticReply) {
+      orb.flashCacheHit();
+      recordPipelineEvent({
+        messageSnippet: text.slice(0, 60),
+        taskType: "unknown", provider: "cache", confidence: 1,
+        cacheLayer: "semantic", latencyMs: Date.now() - pipelineStart,
+      });
+      setMessages([...updatedMessages, { role: "assistant", content: semanticReply }]);
+      setWelcomeText("");
+      setInput("");
+      telemetry.trackMessageReceived();
+      if (sentViaVoiceRef.current) {
+        sentViaVoiceRef.current = false;
+        try { speakText(semanticReply); } catch { /* no crítico */ }
       }
       return;
     }
@@ -542,6 +570,12 @@ export default function Home() {
         throw new Error(`HTTP ${res.status}: ${errText}`);
       }
 
+      // ── F-3: capturar headers del pipeline ────────────────────────────
+      const pipelineTaskType  = (res.headers.get("x-sofiaa-tasktype")   ?? "unknown") as import("@/core/llm.orchestrator").TaskType;
+      const pipelineProvider  = res.headers.get("x-sofiaa-provider")    ?? "unknown";
+      const pipelineConf      = parseFloat(res.headers.get("x-sofiaa-confidence") ?? "1");
+      // ─────────────────────────────────────────────────────────────────
+
       orb.startResponse();
 
       const reader      = res.body.getReader();
@@ -565,8 +599,20 @@ export default function Home() {
 
       telemetry.trackMessageReceived();
 
-      // ── Response Cache: guardar respuesta para futuras consultas ─────────
-      setCachedResponse(text, fullResponse);
+      // ── Response Cache: guardar en ambas capas ───────────────────────────
+      setCachedResponse(text, fullResponse);                        // exact match (sync)
+      setSemanticCache(text, fullResponse).catch(() => undefined);  // semántico (async, best-effort)
+      // ─────────────────────────────────────────────────────────────────────
+
+      // ── F-3: registrar evento de pipeline ────────────────────────────────
+      recordPipelineEvent({
+        messageSnippet: text.slice(0, 60),
+        taskType:   pipelineTaskType,
+        provider:   pipelineProvider,
+        confidence: pipelineConf,
+        cacheLayer: "miss",
+        latencyMs:  Date.now() - pipelineStart,
+      });
       // ─────────────────────────────────────────────────────────────────────
 
       // Hablar la respuesta si el usuario usó el micrófono

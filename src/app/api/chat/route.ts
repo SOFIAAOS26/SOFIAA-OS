@@ -281,12 +281,16 @@ export async function POST(req: NextRequest) {
 
   let llmStream: ReadableStream<LLMStreamChunk>;
   let usedProvider: string;
+  let usedTaskType: string = "query";
+  let usedConfidence: number = 1.0;
 
   try {
-    const result = await orchestrator.complete(llmRequest);
-    llmStream    = result.stream;
-    usedProvider = result.provider;
-    tracer.log("orchestrator_selected", "ok", "info", { provider: usedProvider });
+    const result  = await orchestrator.complete(llmRequest);
+    llmStream     = result.stream;
+    usedProvider  = result.provider;
+    usedTaskType  = result.taskType;
+    usedConfidence = result.confidence;
+    tracer.log("orchestrator_selected", "ok", "info", { provider: usedProvider, taskType: usedTaskType });
   } catch (err) {
     tracer.log("orchestrator_failed", "failed", "error", { error: String(err) });
     await bus.flush();
@@ -445,10 +449,12 @@ export async function POST(req: NextRequest) {
 
   return new Response(stream, {
     headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Transfer-Encoding": "chunked",
-      "x-sofiaa-trace":    tracer.id,
-      "x-sofiaa-provider": usedProvider,
+      "Content-Type":         "text/plain; charset=utf-8",
+      "Transfer-Encoding":    "chunked",
+      "x-sofiaa-trace":       tracer.id,
+      "x-sofiaa-provider":    usedProvider,
+      "x-sofiaa-tasktype":    usedTaskType,
+      "x-sofiaa-confidence":  usedConfidence.toFixed(2),
     },
   });
 }
