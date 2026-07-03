@@ -76,7 +76,10 @@ export class CapabilityGateway {
       };
     }
 
-    if (def.extensionId !== ctx.extensionId) {
+    // Admin puede acceder a capabilities de cualquier extensión (cross-extension)
+    // El resto solo puede acceder a las de su extensión activa
+    const isAdminRole = ctx.userRole === "admin";
+    if (!isAdminRole && def.extensionId !== ctx.extensionId) {
       return {
         allowed: false,
         reason: `Capability "${capabilityId}" pertenece a la extensión "${def.extensionId}", no a "${ctx.extensionId}"`,

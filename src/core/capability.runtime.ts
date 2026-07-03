@@ -103,7 +103,12 @@ export class CapabilityRuntime {
     if (!provider) {
       throw new Error(`[CapabilityRuntime] No hay provider registrado para "${definition.providerType}"`);
     }
-    return provider.get(definition.providerConfig, ctx.params);
+    // Permitir que params.collection sobreescriba la colección base
+    // Esto habilita BuscarRegistro y queries cross-collection para admin
+    const config = ctx.params?.collection
+      ? { ...definition.providerConfig, collection: ctx.params.collection }
+      : definition.providerConfig;
+    return provider.get(config, ctx.params);
   }
 }
 

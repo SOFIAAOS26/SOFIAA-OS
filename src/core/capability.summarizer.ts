@@ -125,6 +125,59 @@ const METRIC_COMPUTERS: Record<string, MetricComputer> = {
       briefs_bloqueados:  bloqueados,
     };
   },
+
+  // ── Marketing Sofia ──────────────────────────────────────────────────
+  MarketingClientes: (raw) => {
+    const rows    = raw as Array<Record<string, unknown>>;
+    const activos = rows.filter(r => r.activo !== false);
+    const presupuestos = activos.map(r => Number(r.presupuesto_mensual) || 0);
+    const promedio = presupuestos.length > 0
+      ? Math.round(presupuestos.reduce((a, b) => a + b, 0) / presupuestos.length)
+      : 0;
+    return {
+      total_clientes:       rows.length,
+      clientes_activos:     activos.length,
+      presupuesto_promedio: `$${promedio.toLocaleString("es-MX")}`,
+    };
+  },
+
+  MarketingMetricas: (raw) => {
+    const rows = raw as Array<Record<string, unknown>>;
+    const alcance      = rows.reduce((s, r) => s + (Number(r.alcance) || 0), 0);
+    const engagements  = rows.map(r => Number(r.engagement_rate) || 0);
+    const engageProm   = engagements.length > 0
+      ? parseFloat((engagements.reduce((a, b) => a + b, 0) / engagements.length).toFixed(2))
+      : 0;
+    const conversiones = rows.reduce((s, r) => s + (Number(r.conversiones) || 0), 0);
+    return {
+      alcance_total:   alcance,
+      engagement_rate: `${engageProm}%`,
+      conversiones,
+    };
+  },
+
+  MarketingFinanzas: (raw) => {
+    const rows    = raw as Array<Record<string, unknown>>;
+    const ingresos = rows.reduce((s, r) => s + (Number(r.ingreso) || 0), 0);
+    const gastos   = rows.reduce((s, r) => s + (Number(r.gasto) || 0), 0);
+    const utilidad = ingresos - gastos;
+    const margen   = ingresos > 0
+      ? parseFloat(((utilidad / ingresos) * 100).toFixed(1))
+      : 0;
+    return {
+      ingresos_total: `$${ingresos.toLocaleString("es-MX")}`,
+      gastos_total:   `$${gastos.toLocaleString("es-MX")}`,
+      utilidad_neta:  `$${utilidad.toLocaleString("es-MX")} (${margen}%)`,
+    };
+  },
+
+  // ── Búsqueda detallada — devuelve campos del registro, no agregados ──
+  BuscarRegistro: (raw) => {
+    const rows = raw as Array<Record<string, unknown>>;
+    return {
+      registros_encontrados: rows.length,
+    };
+  },
 };
 
 // ── Detección de insights ──────────────────────────────────────────────────
@@ -217,6 +270,57 @@ const INSIGHT_DETECTORS: Record<string, InsightDetector> = {
     );
     if (vencidos.length > 0) {
       insights.push(`${vencidos.length} brief(s) con fecha vencida`);
+    }
+    return insights;
+  },
+
+  MarketingClientes: (raw) => {
+    const rows    = raw as Array<Record<string, unknown>>;
+    const insights: string[] = [];
+    const sorted  = [...rows].sort((a, b) => Number(b.presupuesto_mensual) - Number(a.presupuesto_mensual));
+    if (sorted[0]) {
+      const top = sorted[0];
+      insights.push(`Mayor presupuesto: ${top.nombre} ($${Number(top.presupuesto_mensual).toLocaleString("es-MX")}/mes)`);
+    }
+    return insights;
+  },
+
+  MarketingMetricas: (raw) => {
+    const rows    = raw as Array<Record<string, unknown>>;
+    const insights: string[] = [];
+    const sorted  = [...rows].sort((a, b) => Number(b.engagement_rate) - Number(a.engagement_rate));
+    if (sorted[0]) {
+      insights.push(`Mejor campaña: ${sorted[0].nombre ?? "sin nombre"} (${sorted[0].engagement_rate}% engagement)`);
+    }
+    return insights;
+  },
+
+  MarketingFinanzas: (raw) => {
+    const rows    = raw as Array<Record<string, unknown>>;
+    const insights: string[] = [];
+    const sorted  = [...rows].sort((a, b) => Number(b.ingreso) - Number(a.ingreso));
+    if (sorted[0]) {
+      insights.push(`Mejor mes: ${sorted[0].mes ?? "sin dato"} ($${Number(sorted[0].ingreso).toLocaleString("es-MX")})`);
+    }
+    return insights;
+  },
+
+  BuscarRegistro: (raw) => {
+    if (raw.length === 0) return ["No se encontró ningún registro con esos criterios."];
+    // Para registros individuales, listar los campos más relevantes
+    const row     = raw[0] as Record<string, unknown>;
+    const insights: string[] = [];
+    const SKIP    = new Set(["id", "__typename", "createdAt", "updatedAt", "timestamp"]);
+    const fields  = Object.entries(row)
+      .filter(([k]) => !SKIP.has(k))
+      .slice(0, 8); // máximo 8 campos para no saturar el prompt
+    for (const [k, v] of fields) {
+      if (v !== null && v !== undefined && String(v).trim() !== "") {
+        insights.push(`${k.replace(/_/g, " ")}: ${v}`);
+      }
+    }
+    if (raw.length > 1) {
+      insights.push(`(+${raw.length - 1} registro(s) adicional(es) encontrado(s))`);
     }
     return insights;
   },

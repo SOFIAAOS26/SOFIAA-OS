@@ -79,9 +79,61 @@ export const CAPABILITY_REGISTRY: CapabilityDefinition[] = [
     },
   },
 
-  // ── Espacio reservado para futuras extensiones ───────────────────────────
-  // MondayProvider: { providerType: "monday", ... }
-  // MarketingSofia: { extensionId: "marketing-sofia", ... }
+  // ── Marketing Sofia ──────────────────────────────────────────────────────
+  {
+    id:           "MarketingClientes",
+    label:        "Clientes activos de la agencia y sus presupuestos",
+    extensionId:  "marketing-sofia",
+    providerType: "firestore",
+    providerConfig: { collection: "ms_clientes" },
+    requiredRoles: ["admin", "gerente"],
+    outputSchema: {
+      resumen:  "Total de clientes, presupuesto promedio mensual y distribución por sector",
+      metricas: ["total_clientes", "presupuesto_promedio", "clientes_activos"],
+      insights: ["cliente con mayor presupuesto", "sector con más clientes"],
+    },
+  },
+  {
+    id:           "MarketingMetricas",
+    label:        "Métricas de campañas: alcance, engagement y conversiones",
+    extensionId:  "marketing-sofia",
+    providerType: "firestore",
+    providerConfig: { collection: "ms_metricas" },
+    requiredRoles: ["admin", "gerente"],
+    outputSchema: {
+      resumen:  "Alcance total, engagement rate promedio y conversiones del período",
+      metricas: ["alcance_total", "engagement_rate", "conversiones"],
+      insights: ["campaña con mejor rendimiento", "área de mejora detectada"],
+    },
+  },
+  {
+    id:           "MarketingFinanzas",
+    label:        "Ingresos, gastos y utilidad de la agencia",
+    extensionId:  "marketing-sofia",
+    providerType: "firestore",
+    providerConfig: { collection: "ms_finanzas" },
+    requiredRoles: ["admin"],
+    outputSchema: {
+      resumen:  "Ingresos vs gastos del período, utilidad neta y margen",
+      metricas: ["ingresos_total", "gastos_total", "utilidad_neta"],
+      insights: ["mes con mayor ingreso", "rubros de mayor gasto"],
+    },
+  },
+
+  // ── Búsqueda detallada — cross-extension ─────────────────────────────────
+  {
+    id:           "BuscarRegistro",
+    label:        "Buscar un registro específico por nombre o campo en cualquier colección",
+    extensionId:  "tec-bi",   // el gateway admin ya ignora este campo
+    providerType: "firestore",
+    providerConfig: { collection: "" }, // se sobreescribe via params.collection
+    requiredRoles: ["admin"],
+    outputSchema: {
+      resumen:  "Detalle completo del registro encontrado",
+      metricas: ["registros_encontrados"],
+      insights: ["campos relevantes del registro"],
+    },
+  },
 ];
 
 // ── Resolvers ──────────────────────────────────────────────────────────────
@@ -96,15 +148,33 @@ export function getCapabilitiesForExtension(extensionId: string): CapabilityDefi
 
 /**
  * Genera el bloque de menú de capabilities para el system prompt.
+ * extensionId = "*" → incluye TODAS las capabilities (para admin desde cualquier ruta).
  * El LLM conoce qué puede pedir — pero no cómo ni de dónde.
  */
 export function buildCapabilityMenuBlock(extensionId: string): string {
-  const caps = getCapabilitiesForExtension(extensionId);
+  const caps = extensionId === "*"
+    ? CAPABILITY_REGISTRY.filter(c => c.id !== "BuscarRegistro") // BuscarRegistro se explica aparte
+    : getCapabilitiesForExtension(extensionId);
+
   if (caps.length === 0) return "";
 
-  const lines = caps
-    .map(c => `  - ${c.id}: ${c.label}`)
-    .join("\n");
+  // Agrupar por extensión cuando es vista de admin (*)
+  let lines: string;
+  if (extensionId === "*") {
+    const byExt: Record<string, CapabilityDefinition[]> = {};
+    for (const c of caps) {
+      (byExt[c.extensionId] ??= []).push(c);
+    }
+    lines = Object.entries(byExt)
+      .map(([ext, defs]) => `  [${ext}]\n${defs.map(d => `    - ${d.id}: ${d.label}`).join("\n")}`)
+      .join("\n");
+  } else {
+    lines = caps.map(c => `  - ${c.id}: ${c.label}`).join("\n");
+  }
 
-  return `\n\nCAPACIDADES DE DATOS DISPONIBLES:\nPuedes solicitar datos en tiempo real usando la función request_capability con uno de estos IDs:\n${lines}\n\nÚsalas cuando el usuario pida información específica que no está en tu conocimiento base.`;
+  const buscarNota = extensionId === "*"
+    ? "\n  - BuscarRegistro: Buscar un registro específico por nombre (ej: cliente 'Acme', proveedor 'LogiCorp'). Requiere params: {collection: 'nombre_coleccion', campo: 'nombre', valor: 'X'}"
+    : "";
+
+  return `\n\nCAPACIDADES DE DATOS DISPONIBLES:\nPuedes solicitar datos en tiempo real usando la función request_capability con uno de estos IDs:\n${lines}${buscarNota}\n\nÚsalas cuando el usuario pida información específica que no está en tu conocimiento base. Cuando el usuario pregunte de datos empresariales, SIEMPRE usa estas capabilities en lugar de sugerir navegar a una extensión.`;
 }

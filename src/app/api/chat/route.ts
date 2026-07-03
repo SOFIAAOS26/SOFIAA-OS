@@ -261,10 +261,14 @@ export async function POST(req: NextRequest) {
   tracer.log("cpe_policies", "ok", "info", { count: activePolicies.length });
 
   // ── Capability Menu Block — Sprint E ─────────────────────────────────
-  // Solo se incluye si hay capabilities disponibles para la extensión activa
-  const capabilityMenuBlock = activeExtId
-    ? buildCapabilityMenuBlock(activeExtId)
-    : "";
+  // Admin ve TODAS las capabilities desde cualquier ruta (fix Bug 1)
+  // El resto solo ve las de su extensión activa
+  const isAdmin = userRole === "admin";
+  const capabilityMenuBlock = isAdmin
+    ? buildCapabilityMenuBlock("*")          // "*" = todas las extensiones
+    : activeExtId
+      ? buildCapabilityMenuBlock(activeExtId)
+      : "";
   // ─────────────────────────────────────────────────────────────────────
 
   // ── LLM Orchestrator — elige el mejor provider disponible ────────────
@@ -360,6 +364,7 @@ export async function POST(req: NextRequest) {
   // ─────────────────────────────────────────────────────────────────────
 
   // Contexto de capability (Sprint E) — se resuelve aquí para usarse dentro del stream
+  // extensionId base vacío — se sobreescribe con el de la capability al ejecutar (fix Bug 2)
   const capCtxBase: CapabilityContext = {
     userId:      userId ?? "anonymous",
     userRole:    userRole ?? "guest",
@@ -390,9 +395,17 @@ export async function POST(req: NextRequest) {
               const toolResults = parseToolCalls(toolCallList);
 
               // ── Capability Runtime (Sprint E) — re-run LLM con datos ──
-              if (toolResults.capabilityRequest && activeExtId) {
+              // Fix Bug 2: admin puede ejecutar capabilities de cualquier extensión
+              // El gateway recibe el extensionId de la capability, no del path activo
+              if (toolResults.capabilityRequest && (activeExtId || isAdmin)) {
                 const { capability_id, params } = toolResults.capabilityRequest;
-                const capCtx: CapabilityContext = { ...capCtxBase, params };
+                const { resolveCapability } = await import("@/core/capability.registry");
+                const capDef = resolveCapability(capability_id);
+                const capCtx: CapabilityContext = {
+                  ...capCtxBase,
+                  extensionId: capDef?.extensionId ?? activeExtId ?? "",
+                  params,
+                };
 
                 try {
                   tracer.log("capability_request", "ok", "info", { capability_id });
