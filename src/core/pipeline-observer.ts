@@ -40,7 +40,18 @@ interface PipelineStore {
 
 const STORE_KEY    = "sofiaa_pipeline_log";
 const STORE_VER    = "f3.1";
-const MAX_EVENTS   = 50;   // los últimos 50 requests
+const MAX_EVENTS   = 50;   // los últimos 50 requests en localStorage
+
+// ── userId de módulo (se setea al autenticar) ─────────────────────────────
+let _currentUserId: string | null = null;
+
+/**
+ * Registra el userId activo — llamar tras login.
+ * Permite que recordPipelineEvent persista a Firestore sin cambiar su firma.
+ */
+export function setPipelineUserId(uid: string | null): void {
+  _currentUserId = uid;
+}
 
 // ── I/O ───────────────────────────────────────────────────────────────────
 
@@ -71,6 +82,7 @@ function writeStore(store: PipelineStore): void {
 
 /**
  * Registra un evento de pipeline tras completar un request.
+ * Persiste en localStorage Y en Firestore (best-effort, async).
  */
 export function recordPipelineEvent(event: Omit<PipelineEvent, "id" | "timestamp">): void {
   const store = readStore();
@@ -81,6 +93,23 @@ export function recordPipelineEvent(event: Omit<PipelineEvent, "id" | "timestamp
   };
   store.events.push(entry);
   writeStore(store);
+
+  // H-3: persistir a Firestore si hay userId activo
+  if (_currentUserId) {
+    pushEventToFirestore(_currentUserId, entry).catch(() => {});
+  }
+}
+
+/** Persiste un evento a Firestore para acumular datos de N.O.R.A */
+async function pushEventToFirestore(userId: string, event: PipelineEvent): Promise<void> {
+  const { db }      = await import("@/lib/firebase");
+  const { doc, setDoc } = await import("firebase/firestore");
+  const ref = doc(db, "users", userId, "pipeline_events", event.id);
+  await setDoc(ref, {
+    ...event,
+    // Añadimos fecha como campo separado para queries de N.O.R.A
+    date: new Date(event.timestamp).toISOString().split("T")[0],
+  });
 }
 
 /**

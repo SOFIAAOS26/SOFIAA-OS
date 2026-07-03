@@ -16,9 +16,16 @@ import { getSafetyResponse } from "@/config/safety.response.map";
 import { useSofiaaTelemetry } from "@/hooks/useSofiaaTelemetry";
 import { getCachedResponse, setCachedResponse } from "@/core/response-cache";
 import { getSemanticCache, setSemanticCache } from "@/core/semantic-cache";
-import { recordPipelineEvent } from "@/core/pipeline-observer";
+import { recordPipelineEvent, setPipelineUserId } from "@/core/pipeline-observer";
 import { detectGoal } from "@/core/goal.engine";
 import { addTimelineEntry, buildContextualMemoryBlock } from "@/core/memory.timeline";
+import {
+  syncMemoryFromFirestore,
+  writeLongMemory,
+  readLongMemory,
+  appendLongMemory,
+  clearLongMemory,
+} from "@/core/memory.store";
 import { generateSessionTitle, extractTags, detectTopGoal } from "@/core/memory.summary";
 import { OrbController } from "@/components/orb/orb.controller";
 import { getDisclosure } from "@/core/experience.disclosure";
@@ -283,9 +290,19 @@ export default function Home() {
     recognition.start();
   };
 
+  // H-2 + H-3: Sync al autenticarse
+  useEffect(() => {
+    if (user?.uid) {
+      syncMemoryFromFirestore(user.uid).catch(() => {});  // H-2
+      setPipelineUserId(user.uid);                         // H-3
+    } else {
+      setPipelineUserId(null);
+    }
+  }, [user?.uid]);
+
   // Bienvenida o restauración de memoria
   useEffect(() => {
-    const hasLongMemory = !!localStorage.getItem("sofiaa_long_memory");
+    const hasLongMemory = !!readLongMemory();
     telemetry.trackSessionStart(hasLongMemory);
 
     // En carga inicial (resetKey === 0), intentar restaurar conversación guardada
@@ -340,9 +357,7 @@ export default function Home() {
         });
         const { memory } = await res.json();
         if (memory) {
-          const existing = localStorage.getItem("sofiaa_long_memory") ?? "";
-          const updated = existing ? `${existing}\n${memory}` : memory;
-          localStorage.setItem("sofiaa_long_memory", updated);
+          appendLongMemory(user?.uid ?? null, memory);
 
           // ── Memory Timeline: guardar entrada de sesión ─────────────────
           addTimelineEntry({
@@ -544,6 +559,21 @@ export default function Home() {
     setIsLoading(true);
     orb.transition("thinking");
 
+    // ── H-1: detectar si el mensaje requiere modo agente (ReAct multi-paso) ─
+    const AGENT_PATTERNS = [
+      /\banaliza\b/i, /\bcompara\b/i, /\binvestiga\b/i,
+      /\bdame un reporte\b/i, /\breporte de\b/i,
+      /\bresumen (completo|ejecutivo|detallado)\b/i,
+      /\bcuántos?\b.*\by\b.*\bcuántos?\b/i,   // "cuántos X y cuántos Y"
+      /\b(todos|todas) (los|las)\b.*\b(y|además|también)\b/i,
+      /\bpaso a paso\b/i, /\bplan de\b/i, /\bestrategia\b/i,
+    ];
+    const AGENT_ROLES = new Set<string>(["admin", "director", "vp"]);
+    const useAgentMode =
+      AGENT_ROLES.has(profile?.rol ?? "") &&
+      AGENT_PATTERNS.some(p => p.test(text));
+    // ─────────────────────────────────────────────────────────────────────
+
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -552,7 +582,7 @@ export default function Home() {
           messages: updatedMessages
             .filter(m => !m.content.startsWith("Llevándote a "))  // excluir confirmaciones sintéticas de nav
             .map(({ role, content }) => ({ role, content })),
-          longTermMemory: localStorage.getItem("sofiaa_long_memory") ?? undefined,
+          longTermMemory: readLongMemory() || undefined,
           contextualMemory: buildContextualMemoryBlock(5),
           detectedGoal,
           activePath: pathname,
@@ -561,6 +591,7 @@ export default function Home() {
           activeGoal:   goalState.goal,
           graphContext: expGraph.getAPIPayload(),
           userId:       user?.uid ?? null,
+          agentMode:    useAgentMode,
         }),
       });
 
@@ -1127,7 +1158,7 @@ export default function Home() {
         messages={messages}
         onClose={() => setShowAdmin(false)}
         onClearMemory={() => {
-          localStorage.removeItem("sofiaa_long_memory");
+          clearLongMemory(user?.uid ?? null).catch(() => {});
           setShowAdmin(false);
         }}
         onClearConversation={() => {
@@ -1135,15 +1166,14 @@ export default function Home() {
           setShowAdmin(false);
         }}
         onUpdateLongMemory={(text) => {
-          localStorage.setItem("sofiaa_long_memory", text);
+          writeLongMemory(user?.uid ?? null, text);
         }}
         onResumeSession={(summary) => {
-          // Cargar resumen como contexto inicial de la nueva sesión
-          const existing = localStorage.getItem("sofiaa_long_memory") ?? "";
+          const existing = readLongMemory();
           const withResume = existing
             ? `${existing}\n[Contexto reanudado]: ${summary}`
             : `[Contexto reanudado]: ${summary}`;
-          localStorage.setItem("sofiaa_long_memory", withResume);
+          writeLongMemory(user?.uid ?? null, withResume);
         }}
       />
     )}
