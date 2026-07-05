@@ -11,6 +11,7 @@ import LoginModal from "@/components/tec-bi/LoginModal";
 
 import SofiaWave from "@/components/orb/SofiaWave";
 import AdminPanel from "@/components/admin/AdminPanel";
+import NoraPanel  from "@/components/admin/NoraPanel";
 import { analyzeMessage } from "@/core/guardrails.engine";
 import { getSafetyResponse } from "@/config/safety.response.map";
 import { useSofiaaTelemetry } from "@/hooks/useSofiaaTelemetry";
@@ -156,6 +157,7 @@ export default function Home() {
   const [isDark, setIsDark]             = useState(false);
   const [isListeningVoice, setIsListeningVoice] = useState(false);
   const [showAdmin, setShowAdmin]               = useState(false);
+  const [showNora,  setShowNora]                = useState(false);
   const [pendingNav, setPendingNav]         = useState<string | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const messagesEndRef  = useRef<HTMLDivElement>(null);
@@ -479,6 +481,13 @@ export default function Home() {
     if (text.toLowerCase() === "espada del augurio") {
       setInput("");
       setShowAdmin(true);
+      return;
+    }
+
+    // Frase secreta N.O.R.A — visor de datos de usuarios
+    if (text.toLowerCase() === "fiat lux") {
+      setInput("");
+      setShowNora(true);
       return;
     }
 
@@ -1152,6 +1161,8 @@ export default function Home() {
       </div>
     )}
     {/* ───────────────────────────────────────────────── */}
+
+    {showNora && <NoraPanel onClose={() => setShowNora(false)} />}
 
     {showAdmin && (
       <AdminPanel
