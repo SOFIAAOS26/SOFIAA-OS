@@ -265,22 +265,14 @@ export default function ClientesPage() {
         <div
           style={{
             position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)",
-            overflowY: "auto", zIndex: 999,
+            overflowY: "auto", zIndex: 999, padding: "24px 16px",
           }}
           onClick={(e) => e.target === e.currentTarget && setModalOpen(false)}
         >
           <div
             style={{
-              minHeight: "100%", display: "flex",
-              alignItems: "center", justifyContent: "center",
-              padding: "24px 16px",
-            }}
-            onClick={(e) => e.target === e.currentTarget && setModalOpen(false)}
-          >
-          <div
-            style={{
               background: "#fff", borderRadius: 20, padding: 28,
-              width: "100%", maxWidth: 560,
+              width: "100%", maxWidth: 560, margin: "0 auto",
               boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
             }}
           >
@@ -423,7 +415,6 @@ export default function ClientesPage() {
                 </button>
               </div>
             </form>
-          </div>
           </div>
         </div>
       )}
