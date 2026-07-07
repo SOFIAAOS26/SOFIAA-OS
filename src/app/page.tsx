@@ -1207,11 +1207,10 @@ export default function Home() {
         background: isDark
           ? "linear-gradient(160deg, #09090F 0%, #0E0B1A 60%, #09090F 100%)"
           : "linear-gradient(160deg, #F9F5FF 0%, #FAFAFA 55%, #FFF0F9 100%)",
-        overflow: "hidden",
       }}
     >
       {/* ── La Aurora — blobs de fondo (brand SOFIAA) ── */}
-      <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+      <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
         <div style={{
           position: "absolute", top: "-10%", left: "-15%",
           width: "55%", height: "55%", borderRadius: "50%",
@@ -1241,7 +1240,7 @@ export default function Home() {
         }} />
       </div>
       {/* Header */}
-      <div className="shrink-0 relative flex flex-col items-center gap-0.5 pt-5 pb-1 w-full px-5">
+      <div className="shrink-0 relative flex flex-col items-center gap-0.5 pt-10 pb-1 w-full px-5">
         <p className="text-xs tracking-[0.32em] uppercase font-light" style={{ color: isDark ? "rgba(255,255,255,0.28)" : "rgba(0,0,0,0.28)" }}>
           SOFIAA LAB
         </p>
