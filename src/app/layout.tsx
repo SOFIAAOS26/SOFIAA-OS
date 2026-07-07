@@ -24,16 +24,26 @@ export const metadata: Metadata = {
     "Sistema Operativo de Facilitación Inteligente para Interacción y Acompañamiento. Tu aliada inteligente creada por Abrahan Cruz Urrutia.",
   keywords: ["SOFIAA", "SOFIAA LAB", "Abrahan Cruz", "IA", "inteligencia artificial", "PASCALL", "BERRYWORKS"],
   authors: [{ name: "Abrahan Cruz Urrutia" }],
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
   openGraph: {
     title: "SOFIAA — Intelligent Experience OS",
     description: "Tu aliada inteligente. Creada por Abrahan Cruz Urrutia en Monterrey, México.",
     type: "website",
     locale: "es_MX",
+    images: [{ url: "/icon-512.png", width: 512, height: 512, alt: "SOFIAA" }],
   },
   twitter: {
     card: "summary",
     title: "SOFIAA — Intelligent Experience OS",
     description: "Tu aliada inteligente. Creada por Abrahan Cruz Urrutia en Monterrey, México.",
+    images: ["/icon-512.png"],
   },
   robots: {
     index: true,

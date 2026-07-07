@@ -12,6 +12,7 @@ import LoginModal from "@/components/tec-bi/LoginModal";
 import SofiaWave from "@/components/orb/SofiaWave";
 import AdminPanel from "@/components/admin/AdminPanel";
 import NoraPanel  from "@/components/admin/NoraPanel";
+import SofiaLogo  from "@/components/ui/SofiaLogo";
 import { analyzeMessage } from "@/core/guardrails.engine";
 import { getSafetyResponse } from "@/config/safety.response.map";
 import { useSofiaaTelemetry } from "@/hooks/useSofiaaTelemetry";
@@ -126,7 +127,7 @@ const darkGlass = {
 
 const gradientText: React.CSSProperties = {
   fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-  background: "linear-gradient(135deg, #4F7CFF 0%, #9B4FD9 38%, #E91E8C 68%, #FF6B35 100%)",
+  background: "linear-gradient(135deg, #F472B6 0%, #A855F7 50%, #60A5FA 100%)",
   WebkitBackgroundClip: "text",
   WebkitTextFillColor: "transparent",
   backgroundClip: "text",
@@ -1199,7 +1200,9 @@ export default function Home() {
         <p className="text-xs tracking-[0.32em] uppercase font-light" style={{ color: isDark ? "rgba(255,255,255,0.28)" : "rgba(0,0,0,0.28)" }}>
           SOFIAA LAB
         </p>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {/* Isotipo PHI */}
+          <SofiaLogo size={38} animated />
           <h1
             style={{
               ...gradientText,
