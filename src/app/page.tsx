@@ -63,6 +63,15 @@ const QUICK_ACTIONS = [
   { label: "¿Cómo puedo contactarlos?", icon: "→", modal: false },
 ];
 
+// ─── SOFIAA Brand tokens ───────────────────────────────────────────────────────
+const BRAND = {
+  rosa:   "#F472B6",
+  lila:   "#A855F7",
+  azul:   "#60A5FA",
+  aurora: "linear-gradient(135deg, #F472B6 0%, #A855F7 50%, #60A5FA 100%)",
+  auroraGlow: "0 4px 24px rgba(168,85,247,0.32), 0 1px 0 rgba(255,255,255,0.22) inset",
+};
+
 // ─── Liquid Glass — material translúcido estilo iOS 26 ────────────────────────
 const LG = {
   base: (opacity = 0.38) => `rgba(255,255,255,${opacity})`,
@@ -76,25 +85,27 @@ const glass = {
     background: LG.base(0.38),
     backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
     border: LG.border,
-    boxShadow: `0 4px 20px rgba(100,100,200,0.07), ${LG.highlight}`,
+    boxShadow: `0 4px 20px rgba(168,85,247,0.06), ${LG.highlight}`,
     color: "#1D1D1F",
   } as React.CSSProperties,
   user: {
-    background: "linear-gradient(135deg, rgba(91,138,255,0.92), rgba(123,79,232,0.88))",
+    background: BRAND.aurora,
     backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
-    border: "1px solid rgba(255,255,255,0.28)",
-    boxShadow: "0 4px 18px rgba(79,124,255,0.28), inset 0 1.5px 0 rgba(255,255,255,0.40)",
+    border: "1px solid rgba(255,255,255,0.22)",
+    boxShadow: BRAND.auroraGlow,
     color: "#FFFFFF",
   } as React.CSSProperties,
   input: {
     background: LG.base(0.52), backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
-    border: LG.border, boxShadow: `0 2px 16px rgba(100,100,200,0.07), ${LG.highlight}`,
+    border: "1px solid rgba(168,85,247,0.22)",
+    boxShadow: `0 2px 16px rgba(168,85,247,0.07), ${LG.highlight}`,
     borderRadius: "9999px", padding: "0.38rem 0.9rem", color: "#1D1D1F",
     fontSize: "0.80rem", outline: "none", width: "100%", transition: "box-shadow 0.25s",
   } as React.CSSProperties,
   chip: {
     background: LG.base(0.45), backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
-    border: LG.border, boxShadow: `0 2px 10px rgba(100,100,200,0.06), ${LG.highlight}`,
+    border: "1px solid rgba(168,85,247,0.20)",
+    boxShadow: `0 2px 10px rgba(168,85,247,0.06), ${LG.highlight}`,
     borderRadius: "9999px", padding: "0.38rem 0.9rem", fontSize: "0.79rem",
     color: "#3D3D3F", cursor: "pointer", transition: "all 0.2s", whiteSpace: "nowrap" as const,
   } as React.CSSProperties,
@@ -103,25 +114,25 @@ const glass = {
 // ─── Dark Glass ────────────────────────────────────────────────────────────────
 const darkGlass = {
   assistant: {
-    background: "rgba(255,255,255,0.06)", backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
-    border: "1px solid rgba(255,255,255,0.10)",
+    background: "rgba(255,255,255,0.05)", backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
+    border: "1px solid rgba(168,85,247,0.15)",
     boxShadow: "0 4px 24px rgba(0,0,0,0.35), inset 0 1.5px 0 rgba(255,255,255,0.07)",
     color: "#ECECF1",
   } as React.CSSProperties,
   user: glass.user,
   input: {
     background: "rgba(255,255,255,0.07)", backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
-    border: "1px solid rgba(255,255,255,0.11)",
+    border: "1px solid rgba(168,85,247,0.22)",
     boxShadow: "0 2px 16px rgba(0,0,0,0.30), inset 0 1.5px 0 rgba(255,255,255,0.05)",
     borderRadius: "9999px", padding: "0.5rem 0.9rem", color: "#ECECF1",
     fontSize: "0.82rem", outline: "none", width: "100%", transition: "box-shadow 0.25s",
   } as React.CSSProperties,
   chip: {
-    background: "rgba(255,255,255,0.07)", backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
-    border: "1px solid rgba(255,255,255,0.11)",
+    background: "rgba(168,85,247,0.09)", backdropFilter: LG.blur, WebkitBackdropFilter: LG.blur,
+    border: "1px solid rgba(168,85,247,0.22)",
     boxShadow: "0 2px 10px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.05)",
     borderRadius: "9999px", padding: "0.38rem 0.9rem", fontSize: "0.79rem",
-    color: "rgba(255,255,255,0.72)", cursor: "pointer", transition: "all 0.2s", whiteSpace: "nowrap" as const,
+    color: "rgba(255,255,255,0.78)", cursor: "pointer", transition: "all 0.2s", whiteSpace: "nowrap" as const,
   } as React.CSSProperties,
 };
 
@@ -1191,10 +1202,44 @@ export default function Home() {
     )}
     <main
       className="sofiaa-panel flex-1 flex flex-col"
-      style={{ background: isDark
-        ? "linear-gradient(145deg, #0D0D1A 0%, #0F0F18 55%, #130D1A 100%)"
-        : "linear-gradient(145deg, #EEF1FF 0%, #FAFAFA 55%, #FFF3FC 100%)" }}
+      style={{
+        position: "relative",
+        background: isDark
+          ? "linear-gradient(160deg, #09090F 0%, #0E0B1A 60%, #09090F 100%)"
+          : "linear-gradient(160deg, #F9F5FF 0%, #FAFAFA 55%, #FFF0F9 100%)",
+        overflow: "hidden",
+      }}
     >
+      {/* ── La Aurora — blobs de fondo (brand SOFIAA) ── */}
+      <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+        <div style={{
+          position: "absolute", top: "-10%", left: "-15%",
+          width: "55%", height: "55%", borderRadius: "50%",
+          background: isDark
+            ? "radial-gradient(ellipse, rgba(244,114,182,0.12) 0%, transparent 70%)"
+            : "radial-gradient(ellipse, rgba(244,114,182,0.10) 0%, transparent 70%)",
+          filter: "blur(48px)",
+          animation: "gradientFlow 14s ease infinite",
+        }} />
+        <div style={{
+          position: "absolute", top: "30%", right: "-10%",
+          width: "45%", height: "45%", borderRadius: "50%",
+          background: isDark
+            ? "radial-gradient(ellipse, rgba(96,165,250,0.10) 0%, transparent 70%)"
+            : "radial-gradient(ellipse, rgba(96,165,250,0.09) 0%, transparent 70%)",
+          filter: "blur(48px)",
+          animation: "gradientFlow 18s ease infinite reverse",
+        }} />
+        <div style={{
+          position: "absolute", bottom: "-5%", left: "25%",
+          width: "50%", height: "40%", borderRadius: "50%",
+          background: isDark
+            ? "radial-gradient(ellipse, rgba(168,85,247,0.09) 0%, transparent 70%)"
+            : "radial-gradient(ellipse, rgba(168,85,247,0.07) 0%, transparent 70%)",
+          filter: "blur(48px)",
+          animation: "gradientFlow 22s ease infinite",
+        }} />
+      </div>
       {/* Header */}
       <div className="shrink-0 relative flex flex-col items-center gap-0.5 pt-5 pb-1 w-full px-5">
         <p className="text-xs tracking-[0.32em] uppercase font-light" style={{ color: isDark ? "rgba(255,255,255,0.28)" : "rgba(0,0,0,0.28)" }}>
@@ -1373,9 +1418,9 @@ export default function Home() {
             style={{
               fontSize: "0.78rem", padding: "0.4rem 1rem",
               borderRadius: 9999, cursor: "pointer", border: "none",
-              background: "linear-gradient(135deg, #4F7CFF 0%, #8A20FF 60%, #E91E8C 100%)",
+              background: BRAND.aurora,
               color: "#fff", fontWeight: 700, letterSpacing: "0.02em",
-              boxShadow: "0 3px 18px rgba(79,124,255,0.35), 0 1px 0 rgba(255,255,255,0.20) inset",
+              boxShadow: BRAND.auroraGlow,
               display: "flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" as const,
             }}
           >
@@ -1400,8 +1445,8 @@ export default function Home() {
               paddingLeft: msg.role === "user" ? 0 : 10,
               paddingRight: msg.role === "user" ? 10 : 0,
               background: msg.role === "user"
-                ? "linear-gradient(135deg, #9B4FD9, #E91E8C)"
-                : "linear-gradient(135deg, #4F7CFF, #9B4FD9)",
+                ? "linear-gradient(135deg, #A855F7, #F472B6)"
+                : "linear-gradient(135deg, #60A5FA, #A855F7)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
@@ -1415,7 +1460,7 @@ export default function Home() {
               <div
                 className="sofiaa-bubble"
                 style={{
-                  background: "linear-gradient(135deg, rgba(79,124,255,0.50), rgba(233,30,140,0.38))",
+                  background: "linear-gradient(135deg, rgba(96,165,250,0.55), rgba(168,85,247,0.45), rgba(244,114,182,0.40))",
                   borderRadius: "1.5rem 1.5rem 1.5rem 0.4rem",
                   padding: "1.5px",
                 }}
@@ -1546,21 +1591,21 @@ export default function Home() {
             className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95"
             style={{
               background: isListeningVoice
-                ? "linear-gradient(135deg, #E91E8C, #FF6B35)"
-                : LG.base(0.80),
+                ? BRAND.aurora
+                : isDark ? "rgba(255,255,255,0.08)" : LG.base(0.80),
               backdropFilter: "blur(20px)",
               WebkitBackdropFilter: "blur(20px)",
               boxShadow: isListeningVoice
-                ? "0 0 18px rgba(233,30,140,0.50)"
-                : `0 2px 10px rgba(100,100,200,0.12), inset 0 1px 0 rgba(255,255,255,0.95)`,
-              border: isListeningVoice ? "none" : "1px solid rgba(255,255,255,0.90)",
+                ? BRAND.auroraGlow
+                : `0 2px 10px rgba(168,85,247,0.12), inset 0 1px 0 rgba(255,255,255,0.95)`,
+              border: isListeningVoice ? "none" : "1px solid rgba(168,85,247,0.25)",
               animation: isListeningVoice ? "waveExpand 1.5s ease-out infinite" : "none",
             }}
             aria-label="Hablar"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
               fill="none"
-              stroke={isListeningVoice ? "white" : "#9B4FD9"}
+              stroke={isListeningVoice ? "white" : BRAND.lila}
               strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
               style={{ width: "14px", height: "14px" }}>
               <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3Z" />
@@ -1593,8 +1638,8 @@ export default function Home() {
               disabled={isLoading || isWelcoming || !input.trim()}
               className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full disabled:opacity-35 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95"
               style={{
-                background: "linear-gradient(135deg, #4F7CFF, #9B4FD9)",
-                boxShadow: "0 2px 12px rgba(79,124,255,0.35), inset 0 1px 0 rgba(255,255,255,0.25)",
+                background: BRAND.aurora,
+                boxShadow: BRAND.auroraGlow,
               }}
               aria-label="Enviar"
             >
@@ -1611,9 +1656,9 @@ export default function Home() {
         {/* Atajos de extensiones */}
         <div className="flex justify-center gap-2 mt-2.5">
           {[
-            { label: "TEC BI", icon: "🏛️", path: "/tec-bi",         color: "rgba(79,124,255,0.14)",  border: "rgba(79,124,255,0.32)"  },
-            { label: "MK-s",   icon: "📱", path: "/marketing-sofia", color: "rgba(155,79,217,0.14)", border: "rgba(155,79,217,0.32)" },
-            { label: "JP",     icon: "💙", path: "/jp-memorial",     color: "rgba(14,165,233,0.14)", border: "rgba(14,165,233,0.32)" },
+            { label: "TEC BI", icon: "🏛️", path: "/tec-bi",         color: "rgba(96,165,250,0.13)",  border: "rgba(96,165,250,0.30)"  },
+            { label: "MK-s",   icon: "📱", path: "/marketing-sofia", color: "rgba(168,85,247,0.13)", border: "rgba(168,85,247,0.30)" },
+            { label: "JP",     icon: "💙", path: "/jp-memorial",     color: "rgba(244,114,182,0.13)", border: "rgba(244,114,182,0.30)" },
           ].map(({ label, icon, path, color, border }) => (
             <button
               key={path}
