@@ -22,14 +22,14 @@ const SP: Record<WaveState, { amp: number; spd: number; alpha: number }> = {
   speaking:  { amp: 1.00, spd: 2.60, alpha: 1.00 },
 };
 
-// ── Definición de ondas — colores de la paleta SOFIAA ──────────────────────
+// ── Definición de ondas — Aurora brand SOFIAA (rosa → lila → azul) ─────────
 const WD = [
-  { a: 0.230, f: 1.05, s: 0.50, p: 0.00, r:  79, g: 124, b: 255, lw: 2.8 }, // azul SOFIAA
-  { a: 0.185, f: 1.68, s: 0.84, p: 1.15, r: 155, g:  79, b: 217, lw: 2.2 }, // violeta SOFIAA
-  { a: 0.145, f: 2.32, s: 1.24, p: 2.25, r: 233, g:  30, b: 140, lw: 1.9 }, // rosa SOFIAA
-  { a: 0.105, f: 3.08, s: 1.70, p: 3.40, r: 138, g:  32, b: 255, lw: 1.6 }, // púrpura
-  { a: 0.072, f: 2.68, s: 2.08, p: 4.20, r: 255, g:  88, b: 200, lw: 1.3 }, // pink suave
-  { a: 0.046, f: 3.90, s: 2.65, p: 0.90, r:  79, g: 170, b: 255, lw: 1.0 }, // azul claro
+  { a: 0.230, f: 1.05, s: 0.50, p: 0.00, r:  96, g: 165, b: 250, lw: 2.8 }, // azul  #60A5FA
+  { a: 0.185, f: 1.68, s: 0.84, p: 1.15, r: 168, g:  85, b: 247, lw: 2.2 }, // lila  #A855F7
+  { a: 0.145, f: 2.32, s: 1.24, p: 2.25, r: 244, g: 114, b: 182, lw: 1.9 }, // rosa  #F472B6
+  { a: 0.105, f: 3.08, s: 1.70, p: 3.40, r: 192, g: 132, b: 252, lw: 1.6 }, // lila claro #C084FC
+  { a: 0.072, f: 2.68, s: 2.08, p: 4.20, r: 249, g: 168, b: 212, lw: 1.3 }, // rosa suave #F9A8D4
+  { a: 0.046, f: 3.90, s: 2.65, p: 0.90, r: 147, g: 197, b: 253, lw: 1.0 }, // azul claro #93C5FD
 ];
 
 const N   = 110;
