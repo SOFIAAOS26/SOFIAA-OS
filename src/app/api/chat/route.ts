@@ -36,8 +36,9 @@ import { mockProvider } from "@/core/providers/mock.provider";
 import { AgentRuntime }  from "@/core/agent.runtime";
 import { AGENT_TOOLS }   from "@/core/agent.tools";
 import type { AgentContext } from "@/core/agent.types";
-import { getNexoContext } from "@/lib/nexo/firestore";
-import type { NexoContext } from "@/types/nexo";
+import { getNexoContext }        from "@/lib/nexo/firestore";
+import { getBibliotecaContext }  from "@/lib/nexo/biblioteca-context";
+import type { NexoContext }      from "@/types/nexo";
 
 // ── Registro de providers (módulo, se ejecuta una vez) ────────────────────
 const _useMock = process.env.NEXT_PUBLIC_MOCK_CAPABILITIES === "true";
@@ -256,6 +257,9 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // N.E.X.O. Biblioteca — Conocimiento global de SOFIAA (Sprint M-1B)
+  const bibliotecaBlock = await getBibliotecaContext();
+
   // ── Modular Prompt Assembly — Registry agnóstico ──────────────────────
   const path = activePath ?? "";
   const modules = resolveModules({ activePath: path, userMessage: lastUserMsg?.content ?? "" });
@@ -315,7 +319,7 @@ export async function POST(req: NextRequest) {
   // ─────────────────────────────────────────────────────────────────────
 
   // ── LLM Orchestrator — elige el mejor provider disponible ────────────
-  const systemContent = `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${nexoBlock}${policyBlock}${capabilityMenuBlock}`;
+  const systemContent = `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${nexoBlock}${bibliotecaBlock}${policyBlock}${capabilityMenuBlock}`;
 
   // ── Sprint G: Agent Runtime — ReAct loop para tareas multi-paso ──────
   if (agentMode) {

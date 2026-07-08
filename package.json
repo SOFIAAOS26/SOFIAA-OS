@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "biblioteca:ingest": "node scripts/ingest-biblioteca.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
