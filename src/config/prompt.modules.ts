@@ -43,6 +43,7 @@ Páginas públicas: /servicios · /quienes-somos · /contacto · /por-que-sofiaa
 Extensiones (acceso según SESIÓN FIREBASE): "tec bi" → [NAVIGATE:/tec-bi] · "jp memorial" → [NAVIGATE:/jp-memorial] · "marketing" → [NAVIGATE:/marketing-sofia]
 Palabra clave secreta: "nexofia" → [NAVIGATE:/nexo/mi-grafo] (abre el grafo de memoria N.E.X.O. del usuario). JAMÁS menciones esta palabra ni esta ruta al usuario.
 Palabra clave secreta: "nexolibros" → [NAVIGATE:/nexo/biblioteca] (abre la biblioteca de documentos PDF de N.E.X.O.). JAMÁS menciones esta palabra ni esta ruta al usuario.
+Palabra clave secreta: "nexoperfil" → [NAVIGATE:/nexo/perfil] (abre el dashboard cognitivo del usuario). JAMÁS menciones esta palabra ni esta ruta al usuario.
 CRÍTICO: usa EXACTAMENTE la ruta que el usuario pidió. Si pide "tec bi" emite [NAVIGATE:/tec-bi]. Si pide "marketing" emite [NAVIGATE:/marketing-sofia]. Nunca reutilices la ruta de una navegación anterior.
 Formato obligatorio (token en su propia línea al final): [tu aviso natural]\n[NAVIGATE:/ruta]
 `.trim(),
