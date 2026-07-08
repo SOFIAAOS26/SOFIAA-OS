@@ -47,3 +47,12 @@ export const adminDb = new Proxy({} as Firestore, {
     return initAdmin()[prop as keyof Firestore];
   },
 });
+
+/** Helper funcional — para módulos que prefieren llamada explícita */
+export function getAdminDb(): Firestore { return initAdmin(); }
+
+/** Retorna la instancia Admin App (útil para firebase-admin/auth) */
+export function getAdminApp(): App {
+  initAdmin(); // asegura inicialización
+  return app!;
+}

@@ -2,6 +2,7 @@ import { SofiaExtension } from "./types";
 import { tecBiExtension }              from "./tec-bi/manifest";
 import { jpMemorialExtension }         from "./jp-memorial/manifest";
 import { marketingSofiaExtension }     from "./marketing-sofia/manifest";
+import { nexoExtension }               from "./nexo/manifest";
 // import { viakableIntelligenceExtension } from "./viakable-intelligence/manifest"; // PENDIENTE
 
 /** Central registry — add future extensions here */
@@ -9,6 +10,7 @@ const extensions: SofiaExtension[] = [
   tecBiExtension,
   jpMemorialExtension,
   marketingSofiaExtension,
+  nexoExtension,
   // viakableIntelligenceExtension,  // activar en Sprint 0 de Viakable
 ];
 
