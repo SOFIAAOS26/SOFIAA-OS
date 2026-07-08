@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Regla base: denegar todo por defecto ─────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ── Usuarios: solo acceden a sus propios datos ────────────────────────────
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+      // N.E.X.O. — Nodos de memoria
+      match /nexo_nodes/{nodeId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+
+      // N.E.X.O. — Eventos para N.O.R.A (solo lectura del cliente, escritura solo server)
+      match /nexo_events/{eventId} {
+        allow read:  if request.auth != null && request.auth.uid == uid;
+        allow write: if false; // Solo Admin SDK escribe (server-side)
+      }
+
+      // Long-term memory de SOFIAA
+      match /memories/{memId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+
+      // Pipeline observer / telemetría
+      match /pipeline_events/{eventId} {
+        allow read:  if request.auth != null && request.auth.uid == uid;
+        allow write: if false; // Solo Admin SDK
+      }
+    }
+
+    // ── TEC BI — colecciones institucionales ─────────────────────────────────
+    match /tec_bi/{docId} {
+      allow read:  if request.auth != null;
+      allow write: if request.auth != null && isAdmin();
+    }
+
+    // ── Función helper ────────────────────────────────────────────────────────
+    function isAdmin() {
+      return request.auth.token.email in [
+        "u.cannmx@gmail.com"
+        // Agrega más emails de admin aquí
+      ];
+    }
+  }
+}

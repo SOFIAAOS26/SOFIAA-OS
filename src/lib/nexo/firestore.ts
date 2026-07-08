@@ -102,7 +102,7 @@ export async function upsertNexoNode(
       await docRef.update({
         weight:         Math.min(1, prev.weight + 0.15),
         lastReinforced: Date.now(),
-        hits:           (prev as NexoNode & { hits?: number }).hits ?? 1 + 1,
+        hits:           ((prev as NexoNode & { hits?: number }).hits ?? 1) + 1,
       });
       return;
     }
