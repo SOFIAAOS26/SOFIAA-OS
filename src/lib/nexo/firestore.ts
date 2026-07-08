@@ -18,6 +18,7 @@ import type {
 import {
   NEXO_MAX_CONTEXT_NODES, NEXO_PRUNE_THRESHOLD,
   NEXO_DECAY_RATE, NEXO_DECAY_DAYS,
+  NEXO_PROACTIVE_THRESHOLD, NEXO_MAX_PROACTIVE_NODES,
 } from "@/types/nexo";
 import { generateQueryEmbedding, hybridScore } from "@/lib/nexo/embeddings";
 
@@ -81,7 +82,7 @@ export async function getNexoContext(
     .sort((a, b) => b[1] - a[1])
     .map(([cat]) => cat);
 
-  return { topNodes, totalNodes, clusters, nodeIds };
+  return { topNodes, totalNodes, clusters, nodeIds, proactiveNodes: [], topScore: 0 };
 }
 
 // ── Retrieval semántico (Sprint M-4) ──────────────────────────────────────────
@@ -115,7 +116,7 @@ export async function getSemanticNexoContext(
     .get();
 
   if (snap.empty) {
-    return { topNodes: [], totalNodes: 0, clusters: [], nodeIds: [] };
+    return { topNodes: [], totalNodes: 0, clusters: [], nodeIds: [], proactiveNodes: [], topScore: 0 };
   }
 
   // Generar embedding de la query en paralelo con el fetch
@@ -134,15 +135,24 @@ export async function getSemanticNexoContext(
   // Top-N
   const top     = scored.slice(0, limit);
   const nodeIds = top.map(t => t.id);
+  const topScore = scored.length > 0 ? scored[0].score : 0;
 
-  const topNodes: NexoContextNode[] = top.map(({ node }) => ({
+  const toContextNode = ({ node }: { node: NexoNode }): NexoContextNode => ({
     title:    node.title,
     category: node.category,
     summary:  node.summary,
     weight:   node.weight,
     daysAgo:  Math.floor((now - node.capturedAt) / 86_400_000),
     url:      node.url,
-  }));
+  });
+
+  const topNodes: NexoContextNode[] = top.map(toContextNode);
+
+  // Proactive Surface (Sprint M-5) — nodos con score ≥ umbral
+  const proactiveNodes: NexoContextNode[] = scored
+    .filter(({ score }) => score >= NEXO_PROACTIVE_THRESHOLD)
+    .slice(0, NEXO_MAX_PROACTIVE_NODES)
+    .map(toContextNode);
 
   // Stats globales
   const countSnap  = await db.collection(nexoNodesCol(uid)).count().get();
@@ -157,7 +167,7 @@ export async function getSemanticNexoContext(
     .sort((a, b) => b[1] - a[1])
     .map(([cat]) => cat);
 
-  return { topNodes, totalNodes, clusters, nodeIds };
+  return { topNodes, totalNodes, clusters, nodeIds, proactiveNodes, topScore };
 }
 
 // ── Escribir nodo ─────────────────────────────────────────────────────────────

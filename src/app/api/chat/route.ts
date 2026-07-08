@@ -107,25 +107,41 @@ const NEXO_CATEGORY_LABELS: Record<string, string> = {
 function buildNexoBlock(ctx: NexoContext | null): string {
   if (!ctx || ctx.topNodes.length === 0) return "";
 
-  const lines = ctx.topNodes.map(n => {
-    const cat    = NEXO_CATEGORY_LABELS[n.category] ?? n.category;
-    const when   = n.daysAgo === 0 ? "hoy"
-                 : n.daysAgo === 1 ? "ayer"
-                 : `hace ${n.daysAgo} días`;
-    const urlPart = n.url ? ` | url: ${n.url}` : "";
-    return `• [${cat}] ${n.title} — ${n.summary} (${when}${urlPart})`;
-  });
+  const formatNode = (n: { title: string; category: string; summary: string; daysAgo: number; url?: string | null }) => {
+    const cat   = NEXO_CATEGORY_LABELS[n.category] ?? n.category;
+    const when  = n.daysAgo === 0 ? "hoy" : n.daysAgo === 1 ? "ayer" : `hace ${n.daysAgo} días`;
+    const url   = n.url ? ` | url: ${n.url}` : "";
+    return `• [${cat}] ${n.title} — ${n.summary} (${when}${url})`;
+  };
 
-  const clusters = ctx.clusters.length > 0
-    ? `\nIntereses detectados: ${ctx.clusters.map(c => NEXO_CATEGORY_LABELS[c] ?? c).join(", ")}.`
-    : "";
+  let block = "";
 
-  return (
-    `\n\nMEMORIA N.E.X.O. — Capturas recientes del usuario (${ctx.totalNodes} nodos activos):\n` +
-    lines.join("\n") +
-    clusters +
-    `\n(Usa esta información proactivamente cuando sea relevante. No menciones "N.E.X.O." al usuario.)`
-  );
+  // ── Proactive Surface (Sprint M-5) ────────────────────────────────────────
+  // Nodos con alta similitud semántica → SOFIAA DEBE mencionarlos en su respuesta
+  if (ctx.proactiveNodes.length > 0) {
+    const proactiveLines = ctx.proactiveNodes.map(formatNode).join("\n");
+    block +=
+      `\n\nMEMORIA N.E.X.O. — ALTA RELEVANCIA (INSTRUCCIÓN: menciona estos temas en tu respuesta de forma natural y conversacional, ` +
+      `como si lo recordaras. Usa frases como "Esto me recuerda algo que guardaste sobre...", ` +
+      `"Justo tengo en mente algo tuyo relacionado con...", "Vi que te interesa..." o similares):\n` +
+      proactiveLines;
+  }
+
+  // ── Contexto de fondo — usar si es relevante, sin obligación ─────────────
+  const proactiveTitles = new Set(ctx.proactiveNodes.map(n => n.title));
+  const background = ctx.topNodes.filter(n => !proactiveTitles.has(n.title));
+
+  if (background.length > 0) {
+    const bgLines = background.map(formatNode).join("\n");
+    const clusters = ctx.clusters.length > 0
+      ? `\nIntereses detectados: ${ctx.clusters.map(c => NEXO_CATEGORY_LABELS[c] ?? c).join(", ")}.`
+      : "";
+    block +=
+      `\n\nMEMORIA N.E.X.O. — Contexto de fondo (${ctx.totalNodes} nodos activos):\n` +
+      bgLines + clusters;
+  }
+
+  return block + `\n(No menciones el término "N.E.X.O." al usuario.)`;
 }
 
 export async function POST(req: NextRequest) {

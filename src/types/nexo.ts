@@ -168,6 +168,17 @@ export interface NexoContext {
    * El Attention Engine (Sprint M-2) usa esto para reforzar solo los nodos que SOFIAA usó.
    */
   nodeIds: string[];
+  /**
+   * Nodos con hybridScore ≥ NEXO_PROACTIVE_THRESHOLD.
+   * SOFIAA los menciona explícitamente en su respuesta (Proactive Surface, Sprint M-5).
+   * Subconjunto de topNodes — máximo 2 para no saturar el prompt.
+   */
+  proactiveNodes: NexoContextNode[];
+  /**
+   * Score híbrido más alto visto en esta query (útil para analytics y debug).
+   * Sprint M-5.
+   */
+  topScore: number;
 }
 
 export interface NexoContextNode {
@@ -213,10 +224,17 @@ export interface BibliotecaDoc {
 // ── Constantes ────────────────────────────────────────────────────────────────
 
 export const NEXO_COLLECTION = "nexo_nodes" as const;
-export const NEXO_INITIAL_WEIGHT   = 0.60;
-export const NEXO_DECAY_RATE       = 0.05;
-export const NEXO_PRUNE_THRESHOLD  = 0.05;
+export const NEXO_INITIAL_WEIGHT    = 0.60;
+export const NEXO_DECAY_RATE        = 0.05;
+export const NEXO_PRUNE_THRESHOLD   = 0.05;
 export const NEXO_MAX_CONTEXT_NODES = 5;
+/**
+ * Umbral de hybridScore para activar la superficie proactiva (Sprint M-5).
+ * Nodos con score ≥ 0.65 son mencionados explícitamente por SOFIAA.
+ */
+export const NEXO_PROACTIVE_THRESHOLD = 0.65;
+/** Máximo de nodos proactivos por request — evita saturar el prompt. */
+export const NEXO_MAX_PROACTIVE_NODES = 2;
 
 /** Días sin referencia para cada categoría antes de considerar decay agresivo */
 export const NEXO_DECAY_DAYS: Record<NexoCategory, number> = {
