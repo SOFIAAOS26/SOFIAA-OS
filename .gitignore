@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Service account keys — NUNCA commitear
+*firebase-adminsdk*.json
+*service-account*.json
+*serviceaccount*.json
+client_secret_*.json

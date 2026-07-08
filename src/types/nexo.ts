@@ -48,9 +48,17 @@ export interface NexoIngestPayload {
 
 // ── Nodo N.E.X.O. en el ExperienceGraph ──────────────────────────────────────
 
+export type NexoNodeType = "captured" | "insight";
+
 export interface NexoNode {
   /** ID único — formato: "nexo:{category}:{slug}" */
   id:              string;
+  /**
+   * Tipo de nodo.
+   * "captured" — capturado por el usuario (default si ausente)
+   * "insight"  — generado por el Reflection Engine (Sprint M-0)
+   */
+  type?:           NexoNodeType;
   /** Categoría semántica */
   category:        NexoCategory;
   /** Título legible para el LLM */
@@ -151,6 +159,8 @@ export interface NexoContextNode {
   weight:   number;
   /** Días desde la última captura */
   daysAgo:  number;
+  /** URL original del nodo (para que el LLM genere links correctos) */
+  url?:     string | null;
 }
 
 // ── Constantes ────────────────────────────────────────────────────────────────

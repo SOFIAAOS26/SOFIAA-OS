@@ -21,6 +21,83 @@ import {
 import type { NexoNode, NexoCategory } from "@/types/nexo";
 import { NEXO_DECAY_DAYS } from "@/types/nexo";
 
+// ── Insight card (Sprint M-0) ─────────────────────────────────────────────────
+function InsightCard({
+  node, onDelete, deleting,
+}: { node: NexoNode; onDelete: () => void; deleting: boolean }) {
+  const pattern = node.entities?.extra?.pattern ?? "observación";
+  const PATTERN_ICON: Record<string, string> = {
+    curiosidad:          "🔭",
+    hábito:              "🔄",
+    interés_emergente:   "🌱",
+    conexión_temática:   "🔗",
+    observación:         "💡",
+  };
+  const icon = PATTERN_ICON[pattern] ?? "💡";
+
+  return (
+    <div style={{
+      background:    "rgba(251,191,36,0.05)",
+      border:        "1px solid rgba(251,191,36,0.25)",
+      borderLeft:    "3px solid #FBBF24",
+      borderRadius:  14, padding: "13px 14px",
+      opacity:       deleting ? 0.4 : 1,
+      transition:    "opacity 0.2s",
+    }}>
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 6 }}>
+        <span style={{ fontSize: 18, flexShrink: 0, lineHeight: 1.2 }}>{icon}</span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{
+            margin: "0 0 2px", fontSize: 13, fontWeight: 600, color: "#FDE68A",
+            whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+          }}>
+            {node.title}
+          </p>
+          <p style={{
+            margin: 0, fontSize: 11, color: "rgba(253,230,138,0.65)", lineHeight: 1.5,
+            display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden",
+          }}>
+            {node.summary}
+          </p>
+        </div>
+        <button
+          onClick={onDelete}
+          disabled={deleting}
+          title="Borrar insight"
+          style={{
+            background: "none", border: "none", cursor: "pointer",
+            color: "rgba(253,230,138,0.25)", fontSize: 14, padding: "2px 4px",
+            transition: "color 0.15s", flexShrink: 0,
+          }}
+          onMouseEnter={e => (e.currentTarget.style.color = "#F87171")}
+          onMouseLeave={e => (e.currentTarget.style.color = "rgba(253,230,138,0.25)")}
+        >
+          ✕
+        </button>
+      </div>
+      <div style={{ display: "flex", gap: 6, marginTop: 7, flexWrap: "wrap", alignItems: "center" }}>
+        <span style={{
+          fontSize: 10, padding: "2px 7px", borderRadius: 99,
+          background: "rgba(251,191,36,0.12)", border: "1px solid rgba(251,191,36,0.3)",
+          color: "#FBBF24", fontWeight: 600,
+        }}>
+          ✨ Reflexión
+        </span>
+        <span style={{
+          fontSize: 10, padding: "2px 7px", borderRadius: 99,
+          background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
+          color: "rgba(253,230,138,0.5)",
+        }}>
+          {pattern.replace(/_/g, " ")}
+        </span>
+        <span style={{ fontSize: 10, marginLeft: "auto", color: "rgba(253,230,138,0.3)" }}>
+          {daysAgo(node.capturedAt)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 // ── Constantes visuales ───────────────────────────────────────────────────────
 const CAT_META: Record<NexoCategory, { label: string; icon: string; color: string }> = {
   food:     { label: "Comida",         icon: "🍜", color: "#F59E0B" },
@@ -227,25 +304,29 @@ export default function MiGrafoPage() {
     }
   }, [user, nodes, clearing]);
 
-  // ── Stats ────────────────────────────────────────────────────────────────
+  // ── Separar insights de nodos capturados ─────────────────────────────────
+  const insightNodes   = nodes.filter(n => n.type === "insight");
+  const capturedNodes  = nodes.filter(n => !n.type || n.type === "captured");
+
+  // ── Stats (sobre capturados, no insights) ────────────────────────────────
   const totalNodes  = nodes.length;
-  const avgWeight   = totalNodes > 0
-    ? Math.round(nodes.reduce((s, n) => s + n.weight, 0) / totalNodes * 100)
+  const avgWeight   = capturedNodes.length > 0
+    ? Math.round(capturedNodes.reduce((s, n) => s + n.weight, 0) / capturedNodes.length * 100)
     : 0;
-  const topCat = totalNodes > 0
+  const topCat = capturedNodes.length > 0
     ? Object.entries(
-        nodes.reduce<Record<string, number>>((acc, n) => {
+        capturedNodes.reduce<Record<string, number>>((acc, n) => {
           acc[n.category] = (acc[n.category] ?? 0) + 1; return acc;
         }, {})
       ).sort((a, b) => b[1] - a[1])[0]
     : null;
 
-  // ── Filtro ───────────────────────────────────────────────────────────────
-  const visibleNodes = filterCat === "all"
-    ? nodes
-    : nodes.filter(n => n.category === filterCat);
+  // ── Filtro (solo sobre capturados) ───────────────────────────────────────
+  const visibleCaptured = filterCat === "all"
+    ? capturedNodes
+    : capturedNodes.filter(n => n.category === filterCat);
 
-  const activeCats = [...new Set(nodes.map(n => n.category))];
+  const activeCats = [...new Set(capturedNodes.map(n => n.category))];
 
   // ── Estilos base ─────────────────────────────────────────────────────────
   const bg = "linear-gradient(145deg, #0F0B1E 0%, #1A0F2E 55%, #0F1628 100%)";
@@ -312,7 +393,7 @@ export default function MiGrafoPage() {
           </div>
         )}
 
-        {/* Filtros por categoría */}
+        {/* Filtros por categoría (solo capturados) */}
         {activeCats.length > 1 && (
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14 }}>
             <button
@@ -324,11 +405,11 @@ export default function MiGrafoPage() {
                 color: filterCat === "all" ? "#A855F7" : "rgba(226,217,243,0.5)",
               }}
             >
-              Todos ({totalNodes})
+              Todos ({capturedNodes.length})
             </button>
             {activeCats.map(cat => {
               const m = CAT_META[cat];
-              const count = nodes.filter(n => n.category === cat).length;
+              const count = capturedNodes.filter(n => n.category === cat).length;
               return (
                 <button
                   key={cat}
@@ -366,10 +447,48 @@ export default function MiGrafoPage() {
           </div>
         )}
 
-        {/* Nodes list */}
-        {!loading && visibleNodes.length > 0 && (
+        {/* Sección de Insights (Sprint M-0) */}
+        {!loading && insightNodes.length > 0 && (
+          <>
+            <div style={{
+              display: "flex", alignItems: "center", gap: 8,
+              marginBottom: 10,
+            }}>
+              <span style={{ fontSize: 15 }}>✨</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: "#FBBF24", letterSpacing: "0.06em" }}>
+                REFLEXIONES DE SOFIAA
+              </span>
+              <div style={{ flex: 1, height: 1, background: "rgba(251,191,36,0.15)" }} />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
+              {insightNodes.map(node => (
+                <InsightCard
+                  key={node.id}
+                  node={node}
+                  onDelete={() => handleDelete(node.id)}
+                  deleting={deleting.has(node.id)}
+                />
+              ))}
+            </div>
+            {capturedNodes.length > 0 && (
+              <div style={{
+                display: "flex", alignItems: "center", gap: 8,
+                marginBottom: 10,
+              }}>
+                <span style={{ fontSize: 15 }}>🧠</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(168,85,247,0.7)", letterSpacing: "0.06em" }}>
+                  MEMORIA CAPTURADA
+                </span>
+                <div style={{ flex: 1, height: 1, background: "rgba(168,85,247,0.12)" }} />
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Nodes list (capturados) */}
+        {!loading && visibleCaptured.length > 0 && (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {visibleNodes.map(node => (
+            {visibleCaptured.map(node => (
               <NodeCard
                 key={node.id}
                 node={node}

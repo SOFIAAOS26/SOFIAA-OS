@@ -3,6 +3,10 @@
     {
       "path": "/api/nexo/decay",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/nexo/reflect",
+      "schedule": "0 10 * * *"
     }
   ]
 }
