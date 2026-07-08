@@ -38,6 +38,7 @@ import { AGENT_TOOLS }   from "@/core/agent.tools";
 import type { AgentContext } from "@/core/agent.types";
 import { getNexoContext }        from "@/lib/nexo/firestore";
 import { getBibliotecaContext }  from "@/lib/nexo/biblioteca-context";
+import { attendNexoNodes }       from "@/lib/nexo/attention";
 import type { NexoContext }      from "@/types/nexo";
 
 // ── Registro de providers (módulo, se ejecuta una vez) ────────────────────
@@ -247,11 +248,13 @@ export async function POST(req: NextRequest) {
   const graphBlock = buildGraphBlockFromPayload(graphContext, activePath ?? "");
 
   // N.E.X.O. — Memoria de capturas del usuario (Sprint N-4)
-  let nexoBlock = "";
+  let nexoBlock   = "";
+  let nexoNodeIds: string[] = []; // Sprint M-2: Attention Engine
   if (userId && userId !== "anonymous") {
     try {
       const nexoCtx = await getNexoContext(userId);
-      nexoBlock = buildNexoBlock(nexoCtx);
+      nexoBlock     = buildNexoBlock(nexoCtx);
+      nexoNodeIds   = nexoCtx.nodeIds;  // IDs para refuerzo post-stream
     } catch {
       // N.E.X.O. nunca debe romper el chat — falla silenciosa
     }
@@ -353,6 +356,10 @@ export async function POST(req: NextRequest) {
             provider: "agent",
           });
           bus.flush().catch(() => {});
+          // Sprint M-2: Attention Engine — refuerzo post-stream (agent mode)
+          if (userId && userId !== "anonymous" && nexoNodeIds.length > 0) {
+            attendNexoNodes(userId, nexoNodeIds).catch(() => {});
+          }
         } catch (err) {
           console.error("[SOFIAA][agent] fatal error:", err);
           tracer.log("agent_error", "failed", "error", { error: String(err) });
@@ -536,6 +543,10 @@ export async function POST(req: NextRequest) {
             } catch { /* evaluación nunca debe romper el stream */ }
 
             bus.flush().catch(() => {});
+            // Sprint M-2: Attention Engine — refuerzo post-stream (normal mode)
+            if (userId && userId !== "anonymous" && nexoNodeIds.length > 0) {
+              attendNexoNodes(userId, nexoNodeIds).catch(() => {});
+            }
 
             controller.close();
             return;

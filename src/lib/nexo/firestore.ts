@@ -56,6 +56,9 @@ export async function getNexoContext(
 
   const nodes = snap.docs.map(d => d.data() as NexoNode);
 
+  // IDs para el Attention Engine (Sprint M-2)
+  const nodeIds = snap.docs.map(d => d.id);
+
   const topNodes: NexoContextNode[] = nodes.map(n => ({
     title:    n.title,
     category: n.category,
@@ -77,7 +80,7 @@ export async function getNexoContext(
     .sort((a, b) => b[1] - a[1])
     .map(([cat]) => cat);
 
-  return { topNodes, totalNodes, clusters };
+  return { topNodes, totalNodes, clusters, nodeIds };
 }
 
 // ── Escribir nodo ─────────────────────────────────────────────────────────────

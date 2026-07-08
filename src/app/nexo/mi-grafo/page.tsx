@@ -214,6 +214,16 @@ function NodeCard({
         }}>
           {meta.label}
         </span>
+        {/* Sprint M-2: badge de atención */}
+        {(node.reinforceCount ?? 0) > 0 && (
+          <span style={{
+            fontSize: 10, padding: "2px 7px", borderRadius: 99,
+            background: "rgba(45,212,191,0.12)", border: "1px solid rgba(45,212,191,0.3)",
+            color: "#2DD4BF", fontWeight: 700,
+          }}>
+            🔁 {node.reinforceCount}
+          </span>
+        )}
         {node.entities.price && (
           <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 99, background: "rgba(255,255,255,0.06)", color: "rgba(226,217,243,0.5)", border: "1px solid rgba(255,255,255,0.1)" }}>
             💰 {node.entities.price}

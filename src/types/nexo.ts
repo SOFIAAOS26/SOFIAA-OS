@@ -93,6 +93,12 @@ export interface NexoNode {
   capturedAt:      number;
   /** Timestamp de creación en Firestore */
   createdAt:       number;
+  /**
+   * Número de veces que el nodo fue seleccionado por el Attention Engine.
+   * Aumenta cuando el nodo es inyectado en el contexto de una conversación.
+   * Sprint M-2.
+   */
+  reinforceCount?: number;
 }
 
 // ── Entidades extraídas del contenido ────────────────────────────────────────
@@ -151,6 +157,11 @@ export interface NexoContext {
   totalNodes: number;
   /** Clusters de intereses detectados */
   clusters: string[];
+  /**
+   * IDs de los nodos que fueron seleccionados para esta llamada.
+   * El Attention Engine (Sprint M-2) usa esto para reforzar solo los nodos que SOFIAA usó.
+   */
+  nodeIds: string[];
 }
 
 export interface NexoContextNode {
