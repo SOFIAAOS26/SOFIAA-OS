@@ -23,7 +23,7 @@ export function resolveModules(ctx: ResolverContext): ModuleKey[] {
   const path = activePath ?? "";
 
   // ── Kernel base — siempre ─────────────────────────────────────────────────
-  const modules: ModuleKey[] = ["base", "nav_core", "nav_external", "generative_ui"];
+  const modules: ModuleKey[] = ["base", "nav_core", "nav_external", "generative_ui", "nexo_cards"];
 
   // ── Abrahan: lazy — solo si el mensaje lo solicita ───────────────────────
   if (ABRAHAN_RE.test(userMessage)) modules.push("abrahan");

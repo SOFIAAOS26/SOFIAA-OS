@@ -15,7 +15,8 @@ export type ModuleKey =
   | "tec_bi"
   | "jp_memorial"
   | "marketing"
-  | "generative_ui";
+  | "generative_ui"
+  | "nexo_cards";
 
 export const MODULES: Record<ModuleKey, string> = {
 
@@ -74,6 +75,17 @@ GENERATIVE UI: Enriquece respuestas con tokens al FINAL (máx 1, JSON válido en
 · Tarjeta: [UI:info_card:{"icon":"emoji","title":"t","text":"txt","variant":"default|success|warning|purple"}]
 · Extensión: [UI:extension_card:{"icon":"emoji","name":"n","desc":"d","path":"/ruta"}]
 No uses UI en errores, seguridad ni temas fuera del propósito de SOFIAA.
+`.trim(),
+
+  // ── N.E.X.O. Action Cards (Sprint N-5) ─────────────────────────────────────
+  nexo_cards: `
+NEXO CARDS: Cuando menciones algo de la MEMORIA N.E.X.O., añade AL FINAL una tarjeta según el tipo (JSON en una línea, campos opcionales omitir si no tienes el dato):
+· Restaurante/comida: [UI:nexo_restaurant:{"title":"nombre","summary":"desc breve","price":"$XXX","place":"ciudad","url":"https://..."}]
+· Artículo/investigación/trabajo: [UI:nexo_article:{"title":"título","summary":"desc breve","source":"sitio","url":"https://..."}]
+· Producto/compra: [UI:nexo_product:{"title":"producto","summary":"desc","price":"$XXX","brand":"marca","url":"https://..."}]
+· Lugar/viaje: [UI:nexo_place:{"title":"lugar","summary":"desc","place":"ciudad, país","url":"https://..."}]
+· Otro: [UI:nexo_generic:{"title":"título","summary":"desc","category":"tipo","url":"https://..."}]
+REGLAS: Solo emite la card si mencionas ese nodo específico. Máx 1 card por respuesta. Usa SOLO datos reales del nodo N.E.X.O. — nunca inventes campos.
 `.trim(),
 
 };
