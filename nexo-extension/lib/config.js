@@ -11,7 +11,7 @@
 export const SOFIAA_API_URL = "https://sofiaa-os.vercel.app"; // ← cambiar si tu URL es diferente
 
 export const FIREBASE_CONFIG = {
-  apiKey:            "REEMPLAZAR_CON_NEXT_PUBLIC_FIREBASE_API_KEY",
+  apiKey:            "AIzaSyCJET-4tYUAA8JAx6XIZ308n8bYxR7jzPo",
   authDomain:        "sofiaa-tec-bi.firebaseapp.com",
   projectId:         "sofiaa-tec-bi",
   storageBucket:     "sofiaa-tec-bi.firebasestorage.app",

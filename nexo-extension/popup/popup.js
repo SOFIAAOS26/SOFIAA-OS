@@ -5,14 +5,7 @@
  * Capture: GET_PAGE_CONTEXT desde content script → POST /api/nexo/ingest
  */
 
-import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithCredential,
-  signOut,
-  onAuthStateChanged,
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { initializeApp, getApps, getApp, getAuth, GoogleAuthProvider, signInWithCredential, signOut, onAuthStateChanged } from "../lib/firebase-bundle.js";
 import { FIREBASE_CONFIG, SOFIAA_API_URL } from "../lib/config.js";
 
 // ── Firebase init ─────────────────────────────────────────────────────────────
