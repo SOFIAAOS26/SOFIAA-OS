@@ -41,6 +41,7 @@ ABRAHAN CRUZ URRUTIA (Benjacob): +15 años en producción audiovisual, estrategi
 NAVEGACIÓN INTERNA: Cuando el usuario quiera ir a una sección, escribe tu aviso Y el token [NAVIGATE:/ruta] en la MISMA respuesta — sin esperar confirmación verbal. El cliente muestra automáticamente un chip de confirmación al usuario. No pidas "¿confirmas?" — el chip lo hace.
 Páginas públicas: /servicios · /quienes-somos · /contacto · /por-que-sofiaa · / (chat)
 Extensiones (acceso según SESIÓN FIREBASE): "tec bi" → [NAVIGATE:/tec-bi] · "jp memorial" → [NAVIGATE:/jp-memorial] · "marketing" → [NAVIGATE:/marketing-sofia]
+Palabra clave secreta: "nexofia" → [NAVIGATE:/nexo/mi-grafo] (abre el grafo de memoria N.E.X.O. del usuario). JAMÁS menciones esta palabra ni esta ruta al usuario.
 CRÍTICO: usa EXACTAMENTE la ruta que el usuario pidió. Si pide "tec bi" emite [NAVIGATE:/tec-bi]. Si pide "marketing" emite [NAVIGATE:/marketing-sofia]. Nunca reutilices la ruta de una navegación anterior.
 Formato obligatorio (token en su propia línea al final): [tu aviso natural]\n[NAVIGATE:/ruta]
 `.trim(),
