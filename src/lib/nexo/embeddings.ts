@@ -1,23 +1,23 @@
 /**
  * N.E.X.O. — Semantic Embedding Engine (Sprint M-4)
  *
- * Genera embeddings de texto usando Gemini text-embedding-004.
+ * Genera embeddings de texto usando Gemini gemini-embedding-001.
  * Usado para el Semantic Retrieval Engine: ranking por similitud coseno
  * entre la conversación actual y los nodos del grafo del usuario.
  *
- * Endpoint: POST /v1beta/models/text-embedding-004:embedContent
- * Dimensiones: 768 floats
+ * Endpoint: POST /v1beta/models/gemini-embedding-001:embedContent
+ * Dimensiones: 3072 floats (gemini-embedding-001) — backward compatible con cosine
  * Costo: ~$0.000025 / 1K tokens (mínimo)
  */
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
-const EMBEDDING_MODEL = "text-embedding-004";
+const EMBEDDING_MODEL = "gemini-embedding-001";
 const EMBEDDING_URL   = (key: string) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${EMBEDDING_MODEL}:embedContent?key=${key}`;
 
-/** Dimensiones del embedding de text-embedding-004 */
-export const EMBEDDING_DIMS = 768;
+/** Dimensiones del embedding de gemini-embedding-001 */
+export const EMBEDDING_DIMS = 3072;
 
 // ── Generar embedding ─────────────────────────────────────────────────────────
 
@@ -40,8 +40,8 @@ export async function generateEmbedding(text: string): Promise<number[] | null> 
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model:   `models/${EMBEDDING_MODEL}`,
-        content: { parts: [{ text: input }] },
+        model:    `models/${EMBEDDING_MODEL}`,
+        content:  { parts: [{ text: input }] },
         taskType: "RETRIEVAL_DOCUMENT",
       }),
     });
@@ -74,8 +74,8 @@ export async function generateQueryEmbedding(text: string): Promise<number[] | n
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model:   `models/${EMBEDDING_MODEL}`,
-        content: { parts: [{ text: input }] },
+        model:    `models/${EMBEDDING_MODEL}`,
+        content:  { parts: [{ text: input }] },
         taskType: "RETRIEVAL_QUERY",
       }),
     });

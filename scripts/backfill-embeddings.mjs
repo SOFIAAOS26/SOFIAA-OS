@@ -31,11 +31,40 @@ const DRY    = args.includes("--dry-run");
 const UID_ARG = args.find(a => a.startsWith("--uid="))?.split("=")[1] ?? null;
 
 // ── Config ────────────────────────────────────────────────────────────────────
-const EMBEDDING_MODEL = "text-embedding-004";
-const EMBED_URL       = key =>
-  `https://generativelanguage.googleapis.com/v1beta/models/${EMBEDDING_MODEL}:embedContent?key=${key}`;
+// Orden de preferencia — se prueban hasta encontrar uno disponible
+const EMBEDDING_MODELS = [
+  "gemini-embedding-001",        // GA 2025 (disponible confirmado)
+  "gemini-embedding-2",          // Nuevo, alta calidad
+  "gemini-embedding-2-preview",  // Preview variante
+];
 const RATE_MS         = 220;   // ms entre calls — ~4.5/seg, bajo el límite de 1500/min
 const BATCH_SIZE      = 10;    // nodos por batch de Firestore update
+
+// ── Diagnóstico: listar modelos de embedding disponibles ──────────────────────
+async function listEmbeddingModels(apiKey) {
+  try {
+    const res  = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}&pageSize=100`
+    );
+    if (!res.ok) {
+      console.warn(`  ⚠ No se pudo listar modelos: ${res.status} ${res.statusText}`);
+      return;
+    }
+    const data   = await res.json();
+    const models = (data.models ?? []).filter(m =>
+      m.supportedGenerationMethods?.includes("embedContent")
+    );
+    if (models.length === 0) {
+      console.warn("  ⚠ Esta API key no tiene acceso a ningún modelo de embedding.\n");
+    } else {
+      console.log("  ℹ Modelos de embedding disponibles con esta key:");
+      models.forEach(m => console.log(`      ${m.name}`));
+      console.log();
+    }
+  } catch (e) {
+    console.warn("  ⚠ Error al listar modelos:", e.message);
+  }
+}
 
 // ── Firebase ──────────────────────────────────────────────────────────────────
 async function initFirebase() {
@@ -52,30 +81,52 @@ async function initFirebase() {
   return getFirestore(app);
 }
 
-// ── Embedding ─────────────────────────────────────────────────────────────────
+// ── Embedding (usando @google/generative-ai SDK) ──────────────────────────────
+let _genAI     = null;
+let _embedMod  = null;   // modelo que funcionó
+let _embedFail = null;   // error cacheado — no reintentar si ya sabemos que falla
+
+async function getEmbedModel(apiKey) {
+  if (_embedMod)  return _embedMod;
+  if (_embedFail) throw _embedFail;
+
+  const { GoogleGenerativeAI } = await import("@google/generative-ai");
+  _genAI = new GoogleGenerativeAI(apiKey);
+
+  const errors = [];
+
+  // Probar modelos en orden hasta encontrar uno disponible
+  for (const modelName of EMBEDDING_MODELS) {
+    try {
+      const m = _genAI.getGenerativeModel({ model: modelName });
+      const res = await m.embedContent("test");
+      if (!res?.embedding?.values?.length) throw new Error("Respuesta vacía");
+      _embedMod = m;
+      console.log(`  ℹ Modelo de embedding: ${modelName}\n`);
+      return _embedMod;
+    } catch (e) {
+      const msg = e.message ?? String(e);
+      errors.push(`  • ${modelName}: ${msg.slice(0, 300)}`);
+      console.warn(`  ⚠ ${modelName} falló: ${msg.slice(0, 200)}`);
+    }
+  }
+
+  _embedFail = new Error(
+    `Ningún modelo de embedding disponible.\nErrores:\n${errors.join("\n")}`
+  );
+  throw _embedFail;
+}
+
 async function embed(text, apiKey) {
   const input = text.trim().slice(0, 2000);
   if (!input) return null;
 
   try {
-    const res = await fetch(EMBED_URL(apiKey), {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model:    `models/${EMBEDDING_MODEL}`,
-        content:  { parts: [{ text: input }] },
-        taskType: "RETRIEVAL_DOCUMENT",
-      }),
-    });
-    if (!res.ok) {
-      const err = await res.text();
-      console.error(`  ✗ Gemini error ${res.status}:`, err.slice(0, 120));
-      return null;
-    }
-    const data = await res.json();
-    return data?.embedding?.values ?? null;
+    const model  = await getEmbedModel(apiKey);
+    const result = await model.embedContent(input);
+    return result?.embedding?.values ?? null;
   } catch (e) {
-    console.error("  ✗ fetch error:", e.message);
+    console.error("  ✗ embed error:", e.message?.slice(0, 120));
     return null;
   }
 }
@@ -150,6 +201,10 @@ async function main() {
     console.error("✗ GEMINI_API_KEY no encontrada en .env.local");
     process.exit(1);
   }
+
+  // Diagnóstico: qué modelos de embedding acepta esta key
+  console.log("Verificando modelos disponibles...");
+  await listEmbeddingModels(apiKey);
 
   const db = await initFirebase();
 
