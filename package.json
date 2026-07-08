@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "biblioteca:ingest": "node scripts/ingest-biblioteca.mjs"
+    "biblioteca:ingest": "node --env-file=.env.local scripts/ingest-biblioteca.mjs",
+    "nexo:backfill-embeddings": "node --env-file=.env.local scripts/backfill-embeddings.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
