@@ -7,7 +7,15 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
-    // ── Usuarios: solo acceden a sus propios datos ────────────────────────────
+    // ── Perfiles de usuario (AuthContext + N.O.R.A) ───────────────────────────
+    // CRÍTICO: cada usuario lee su propio perfil; admin lee todos (para N.O.R.A)
+    match /usuarios/{uid} {
+      allow read:  if request.auth != null &&
+                      (request.auth.uid == uid || isAdmin());
+      allow write: if request.auth != null && isAdmin();
+    }
+
+    // ── Datos privados del usuario ────────────────────────────────────────────
     match /users/{uid} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
 
@@ -16,21 +24,26 @@ service cloud.firestore {
         allow read, write: if request.auth != null && request.auth.uid == uid;
       }
 
-      // N.E.X.O. — Eventos para N.O.R.A (solo lectura del cliente, escritura solo server)
+      // N.E.X.O. — Biblioteca de PDFs personales
+      match /biblioteca/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+
+      // N.E.X.O. — Eventos (solo lectura cliente, escritura Admin SDK)
       match /nexo_events/{eventId} {
         allow read:  if request.auth != null && request.auth.uid == uid;
-        allow write: if false; // Solo Admin SDK escribe (server-side)
+        allow write: if false;
       }
 
       // Long-term memory de SOFIAA
-      match /memories/{memId} {
+      match /memory/{memId} {
         allow read, write: if request.auth != null && request.auth.uid == uid;
       }
 
       // Pipeline observer / telemetría
       match /pipeline_events/{eventId} {
         allow read:  if request.auth != null && request.auth.uid == uid;
-        allow write: if false; // Solo Admin SDK
+        allow write: if false;
       }
     }
 
@@ -38,6 +51,11 @@ service cloud.firestore {
     match /tec_bi/{docId} {
       allow read:  if request.auth != null;
       allow write: if request.auth != null && isAdmin();
+    }
+
+    // ── sofiaa_biblioteca — solo Admin SDK escribe; no se lee desde cliente ───
+    match /sofiaa_biblioteca/{docId} {
+      allow read, write: if false; // Admin SDK bypasses rules
     }
 
     // ── Función helper ────────────────────────────────────────────────────────

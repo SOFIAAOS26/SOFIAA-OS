@@ -12,13 +12,6 @@
       "collectionGroup": "nexo_nodes",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "weight", "order": "DESCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "nexo_nodes",
-      "queryScope": "COLLECTION",
-      "fields": [
         { "fieldPath": "url",    "order": "ASCENDING" },
         { "fieldPath": "weight", "order": "DESCENDING" }
       ]
