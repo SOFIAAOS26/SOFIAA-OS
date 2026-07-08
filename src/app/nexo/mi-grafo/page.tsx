@@ -151,6 +151,25 @@ function NodeCard({
           {daysAgo(node.capturedAt)} · expira ~{daysLeft}d
         </span>
       </div>
+
+      {/* Link al original */}
+      {node.url && (
+        <a
+          href={node.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: "block", marginTop: 8,
+            fontSize: 10, color: "rgba(168,85,247,0.6)",
+            whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+            textDecoration: "none",
+          }}
+          onMouseEnter={e => (e.currentTarget.style.color = "#A855F7")}
+          onMouseLeave={e => (e.currentTarget.style.color = "rgba(168,85,247,0.6)")}
+        >
+          🔗 {node.url}
+        </a>
+      )}
     </div>
   );
 }

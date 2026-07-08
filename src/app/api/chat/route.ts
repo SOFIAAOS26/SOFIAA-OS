@@ -108,7 +108,8 @@ function buildNexoBlock(ctx: NexoContext | null): string {
     const when   = n.daysAgo === 0 ? "hoy"
                  : n.daysAgo === 1 ? "ayer"
                  : `hace ${n.daysAgo} días`;
-    return `• [${cat}] ${n.title} — ${n.summary} (${when})`;
+    const urlPart = n.url ? ` | url: ${n.url}` : "";
+    return `• [${cat}] ${n.title} — ${n.summary} (${when}${urlPart})`;
   });
 
   const clusters = ctx.clusters.length > 0
