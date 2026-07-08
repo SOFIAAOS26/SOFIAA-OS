@@ -1,17 +1,29 @@
 /**
  * N.E.X.O. — POST /api/nexo/ingest
- * Sprint N-0: endpoint esqueleto con validación completa
- * Sprint N-2: clasificación LLM + persistencia (próximo sprint)
+ * Sprint N-2: clasificación LLM (Gemini Flash) + persistencia Firestore
  *
  * Recibe capturas desde la Chrome Extension, PWA Share Target o el chat.
- * Valida el payload, retorna 200 con un echo del contenido recibido.
- * En Sprint N-2 se añade la clasificación con Gemini Flash.
+ * 1. Verifica sesión Firebase
+ * 2. Valida y sanitiza el payload
+ * 3. Clasifica con Gemini Flash (categoría, entidades, importanceScore, resumen)
+ * 4. Persiste el NexoNode en Firestore (upsert — deduplicación por URL)
+ * 5. Registra evento en N.O.R.A
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { getAuth }                    from "firebase-admin/auth";
-import { getAdminApp }                from "@/lib/firebase-admin";
-import type { NexoIngestPayload, NexoIngestResponse } from "@/types/nexo";
+import { NextRequest, NextResponse }          from "next/server";
+import { getAuth }                             from "firebase-admin/auth";
+import { getAdminApp }                         from "@/lib/firebase-admin";
+import { classifyNexoPayload }                 from "@/lib/nexo/classifier";
+import { upsertNexoNode, logNexoEvent }        from "@/lib/nexo/firestore";
+import type {
+  NexoIngestPayload,
+  NexoIngestResponse,
+  NexoNode,
+} from "@/types/nexo";
+import {
+  NEXO_INITIAL_WEIGHT,
+  NEXO_DECAY_RATE,
+} from "@/types/nexo";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -32,7 +44,7 @@ async function getUid(req: NextRequest): Promise<string | null> {
   }
 }
 
-// ── Handler principal ─────────────────────────────────────────────────────────
+// ── Handler ───────────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
   const start = Date.now();
@@ -60,28 +72,68 @@ export async function POST(req: NextRequest) {
     url:         payload.url?.trim() ?? null,
     title:       payload.title.trim().slice(0, 300),
     text:        payload.text.trim().slice(0, 8000),
-    imageUrl:    payload.imageUrl?.trim() ?? undefined,
+    imageUrl:    payload.imageUrl?.trim() || undefined,
     imageBase64: payload.imageBase64 ?? undefined,
     source:      payload.source,
     capturedAt:  payload.capturedAt,
   };
 
-  // 4. Sprint N-0: respuesta esqueleto (clasificación LLM se añade en N-2)
-  //    Por ahora retorna categoría "other" y score 0.5 como placeholders.
-  const nodeId = `nexo:pending:${Date.now()}`;
+  // 4. Clasificar con Gemini Flash
+  const classification = await classifyNexoPayload(clean);
+
+  // 5. Construir NexoNode
+  const nodeId = `nexo:${classification.category}:${classification.slug}`;
+  const now    = Date.now();
+
+  const node: NexoNode = {
+    id:              nodeId,
+    category:        classification.category,
+    title:           clean.title,
+    summary:         classification.summary,
+    entities:        classification.entities,
+    url:             clean.url,
+    imageUrl:        clean.imageUrl ?? null,
+    source:          clean.source,
+    weight:          NEXO_INITIAL_WEIGHT,
+    importanceScore: classification.importanceScore,
+    decayRate:       NEXO_DECAY_RATE,
+    lastReinforced:  now,
+    capturedAt:      clean.capturedAt,
+    createdAt:       now,
+  };
+
+  // 6. Persistir en Firestore (upsert — si ya existe la URL, refuerza el peso)
+  await upsertNexoNode(uid, node);
+
+  // 7. Log evento en N.O.R.A
+  const durationMs = Date.now() - start;
+  await logNexoEvent(uid, {
+    id:              `ingest:${now}:${uid.slice(0, 8)}`,
+    userId:          uid,
+    nodeId,
+    action:          "captured",
+    source:          clean.source,
+    category:        classification.category,
+    importanceScore: classification.importanceScore,
+    tokensUsed:      classification.tokensUsed,
+    durationMs,
+    timestamp:       now,
+  });
+
+  console.log(
+    `[N.E.X.O. ingest] uid=${uid.slice(0,8)} cat=${classification.category} ` +
+    `score=${classification.importanceScore.toFixed(2)} tokens=${classification.tokensUsed} dt=${durationMs}ms`
+  );
 
   const response: NexoIngestResponse = {
     success:         true,
     nodeId,
-    category:        "other",    // Sprint N-2: Gemini Flash clasificará esto
-    importanceScore: 0.5,        // Sprint N-2: LLM asignará score real
-    summary:         clean.text.slice(0, 200) + "...", // Sprint N-2: resumen LLM
-    entities:        {},         // Sprint N-2: extracción de entidades
-    durationMs:      Date.now() - start,
+    category:        classification.category,
+    importanceScore: classification.importanceScore,
+    summary:         classification.summary,
+    entities:        classification.entities,
+    durationMs,
   };
-
-  // 5. Log básico (Sprint N-2 escribirá en Firestore)
-  console.log(`[N.E.X.O. ingest] uid=${uid} source=${clean.source} title="${clean.title}" dt=${response.durationMs}ms`);
 
   return NextResponse.json(response, { status: 200 });
 }
