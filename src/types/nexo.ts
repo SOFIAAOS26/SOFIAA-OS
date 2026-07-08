@@ -25,7 +25,8 @@ export type NexoSource =
   | "chrome_extension"  // extensión de Chrome
   | "pwa_share"         // PWA Share Target mobile
   | "screenshot"        // imagen / captura de pantalla via Gemini Vision
-  | "manual";           // pegado manual en el chat
+  | "manual"            // pegado manual en el chat
+  | "pdf_library";      // documento PDF subido a la biblioteca (Sprint M-1)
 
 // ── Payload que llega al endpoint /api/nexo/ingest ────────────────────────────
 
@@ -161,6 +162,35 @@ export interface NexoContextNode {
   daysAgo:  number;
   /** URL original del nodo (para que el LLM genere links correctos) */
   url?:     string | null;
+}
+
+// ── Biblioteca de documentos PDF (Sprint M-1) ─────────────────────────────────
+
+/**
+ * Documento en la biblioteca personal de SOFIAA.
+ * Almacenado en: users/{uid}/biblioteca/{docId}
+ */
+export interface BibliotecaDoc {
+  /** ID único — formato: "bib:{slugname}:{timestamp}" */
+  id:           string;
+  /** Título extraído por Gemini del documento */
+  title:        string;
+  /** Nombre original del archivo */
+  filename:     string;
+  /** Autor detectado (puede ser vacío) */
+  author:       string;
+  /** Tamaño en bytes */
+  sizeBytes:    number;
+  /** Número de nodos N.E.X.O. creados */
+  nodesCreated: number;
+  /** Estado del procesamiento */
+  status:       "processing" | "processed" | "error";
+  /** Timestamp de procesamiento completo */
+  processedAt:  number;
+  /** Timestamp de creación del documento */
+  createdAt:    number;
+  /** Mensaje de error si status === "error" */
+  errorMsg?:    string;
 }
 
 // ── Constantes ────────────────────────────────────────────────────────────────
