@@ -36,6 +36,8 @@ import { mockProvider } from "@/core/providers/mock.provider";
 import { AgentRuntime }  from "@/core/agent.runtime";
 import { AGENT_TOOLS }   from "@/core/agent.tools";
 import type { AgentContext } from "@/core/agent.types";
+import { getNexoContext } from "@/lib/nexo/firestore";
+import type { NexoContext } from "@/types/nexo";
 
 // ── Registro de providers (módulo, se ejecuta una vez) ────────────────────
 const _useMock = process.env.NEXT_PUBLIC_MOCK_CAPABILITIES === "true";
@@ -90,6 +92,35 @@ function buildGraphBlockFromPayload(
   return lines.length > 0
     ? `\n\nCONTEXTO DE EXPERIENCIA DEL USUARIO:\n${lines.join("\n")}`
     : "";
+}
+
+// ── Helper: formatea el contexto N.E.X.O. para el system prompt ──────────
+const NEXO_CATEGORY_LABELS: Record<string, string> = {
+  food: "comida", work: "trabajo", travel: "viaje", shopping: "compras",
+  research: "investigación", social: "social", media: "media", other: "otro",
+};
+
+function buildNexoBlock(ctx: NexoContext | null): string {
+  if (!ctx || ctx.topNodes.length === 0) return "";
+
+  const lines = ctx.topNodes.map(n => {
+    const cat    = NEXO_CATEGORY_LABELS[n.category] ?? n.category;
+    const when   = n.daysAgo === 0 ? "hoy"
+                 : n.daysAgo === 1 ? "ayer"
+                 : `hace ${n.daysAgo} días`;
+    return `• [${cat}] ${n.title} — ${n.summary} (${when})`;
+  });
+
+  const clusters = ctx.clusters.length > 0
+    ? `\nIntereses detectados: ${ctx.clusters.map(c => NEXO_CATEGORY_LABELS[c] ?? c).join(", ")}.`
+    : "";
+
+  return (
+    `\n\nMEMORIA N.E.X.O. — Capturas recientes del usuario (${ctx.totalNodes} nodos activos):\n` +
+    lines.join("\n") +
+    clusters +
+    `\n(Usa esta información proactivamente cuando sea relevante. No menciones "N.E.X.O." al usuario.)`
+  );
 }
 
 export async function POST(req: NextRequest) {
@@ -213,6 +244,17 @@ export async function POST(req: NextRequest) {
   // Experience Graph — contexto estructurado del usuario (Sprint D-E)
   const graphBlock = buildGraphBlockFromPayload(graphContext, activePath ?? "");
 
+  // N.E.X.O. — Memoria de capturas del usuario (Sprint N-4)
+  let nexoBlock = "";
+  if (userId && userId !== "anonymous") {
+    try {
+      const nexoCtx = await getNexoContext(userId);
+      nexoBlock = buildNexoBlock(nexoCtx);
+    } catch {
+      // N.E.X.O. nunca debe romper el chat — falla silenciosa
+    }
+  }
+
   // ── Modular Prompt Assembly — Registry agnóstico ──────────────────────
   const path = activePath ?? "";
   const modules = resolveModules({ activePath: path, userMessage: lastUserMsg?.content ?? "" });
@@ -272,7 +314,7 @@ export async function POST(req: NextRequest) {
   // ─────────────────────────────────────────────────────────────────────
 
   // ── LLM Orchestrator — elige el mejor provider disponible ────────────
-  const systemContent = `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${policyBlock}${capabilityMenuBlock}`;
+  const systemContent = `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${nexoBlock}${policyBlock}${capabilityMenuBlock}`;
 
   // ── Sprint G: Agent Runtime — ReAct loop para tareas multi-paso ──────
   if (agentMode) {
