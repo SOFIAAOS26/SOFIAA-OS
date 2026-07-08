@@ -27,6 +27,9 @@
     "remark-gfm": "^4.0.1",
     "three": "^0.184.0"
   },
+  "overrides": {
+    "jose": "^4.15.9"
+  },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
