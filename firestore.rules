@@ -8,10 +8,10 @@ service cloud.firestore {
     }
 
     // ── Perfiles de usuario (AuthContext + N.O.R.A) ───────────────────────────
-    // CRÍTICO: cada usuario lee su propio perfil; admin lee todos (para N.O.R.A)
+    // Lectura: cualquier usuario autenticado (nombre y rol no son datos sensibles)
+    // N.O.R.A hace getDocs() de toda la colección → necesita allow list sin restricción por uid
     match /usuarios/{uid} {
-      allow read:  if request.auth != null &&
-                      (request.auth.uid == uid || isAdmin());
+      allow read:  if request.auth != null;
       allow write: if request.auth != null && isAdmin();
     }
 
