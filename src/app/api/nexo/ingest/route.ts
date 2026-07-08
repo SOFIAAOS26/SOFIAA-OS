@@ -15,6 +15,7 @@ import { getAuth }                             from "firebase-admin/auth";
 import { getAdminApp }                         from "@/lib/firebase-admin";
 import { classifyNexoPayload }                 from "@/lib/nexo/classifier";
 import { upsertNexoNode, logNexoEvent }        from "@/lib/nexo/firestore";
+import { generateEmbedding }                   from "@/lib/nexo/embeddings";
 import type {
   NexoIngestPayload,
   NexoIngestResponse,
@@ -85,6 +86,10 @@ export async function POST(req: NextRequest) {
   const nodeId = `nexo:${classification.category}:${classification.slug}`;
   const now    = Date.now();
 
+  // 5b. Generar embedding semántico (Sprint M-4) — falla silenciosa si Gemini no responde
+  const embeddingText = `${clean.title}. ${classification.summary}`;
+  const embedding = await generateEmbedding(embeddingText);
+
   const node: NexoNode = {
     id:              nodeId,
     category:        classification.category,
@@ -100,6 +105,7 @@ export async function POST(req: NextRequest) {
     lastReinforced:  now,
     capturedAt:      clean.capturedAt,
     createdAt:       now,
+    ...(embedding ? { embedding } : {}),
   };
 
   // 6. Persistir en Firestore (upsert — si ya existe la URL, refuerza el peso)

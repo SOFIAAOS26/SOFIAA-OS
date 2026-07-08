@@ -36,7 +36,7 @@ import { mockProvider } from "@/core/providers/mock.provider";
 import { AgentRuntime }  from "@/core/agent.runtime";
 import { AGENT_TOOLS }   from "@/core/agent.tools";
 import type { AgentContext } from "@/core/agent.types";
-import { getNexoContext }        from "@/lib/nexo/firestore";
+import { getSemanticNexoContext } from "@/lib/nexo/firestore";
 import { getBibliotecaContext }  from "@/lib/nexo/biblioteca-context";
 import { attendNexoNodes }       from "@/lib/nexo/attention";
 import { getCognitiveProfile, updateCognitiveProfile, buildCognitiveBlock } from "@/lib/cognitive/profile";
@@ -249,12 +249,13 @@ export async function POST(req: NextRequest) {
   // Experience Graph — contexto estructurado del usuario (Sprint D-E)
   const graphBlock = buildGraphBlockFromPayload(graphContext, activePath ?? "");
 
-  // N.E.X.O. — Memoria de capturas del usuario (Sprint N-4)
+  // N.E.X.O. — Semantic Retrieval (Sprint M-4: ranking híbrido semántico + peso)
   let nexoBlock   = "";
   let nexoNodeIds: string[] = []; // Sprint M-2: Attention Engine
+  const nexoQuery = lastUserMsg?.content ?? "";  // Query semántica = último mensaje
   if (userId && userId !== "anonymous") {
     try {
-      const nexoCtx = await getNexoContext(userId);
+      const nexoCtx = await getSemanticNexoContext(userId, nexoQuery);
       nexoBlock     = buildNexoBlock(nexoCtx);
       nexoNodeIds   = nexoCtx.nodeIds;  // IDs para refuerzo post-stream
     } catch {

@@ -99,6 +99,12 @@ export interface NexoNode {
    * Sprint M-2.
    */
   reinforceCount?: number;
+  /**
+   * Embedding semántico del nodo (título + resumen) generado por Gemini text-embedding-004.
+   * Usado por el Semantic Retrieval Engine (Sprint M-4) para ranking por similitud coseno.
+   * Ausente en nodos anteriores a M-4 — el sistema hace fallback a ranking por peso.
+   */
+  embedding?: number[];
 }
 
 // ── Entidades extraídas del contenido ────────────────────────────────────────

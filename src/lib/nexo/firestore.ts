@@ -19,6 +19,7 @@ import {
   NEXO_MAX_CONTEXT_NODES, NEXO_PRUNE_THRESHOLD,
   NEXO_DECAY_RATE, NEXO_DECAY_DAYS,
 } from "@/types/nexo";
+import { generateQueryEmbedding, hybridScore } from "@/lib/nexo/embeddings";
 
 // ── Rutas de colección ────────────────────────────────────────────────────────
 
@@ -74,6 +75,82 @@ export async function getNexoContext(
   // Detectar clusters de interés
   const categoryCounts = nodes.reduce<Record<string, number>>((acc, n) => {
     acc[n.category] = (acc[n.category] ?? 0) + 1;
+    return acc;
+  }, {});
+  const clusters = Object.entries(categoryCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([cat]) => cat);
+
+  return { topNodes, totalNodes, clusters, nodeIds };
+}
+
+// ── Retrieval semántico (Sprint M-4) ──────────────────────────────────────────
+
+/**
+ * Obtiene el contexto NEXO para inyectar al chat usando ranking semántico híbrido.
+ *
+ * Flujo:
+ *   1. Genera embedding de la query (mensaje actual del usuario)
+ *   2. Fetchea todos los nodos activos (weight > threshold)
+ *   3. Rankea por score = cosine(query, node) * 0.65 + weight * 0.35
+ *   4. Si no hay embeddings disponibles, fallback a ranking por peso
+ *   5. Retorna top-N en formato NexoContext
+ *
+ * @param uid        UID del usuario
+ * @param queryText  Texto de la conversación actual (último mensaje del usuario)
+ * @param limit      Número máximo de nodos a retornar
+ */
+export async function getSemanticNexoContext(
+  uid:       string,
+  queryText: string,
+  limit = NEXO_MAX_CONTEXT_NODES,
+): Promise<NexoContext> {
+  const db  = getAdminDb();
+  const now = Date.now();
+
+  // Fetchear todos los nodos activos (sin ORDER BY para poder re-rankear en memoria)
+  const snap = await db
+    .collection(nexoNodesCol(uid))
+    .where("weight", ">", NEXO_PRUNE_THRESHOLD)
+    .get();
+
+  if (snap.empty) {
+    return { topNodes: [], totalNodes: 0, clusters: [], nodeIds: [] };
+  }
+
+  // Generar embedding de la query en paralelo con el fetch
+  const queryEmbedding = await generateQueryEmbedding(queryText);
+
+  // Rankear nodos por score híbrido
+  const scored = snap.docs.map(d => {
+    const node  = d.data() as NexoNode;
+    const score = hybridScore(queryEmbedding, node.embedding, node.weight);
+    return { id: d.id, node, score };
+  });
+
+  // Ordenar descendente por score
+  scored.sort((a, b) => b.score - a.score);
+
+  // Top-N
+  const top     = scored.slice(0, limit);
+  const nodeIds = top.map(t => t.id);
+
+  const topNodes: NexoContextNode[] = top.map(({ node }) => ({
+    title:    node.title,
+    category: node.category,
+    summary:  node.summary,
+    weight:   node.weight,
+    daysAgo:  Math.floor((now - node.capturedAt) / 86_400_000),
+    url:      node.url,
+  }));
+
+  // Stats globales
+  const countSnap  = await db.collection(nexoNodesCol(uid)).count().get();
+  const totalNodes = countSnap.data().count;
+
+  const categoryCounts = snap.docs.reduce<Record<string, number>>((acc, d) => {
+    const cat = (d.data() as NexoNode).category;
+    acc[cat] = (acc[cat] ?? 0) + 1;
     return acc;
   }, {});
   const clusters = Object.entries(categoryCounts)
