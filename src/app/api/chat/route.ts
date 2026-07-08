@@ -39,6 +39,8 @@ import type { AgentContext } from "@/core/agent.types";
 import { getNexoContext }        from "@/lib/nexo/firestore";
 import { getBibliotecaContext }  from "@/lib/nexo/biblioteca-context";
 import { attendNexoNodes }       from "@/lib/nexo/attention";
+import { getCognitiveProfile, updateCognitiveProfile, buildCognitiveBlock } from "@/lib/cognitive/profile";
+import { extractSignals }        from "@/lib/cognitive/signals";
 import type { NexoContext }      from "@/types/nexo";
 
 // ── Registro de providers (módulo, se ejecuta una vez) ────────────────────
@@ -260,6 +262,23 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Cognitive Variables — Perfil cognitivo del usuario (Sprint M-3)
+  let cognitiveBlock = "";
+  // Extraer señales cognitivas de los mensajes del usuario (rule-based, cero tokens)
+  const userTexts = messages
+    .filter((m: { role: string; content: string }) => m.role === "user")
+    .map((m: { role: string; content: string }) => m.content);
+  const cognitiveSignals = extractSignals(userTexts);
+
+  if (userId && userId !== "anonymous") {
+    try {
+      const profile = await getCognitiveProfile(userId);
+      if (profile) cognitiveBlock = "\n\n" + buildCognitiveBlock(profile);
+    } catch {
+      // El perfil cognitivo nunca debe romper el chat — falla silenciosa
+    }
+  }
+
   // N.E.X.O. Biblioteca — Conocimiento global de SOFIAA (Sprint M-1B)
   const bibliotecaBlock = await getBibliotecaContext();
 
@@ -322,7 +341,7 @@ export async function POST(req: NextRequest) {
   // ─────────────────────────────────────────────────────────────────────
 
   // ── LLM Orchestrator — elige el mejor provider disponible ────────────
-  const systemContent = `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${nexoBlock}${bibliotecaBlock}${policyBlock}${capabilityMenuBlock}`;
+  const systemContent = `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${nexoBlock}${bibliotecaBlock}${cognitiveBlock}${policyBlock}${capabilityMenuBlock}`;
 
   // ── Sprint G: Agent Runtime — ReAct loop para tareas multi-paso ──────
   if (agentMode) {
@@ -359,6 +378,10 @@ export async function POST(req: NextRequest) {
           // Sprint M-2: Attention Engine — refuerzo post-stream (agent mode)
           if (userId && userId !== "anonymous" && nexoNodeIds.length > 0) {
             attendNexoNodes(userId, nexoNodeIds).catch(() => {});
+          }
+          // Sprint M-3: Cognitive Variables — actualizar perfil post-stream (agent mode)
+          if (userId && userId !== "anonymous") {
+            updateCognitiveProfile(userId, cognitiveSignals).catch(() => {});
           }
         } catch (err) {
           console.error("[SOFIAA][agent] fatal error:", err);
@@ -546,6 +569,10 @@ export async function POST(req: NextRequest) {
             // Sprint M-2: Attention Engine — refuerzo post-stream (normal mode)
             if (userId && userId !== "anonymous" && nexoNodeIds.length > 0) {
               attendNexoNodes(userId, nexoNodeIds).catch(() => {});
+            }
+            // Sprint M-3: Cognitive Variables — actualizar perfil post-stream (normal mode)
+            if (userId && userId !== "anonymous") {
+              updateCognitiveProfile(userId, cognitiveSignals).catch(() => {});
             }
 
             controller.close();
