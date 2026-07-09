@@ -165,7 +165,7 @@ function DropZone({
         {uploading ? "Procesando con Gemini…" : "Sube un PDF"}
       </p>
       <p style={{ margin: 0, fontSize: 12, color: "rgba(226,217,243,0.4)" }}>
-        {uploading ? "Esto puede tardar 10-30 segundos" : "Arrastra aquí o toca para seleccionar · máx 10MB"}
+        {uploading ? "Esto puede tardar 10-30 segundos" : "Arrastra aquí o toca para seleccionar · máx 9MB"}
       </p>
     </div>
   );
@@ -210,6 +210,15 @@ export default function BibliotecaPage() {
   // Subir PDF
   const handleFile = useCallback(async (file: File) => {
     if (!user || uploading) return;
+
+    // Validación client-side: 9MB para dejar margen al límite de Vercel (4.5MB Hobby / ~10MB Pro)
+    const MAX_CLIENT_MB = 9;
+    if (file.size > MAX_CLIENT_MB * 1024 * 1024) {
+      setUploadMsg({ type: "err", text: `El PDF supera el límite de ${MAX_CLIENT_MB}MB. Usa un documento más pequeño o divídelo en partes.` });
+      setTimeout(() => setUploadMsg(null), 6000);
+      return;
+    }
+
     setUploading(true);
     setUploadMsg(null);
 
@@ -224,9 +233,20 @@ export default function BibliotecaPage() {
         body:    formData,
       });
 
-      const data = await res.json();
+      // Parsear respuesta de forma segura — el servidor puede devolver texto plano en errores 413/502
+      let data: Record<string, unknown> = {};
+      const contentType = res.headers.get("content-type") ?? "";
+      if (contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        if (res.status === 413) throw new Error("El PDF es demasiado grande para el servidor. Intenta con un documento menor a 4MB.");
+        if (res.status === 504 || res.status === 502) throw new Error("El servidor tardó demasiado. Intenta con un PDF más pequeño.");
+        throw new Error(text.slice(0, 120) || `Error del servidor (${res.status})`);
+      }
+
       if (!res.ok || !data.success) {
-        throw new Error(data.error ?? "Error al procesar el PDF");
+        throw new Error((data.error as string) ?? "Error al procesar el PDF");
       }
 
       setUploadMsg({
@@ -240,7 +260,7 @@ export default function BibliotecaPage() {
       });
     } finally {
       setUploading(false);
-      setTimeout(() => setUploadMsg(null), 6000);
+      setTimeout(() => setUploadMsg(null), 8000);
     }
   }, [user, uploading]);
 

@@ -53,7 +53,11 @@ export async function POST(req: NextRequest) {
   let formData: FormData;
   try {
     formData = await req.formData();
-  } catch {
+  } catch (e) {
+    const msg = String(e);
+    if (msg.includes("too large") || msg.includes("413") || msg.includes("limit")) {
+      return err("El PDF supera el límite permitido. Usa un documento menor a 4MB.", 413);
+    }
     return err("Error leyendo el formulario");
   }
 
