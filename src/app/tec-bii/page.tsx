@@ -91,18 +91,19 @@ function ModuleCard({
 
   return (
     <div
-      onClick={onClick}
+      onClick={mod.ready ? onClick : undefined}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{
-        background:   hover ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.02)",
-        border:       `1px solid ${hover ? mod.accent + "44" : "rgba(255,255,255,0.06)"}`,
+        background:   hover && mod.ready ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.02)",
+        border:       `1px solid ${hover && mod.ready ? mod.accent + "44" : "rgba(255,255,255,0.06)"}`,
         borderLeft:   `3px solid ${mod.accent}`,
         borderRadius: 14,
         padding:      "18px 20px",
-        cursor:       "pointer",
+        cursor:       mod.ready ? "pointer" : "default",
+        opacity:      mod.ready ? 1 : 0.5,
         transition:   "all 0.2s",
-        transform:    hover ? "translateY(-2px)" : "none",
+        transform:    hover && mod.ready ? "translateY(-2px)" : "none",
       }}
     >
       <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>

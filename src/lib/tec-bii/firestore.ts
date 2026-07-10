@@ -57,8 +57,9 @@ export function subscribeProyectosV2(uid: string, cb: (data: ProyectoV2[]) => vo
     collection(db, tecBiiPath(uid, "proyecto")),
     orderBy("createdAt", "desc"),
   );
-  return onSnapshot(q, (snap) =>
-    cb(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as ProyectoV2))
+  return onSnapshot(q,
+    (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as ProyectoV2)),
+    (_err) => cb([]) // permission denied u otro error → vacío, no crash
   );
 }
 
@@ -100,8 +101,9 @@ export function subscribeBriefsV2(uid: string, cb: (data: BriefV2[]) => void) {
     collection(db, tecBiiPath(uid, "brief")),
     orderBy("createdAt", "desc"),
   );
-  return onSnapshot(q, (snap) =>
-    cb(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as BriefV2))
+  return onSnapshot(q,
+    (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as BriefV2)),
+    (_err) => cb([])
   );
 }
 
@@ -143,8 +145,9 @@ export function subscribeEmpleadosV2(uid: string, cb: (data: EmpleadoV2[]) => vo
     collection(db, tecBiiPath(uid, "empleado")),
     orderBy("nombre", "asc"),
   );
-  return onSnapshot(q, (snap) =>
-    cb(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as EmpleadoV2))
+  return onSnapshot(q,
+    (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as EmpleadoV2)),
+    (_err) => cb([])
   );
 }
 
