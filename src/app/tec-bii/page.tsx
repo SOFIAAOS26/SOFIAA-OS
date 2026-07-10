@@ -4,17 +4,15 @@
  * TEC Bii — Centro de Mando (Dashboard Cognitivo)
  * RUMBO A TIER 4
  *
- * No muestra solo KPIs numéricos: muestra el estado cognitivo del área.
- * Proyectos con urgencyScore, riskLevel, conexiones al grafo NEXO,
- * e insights en lenguaje natural de SOFIAA.
- *
- * Sprint T2-0: versión foundation — módulos listos para conectar datos
- * en los sprints siguientes.
+ * Sprint T2-2: KPIs reales desde Firestore — proyectos activos,
+ * entidades en el grafo NEXO, urgentes e hipótesis.
  */
 
-import { useRouter } from "next/navigation";
+import { useRouter }           from "next/navigation";
 import { useState, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth }             from "@/contexts/AuthContext";
+import { subscribeProyectosV2 } from "@/lib/tec-bii/firestore";
+import type { ProyectoV2 }     from "@/extensions/tec-bii/schema";
 
 const ACCENT  = "#6366F1";
 const ACCENT2 = "#8B5CF6";
@@ -27,7 +25,7 @@ const MODULES = [
     label:  "Proyectos",
     desc:   "Tracking cognitivo con urgencia, riesgo y conexiones NEXO",
     accent: "#6366F1",
-    ready:  false,
+    ready:  true,
   },
   {
     path:   "/tec-bii/briefs",
@@ -35,7 +33,7 @@ const MODULES = [
     label:  "Briefs",
     desc:   "Solicitudes con Brief Score v2 y generación desde conversación",
     accent: "#8B5CF6",
-    ready:  false,
+    ready:  true,
   },
   {
     path:   "/tec-bii/equipo",
@@ -75,7 +73,7 @@ const MODULES = [
     label:  "Inteligencia",
     desc:   "Hipótesis cruzadas, patrones detectados, reflexiones N.O.R.A.",
     accent: "#6366F1",
-    ready:  false,
+    ready:  true,
   },
 ];
 
@@ -111,7 +109,19 @@ function ModuleCard({
         <div style={{ flex: 1 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
             <span style={{ fontSize: 14, fontWeight: 700, color: "#E2E8F0" }}>{mod.label}</span>
-            {!mod.ready && (
+            {mod.ready ? (
+              <span style={{
+                fontSize:   9,
+                color:      "#10B981",
+                background: "rgba(16,185,129,0.12)",
+                border:     "1px solid rgba(16,185,129,0.25)",
+                borderRadius: 99,
+                padding:    "1px 6px",
+                fontWeight: 700,
+              }}>
+                ✓ ACTIVO
+              </span>
+            ) : (
               <span style={{
                 fontSize:   9,
                 color:      mod.accent,
@@ -121,7 +131,7 @@ function ModuleCard({
                 padding:    "1px 6px",
                 fontWeight: 700,
               }}>
-                T2-1 →
+                T2-3 →
               </span>
             )}
           </div>
@@ -171,9 +181,10 @@ function StatPill({
 // ── Dashboard principal ───────────────────────────────────────────────────────
 
 export default function TecBiiDashboard() {
-  const router          = useRouter();
-  const { profile }     = useAuth();
-  const [time, setTime] = useState("");
+  const router              = useRouter();
+  const { profile, user }   = useAuth();
+  const [time, setTime]     = useState("");
+  const [proyectos, setProyectos] = useState<ProyectoV2[]>([]);
 
   useEffect(() => {
     const update = () => setTime(new Date().toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" }));
@@ -181,6 +192,19 @@ export default function TecBiiDashboard() {
     const id = setInterval(update, 30_000);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    const uid = user?.uid;
+    if (!uid) return;
+    const unsub = subscribeProyectosV2(uid, setProyectos);
+    return unsub;
+  }, [user?.uid]);
+
+  // KPIs reales
+  const activos  = proyectos.filter((p) => p.estado === "En producción").length;
+  const enGrafo  = proyectos.filter((p) => !!p.nexoNodeId).length;
+  const urgentes = proyectos.filter((p) => (p.urgencyScore ?? 0) >= 0.7).length;
+  const hipotesis = proyectos.reduce((acc, p) => acc + (p.hypotheses?.length ?? 0), 0);
 
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto" }}>
@@ -228,10 +252,10 @@ export default function TecBiiDashboard() {
 
       {/* ── KPIs de estado del sistema ───────────────────────────────── */}
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 32 }}>
-        <StatPill label="Versión del sistema" value="2.0" color={ACCENT}    sub="Cognitiva · RUMBO A TIER 4" />
-        <StatPill label="Grafo cognitivo"      value="—"   color={ACCENT2}   sub="Conectando en T2-1" />
-        <StatPill label="Proyectos activos"    value="—"   color="#10B981"   sub="Disponible en T2-1" />
-        <StatPill label="Hipótesis activas"    value="—"   color="#F59E0B"   sub="Disponible en T2-4" />
+        <StatPill label="Versión del sistema"  value="2.0"                                                              color={ACCENT}   sub="Cognitiva · RUMBO A TIER 4" />
+        <StatPill label="Grafo cognitivo"      value={proyectos.length === 0 ? "—" : String(enGrafo)}               color={ACCENT2}  sub={enGrafo > 0 ? `de ${proyectos.length} entidades` : "sin datos aún"} />
+        <StatPill label="Proyectos activos"    value={proyectos.length === 0 ? "—" : String(activos)}               color="#10B981"  sub={urgentes > 0 ? `${urgentes} urgente${urgentes > 1 ? "s" : ""}` : "sin urgencias"} />
+        <StatPill label="Hipótesis activas"    value={proyectos.length === 0 ? "—" : String(hipotesis)}             color="#F59E0B"  sub="cross-domain" />
       </div>
 
       {/* ── Aviso de activación ──────────────────────────────────────── */}
@@ -249,13 +273,12 @@ export default function TecBiiDashboard() {
         <span style={{ fontSize: 20, flexShrink: 0 }}>✦</span>
         <div>
           <p style={{ margin: "0 0 6px", fontSize: 13, fontWeight: 700, color: ACCENT }}>
-            Foundation lista — Sprint T2-0 completado
+            Motor cognitivo activo — Sprints T2-0, T2-1, T2-2 completados
           </p>
           <p style={{ margin: 0, fontSize: 12, color: "rgba(226,232,240,0.55)", lineHeight: 1.6 }}>
-            El schema cognitivo, el manifest y la arquitectura base están activos.
-            El próximo sprint (T2-1) conecta los módulos al Experience Graph:
-            cada proyecto, brief y persona generará un nodo con embedding en el grafo de SOFIAA.
-            Desde ese momento, el motor semántico podrá razonar sobre tu operación del TEC.
+            Cada proyecto que crees se publica automáticamente al Experience Graph con resumen IA y embedding semántico.
+            Ve a <strong style={{ color: ACCENT }}>Proyectos</strong> para gestionar el área con tracking cognitivo,
+            o a <strong style={{ color: ACCENT2 }}>Inteligencia</strong> para que SOFIAA analice el estado operacional y detecte riesgos en tiempo real.
           </p>
         </div>
       </div>
