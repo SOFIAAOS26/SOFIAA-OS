@@ -109,8 +109,8 @@ service cloud.firestore {
     // ── Función helper ────────────────────────────────────────────────────────
     function isAdmin() {
       return request.auth.token.email in [
-        "u.cannmx@gmail.com"
-        // Agrega más emails de admin aquí
+        "u.cannmx@gmail.com",
+        "benjacob.urrutia@gmail.com"
       ];
     }
   }
