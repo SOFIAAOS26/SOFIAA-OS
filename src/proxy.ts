@@ -46,7 +46,7 @@ function getRoleFromRequest(req: NextRequest): string | null {
 
 // ── Proxy handler ─────────────────────────────────────────────────────────
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const prefix = getActiveExtensionPrefix(pathname);
