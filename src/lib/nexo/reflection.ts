@@ -12,12 +12,8 @@
 
 import { getAdminDb }   from "@/lib/firebase-admin";
 import { getNexoNodes } from "@/lib/nexo/firestore";
+import { callGroq }    from "@/lib/groq";
 import type { NexoNode } from "@/types/nexo";
-
-// ── Gemini endpoint ───────────────────────────────────────────────────────────
-
-const GEMINI_URL = (key: string) =>
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
 
 // ── Tipos internos ────────────────────────────────────────────────────────────
 
@@ -124,39 +120,19 @@ Responde ÚNICAMENTE con un objeto JSON válido con esta estructura:
   "connections": ["conexión entre tema A y tema B"]
 }`;
 
-  // ── Llamar a Gemini Flash ─────────────────────────────────────────────────
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new Error("GEMINI_API_KEY no configurada");
-
-  const geminiRes = await fetch(GEMINI_URL(apiKey), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature:     0.75,
-        maxOutputTokens: 1024,
-      },
-    }),
-  });
-
-  if (!geminiRes.ok) {
-    const errText = await geminiRes.text().catch(() => "");
-    throw new Error(`Gemini error ${geminiRes.status}: ${errText.slice(0, 200)}`);
-  }
-
-  const geminiData = await geminiRes.json();
-  const rawText    = geminiData.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+  // ── Llamar a Groq ─────────────────────────────────────────────────────────
+  const rawText = await callGroq(prompt, { maxTokens: 1024, temperature: 0.75, json: true });
+  if (!rawText) throw new Error("Groq no devolvió respuesta");
 
   // Extraer el bloque JSON de la respuesta
   const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error(`Respuesta Gemini sin JSON: ${rawText.slice(0, 200)}`);
+  if (!jsonMatch) throw new Error(`Respuesta Groq sin JSON: ${rawText.slice(0, 200)}`);
 
   let result: ReflectionResult;
   try {
     result = JSON.parse(jsonMatch[0]);
   } catch {
-    throw new Error(`JSON inválido de Gemini: ${jsonMatch[0].slice(0, 200)}`);
+    throw new Error(`JSON inválido de Groq: ${jsonMatch[0].slice(0, 200)}`);
   }
 
   // ── Guardar insights como nodos especiales ────────────────────────────────

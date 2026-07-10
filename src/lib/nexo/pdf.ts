@@ -1,25 +1,19 @@
 /**
- * N.E.X.O. — PDF Library Engine (Sprint M-1)
+ * N.E.X.O. — PDF Library Engine (Sprint M-1, actualizado Groq)
  *
- * Procesa un documento PDF usando Gemini Flash con datos inline.
- * No requiere pdf-parse — Gemini lee el PDF directamente como base64.
+ * Procesa un documento PDF usando pdf-parse (extracción de texto) + Groq LLM.
  *
  * Flujo:
  *   1. Guarda metadata en users/{uid}/biblioteca/{docId} (status: "processing")
- *   2. Envía el PDF a Gemini para extracción estructurada de conocimiento
- *   3. Crea NexoNodes (source: "pdf_library") por cada tema/capítulo detectado
- *   4. Actualiza el BibliotecaDoc con status: "processed" + nodesCreated
- *
- * Límite: PDFs hasta ~10MB (límite de Gemini inline data en producción).
+ *   2. Extrae texto plano del PDF con pdf-parse
+ *   3. Envía el texto a Groq para extracción estructurada de conocimiento (JSON)
+ *   4. Crea NexoNodes (source: "pdf_library") por cada tema/capítulo detectado
+ *   5. Actualiza el BibliotecaDoc con status: "processed" + nodesCreated
  */
 
 import { getAdminDb } from "@/lib/firebase-admin";
+import { callGroq }   from "@/lib/groq";
 import type { NexoNode, NexoCategory, BibliotecaDoc } from "@/types/nexo";
-
-// ── Gemini endpoint ───────────────────────────────────────────────────────────
-
-const GEMINI_URL = (key: string) =>
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
 
 // ── Tipos internos ────────────────────────────────────────────────────────────
 
@@ -99,11 +93,15 @@ export async function processPdf(opts: ProcessPdfOptions): Promise<ProcessPdfRes
   await bibRef.set(initial);
 
   try {
-    // ── 2. Llamar a Gemini con el PDF ─────────────────────────────────────
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) throw new Error("GEMINI_API_KEY no configurada");
+    // ── 2. Extraer texto del PDF con pdf-parse ────────────────────────────
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const pdfParse = require("pdf-parse") as (buf: Buffer) => Promise<{ text: string }>;
+    const pdfBuffer = Buffer.from(pdfBase64, "base64");
+    const pdfData   = await pdfParse(pdfBuffer);
+    const pdfText   = pdfData.text.slice(0, 8000); // truncar para no exceder TPM
 
-    const prompt = `Analiza este documento PDF y extrae su conocimiento de forma estructurada.
+    // ── 3. Llamar a Groq con el texto extraído ────────────────────────────
+    const prompt = `Analiza el siguiente texto extraído de un documento PDF y extrae su conocimiento de forma estructurada.
 
 INSTRUCCIONES:
 - Identifica el título real y autor del documento (si están presentes)
@@ -131,42 +129,17 @@ Responde ÚNICAMENTE con un JSON válido con esta estructura exacta:
       }
     }
   ]
-}`;
+}
 
-    const geminiRes = await fetch(GEMINI_URL(apiKey), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{
-          role: "user",
-          parts: [
-            {
-              inlineData: {
-                mimeType: "application/pdf",
-                data:     pdfBase64,
-              },
-            },
-            { text: prompt },
-          ],
-        }],
-        generationConfig: {
-          temperature:     0.3,   // más determinista para extracción
-          maxOutputTokens: 2048,
-        },
-      }),
-    });
+TEXTO DEL PDF:
+${pdfText}`;
 
-    if (!geminiRes.ok) {
-      const errText = await geminiRes.text().catch(() => "");
-      throw new Error(`Gemini error ${geminiRes.status}: ${errText.slice(0, 200)}`);
-    }
-
-    const geminiData = await geminiRes.json();
-    const rawText    = geminiData.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+    const rawText = await callGroq(prompt, { maxTokens: 2048, temperature: 0.3, json: true });
+    if (!rawText) throw new Error("Groq no devolvió respuesta");
 
     // Extraer JSON
     const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("Gemini no devolvió JSON válido");
+    if (!jsonMatch) throw new Error("Groq no devolvió JSON válido");
 
     let result: GeminiPdfResult;
     try {
@@ -235,7 +208,7 @@ Responde ÚNICAMENTE con un JSON válido con esta estructura exacta:
     });
 
     console.log(
-      `[M-1 PDF] uid=${uid.slice(0, 8)} doc="${finalTitle}" ` +
+      `[M-1 PDF/Groq] uid=${uid.slice(0, 8)} doc="${finalTitle}" ` +
       `nodes=${nodesCreated} dt=${Date.now() - start}ms`
     );
 

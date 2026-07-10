@@ -15,6 +15,7 @@ import { getAdminDb }         from "@/lib/firebase-admin";
 import { nexoNodesCol }       from "@/lib/nexo/firestore";
 import { cosineSimilarity }   from "@/lib/nexo/embeddings";
 import { tecBiiPath }         from "@/lib/tec-bii/collections";
+import { callGroq }           from "@/lib/groq";
 import type { NexoNode }      from "@/types/nexo";
 import type {
   Hypothesis, TecBiiEntityType,
@@ -77,9 +78,6 @@ async function generateHypothesis(
   entitySummary: string,
   captures:      Array<{ title: string; summary: string; similarity: number }>,
 ): Promise<string | null> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return null;
-
   const capturesText = captures
     .map((c, i) => `${i + 1}. "${c.title}" (similitud: ${Math.round(c.similarity * 100)}%)\n   ${c.summary}`)
     .join("\n\n");
@@ -102,29 +100,8 @@ Genera una hipótesis de razonamiento cruzado en 1-2 oraciones. La hipótesis de
 
 Responde SOLO con el texto de la hipótesis, sin comillas ni formato adicional.`;
 
-  try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { maxOutputTokens: 120, temperature: 0.5 },
-        }),
-      }
-    );
-
-    if (!res.ok) return null;
-
-    const data = await res.json() as {
-      candidates?: { content?: { parts?: { text?: string }[] } }[];
-    };
-
-    return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? null;
-  } catch {
-    return null;
-  }
+  const result = await callGroq(prompt, { maxTokens: 150, temperature: 0.5 });
+  return result?.trim() ?? null;
 }
 
 // ── Motor principal ───────────────────────────────────────────────────────────

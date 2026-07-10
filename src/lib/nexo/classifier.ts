@@ -10,6 +10,7 @@
  */
 
 import type { NexoCategory, NexoEntities, NexoIngestPayload } from "@/types/nexo";
+import { callGroq } from "@/lib/groq";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -80,46 +81,23 @@ function heuristicClassify(payload: NexoIngestPayload): ClassifierResult {
 export async function classifyNexoPayload(
   payload: NexoIngestPayload
 ): Promise<ClassifierResult> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    console.warn("[N.E.X.O. classifier] GEMINI_API_KEY no configurado — usando heurística");
-    return heuristicClassify(payload);
-  }
-
   const content = buildContent(payload);
 
-  const body = {
-    systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-    contents: [{ role: "user", parts: [{ text: content }] }],
-    generationConfig: {
-      responseMimeType: "application/json",
-      temperature:      0.1,      // determinista para clasificación
-      maxOutputTokens:  512,
-    },
-  };
-
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-
   try {
-    const res = await fetch(url, {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify(body),
+    const rawText = await callGroq(content, {
+      system:      SYSTEM_PROMPT,
+      maxTokens:   512,
+      temperature: 0.1,
+      json:        true,
     });
 
-    if (!res.ok) {
-      console.error(`[N.E.X.O. classifier] Gemini error ${res.status}`);
+    if (!rawText) {
+      console.warn("[N.E.X.O. classifier] Groq sin respuesta — usando heurística");
       return heuristicClassify(payload);
     }
 
-    const json = await res.json();
-    const rawText: string = json.candidates?.[0]?.content?.parts?.[0]?.text ?? "{}";
-    const tokensUsed: number =
-      (json.usageMetadata?.promptTokenCount ?? 0) +
-      (json.usageMetadata?.candidatesTokenCount ?? 0);
-
     const parsed = JSON.parse(rawText);
-    return sanitizeResult(parsed, payload, tokensUsed);
+    return sanitizeResult(parsed, payload, 0);
 
   } catch (err) {
     console.error("[N.E.X.O. classifier] Error:", err);

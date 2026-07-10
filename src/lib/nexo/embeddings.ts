@@ -1,95 +1,30 @@
 /**
  * N.E.X.O. — Semantic Embedding Engine (Sprint M-4)
  *
- * Genera embeddings de texto usando Gemini gemini-embedding-001.
- * Usado para el Semantic Retrieval Engine: ranking por similitud coseno
- * entre la conversación actual y los nodos del grafo del usuario.
+ * NOTA: Groq no ofrece endpoint de embeddings.
+ * Estas funciones retornan null → el sistema hace fallback a ranking por peso (hybridScore).
+ * Si en el futuro se añade un proveedor de embeddings, aquí se integra.
  *
- * Endpoint: POST /v1beta/models/gemini-embedding-001:embedContent
- * Dimensiones: 3072 floats (gemini-embedding-001) — backward compatible con cosine
- * Costo: ~$0.000025 / 1K tokens (mínimo)
+ * El fallback de peso puro está implementado en hybridScore() y getSemanticNexoContext().
  */
 
-// ── Constantes ────────────────────────────────────────────────────────────────
-
-const EMBEDDING_MODEL = "gemini-embedding-001";
-const EMBEDDING_URL   = (key: string) =>
-  `https://generativelanguage.googleapis.com/v1beta/models/${EMBEDDING_MODEL}:embedContent?key=${key}`;
-
-/** Dimensiones del embedding de gemini-embedding-001 */
+/** Dimensiones del embedding (referencia, actualmente no se generan) */
 export const EMBEDDING_DIMS = 3072;
 
-// ── Generar embedding ─────────────────────────────────────────────────────────
-
 /**
- * Genera un embedding vectorial para el texto dado.
- * Retorna null si la API falla — el sistema hace fallback a ranking por peso.
- *
- * @param text  Texto a embeber (título + resumen del nodo, o mensaje del usuario)
+ * Genera un embedding vectorial.
+ * Actualmente retorna null — el sistema usa ranking por peso como fallback.
  */
-export async function generateEmbedding(text: string): Promise<number[] | null> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return null;
-
-  // Normalizar y truncar a ~2000 chars para no desperdiciar tokens
-  const input = text.trim().slice(0, 2000);
-  if (!input) return null;
-
-  try {
-    const res = await fetch(EMBEDDING_URL(apiKey), {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model:    `models/${EMBEDDING_MODEL}`,
-        content:  { parts: [{ text: input }] },
-        taskType: "RETRIEVAL_DOCUMENT",
-      }),
-    });
-
-    if (!res.ok) return null;
-
-    const data = await res.json() as {
-      embedding?: { values?: number[] };
-    };
-
-    return data.embedding?.values ?? null;
-  } catch {
-    return null;
-  }
+export async function generateEmbedding(_text: string): Promise<number[] | null> {
+  return null;
 }
 
 /**
- * Genera un embedding optimizado para queries de búsqueda.
- * Usa taskType RETRIEVAL_QUERY en lugar de RETRIEVAL_DOCUMENT.
+ * Genera un embedding para queries de búsqueda.
+ * Actualmente retorna null — el sistema usa ranking por peso como fallback.
  */
-export async function generateQueryEmbedding(text: string): Promise<number[] | null> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return null;
-
-  const input = text.trim().slice(0, 1000);
-  if (!input) return null;
-
-  try {
-    const res = await fetch(EMBEDDING_URL(apiKey), {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model:    `models/${EMBEDDING_MODEL}`,
-        content:  { parts: [{ text: input }] },
-        taskType: "RETRIEVAL_QUERY",
-      }),
-    });
-
-    if (!res.ok) return null;
-
-    const data = await res.json() as {
-      embedding?: { values?: number[] };
-    };
-
-    return data.embedding?.values ?? null;
-  } catch {
-    return null;
-  }
+export async function generateQueryEmbedding(_text: string): Promise<number[] | null> {
+  return null;
 }
 
 // ── Similitud coseno ──────────────────────────────────────────────────────────

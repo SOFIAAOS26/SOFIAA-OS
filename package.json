@@ -27,6 +27,7 @@
     "react-markdown": "^10.1.0",
     "recharts": "^3.8.1",
     "remark-gfm": "^4.0.1",
+    "pdf-parse": "^1.1.1",
     "three": "^0.184.0"
   },
   "overrides": {
@@ -37,6 +38,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/pdf-parse": "^1.1.4",
     "@types/three": "^0.184.1",
     "@vitest/coverage-v8": "^2",
     "eslint": "^9",

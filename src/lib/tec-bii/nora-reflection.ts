@@ -15,6 +15,7 @@
 import { getAdminDb }       from "@/lib/firebase-admin";
 import { tecBiiPath }       from "@/lib/tec-bii/collections";
 import type { ProyectoV2, EmpleadoV2, BriefV2 } from "@/extensions/tec-bii/schema";
+import { callGroq }        from "@/lib/groq";
 
 // ── Tipos ─────────────────────────────────────────────────────────────────────
 
@@ -106,10 +107,7 @@ export async function runNoraReflection(uid: string, force = false): Promise<Nor
   // 2. Construir contexto para Gemini
   const contexto = buildContextString(proyectos, empleados, briefs, hipotesisActivas);
 
-  // 3. Llamar a Gemini
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new Error("GEMINI_API_KEY no configurada");
-
+  // 3. Llamar a Groq
   const prompt = `Eres N.O.R.A. (Neural Observer & Reasoning Architecture), el motor de reflexión cognitiva del Área de Producción Audiovisual del Tecnológico de Monterrey Campus Monterrey.
 
 Analizas el estado operacional del área y generas reflexiones profundas, empáticas y accionables sobre la situación del equipo, los proyectos y los patrones emergentes.
@@ -133,28 +131,8 @@ Responde EXACTAMENTE con este JSON (sin texto adicional):
   "estadoGeneral": "uno de: crítico | alerta | estable | óptimo"
 }`;
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-    {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          maxOutputTokens:  500,
-          temperature:      0.65,
-          responseMimeType: "application/json",
-        },
-      }),
-    }
-  );
-
-  if (!res.ok) throw new Error(`Gemini error ${res.status}`);
-
-  const data = await res.json() as {
-    candidates?: { content?: { parts?: { text?: string }[] } }[];
-  };
-  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+  const raw = await callGroq(prompt, { maxTokens: 600, temperature: 0.65, json: true });
+  if (!raw) throw new Error("Groq no devolvió respuesta");
 
   let parsed: {
     narrativa:     string;
@@ -166,7 +144,7 @@ Responde EXACTAMENTE con este JSON (sin texto adicional):
   try {
     parsed = JSON.parse(raw);
   } catch {
-    throw new Error(`Respuesta Gemini inválida: ${raw.slice(0, 200)}`);
+    throw new Error(`Respuesta Groq inválida: ${raw.slice(0, 200)}`);
   }
 
   // 4. Construir y persistir la reflexión

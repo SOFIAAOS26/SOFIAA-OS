@@ -18,6 +18,7 @@ import { getAdminDb }                   from "@/lib/firebase-admin";
 import { getAdminApp }                  from "@/lib/firebase-admin";
 import { tecBiiPath }                   from "@/lib/tec-bii/collections";
 import type { ProyectoV2 }             from "@/extensions/tec-bii/schema";
+import { callGroq }                    from "@/lib/groq";
 
 // ── Tipos de respuesta ────────────────────────────────────────────────────────
 
@@ -59,15 +60,13 @@ async function getUid(req: NextRequest): Promise<string | null> {
 async function generateInsightsWithGemini(
   proyectos: ProyectoV2[]
 ): Promise<{ insights: TecBiiInsight[]; resumen: string }> {
-  const apiKey = process.env.GEMINI_API_KEY;
-
   const activos   = proyectos.filter((p) => p.estado === "En producción");
   const revision  = proyectos.filter((p) => p.estado === "En revisión");
   const urgentes  = proyectos.filter((p) => (p.urgencyScore ?? 0) >= 0.7);
   const enGrafo   = proyectos.filter((p) => !!p.nexoNodeId);
 
-  // Fallback sin API
-  if (!apiKey || proyectos.length === 0) {
+  // Fallback sin datos
+  if (proyectos.length === 0) {
     return buildFallbackInsights(proyectos);
   }
 
@@ -107,29 +106,9 @@ ${urgentes.map((p) => `- "${p.titulo}" urgencia ${Math.round((p.urgencyScore ?? 
 Genera entre 3 y 6 insights relevantes. Sé específico, no genérico. Si hay proyectos urgentes, prioriza esas alertas.`;
 
   try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            maxOutputTokens: 800,
-            temperature:     0.4,
-            responseMimeType: "application/json",
-          },
-        }),
-      }
-    );
+    const raw = await callGroq(prompt, { maxTokens: 900, temperature: 0.4, json: true });
+    if (!raw) return buildFallbackInsights(proyectos);
 
-    if (!res.ok) return buildFallbackInsights(proyectos);
-
-    const data = await res.json() as {
-      candidates?: { content?: { parts?: { text?: string }[] } }[];
-    };
-
-    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
     const parsed = JSON.parse(raw) as {
       resumen: string;
       insights: Array<{

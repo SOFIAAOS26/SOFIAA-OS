@@ -13,6 +13,7 @@ import { NextRequest, NextResponse }  from "next/server";
 import { getAuth }                     from "firebase-admin/auth";
 import { getAdminApp }                 from "@/lib/firebase-admin";
 import type { BriefV2, TipoProyecto, EstadoBrief } from "@/extensions/tec-bii/schema";
+import { callGroq }                    from "@/lib/groq";
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 
@@ -55,9 +56,6 @@ const TIPO_PROYECTOS: TipoProyecto[] = [
 async function generateBriefFromDescription(
   descripcion: string
 ): Promise<GeneratedBrief | null> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return null;
-
   const prompt = `Eres el sistema de inteligencia de briefs del Área de Producción Audiovisual del Tecnológico de Monterrey.
 
 El usuario describió un proyecto con estas palabras:
@@ -85,29 +83,9 @@ Responde EXACTAMENTE en este formato JSON (sin texto adicional):
 }`;
 
   try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            maxOutputTokens:  600,
-            temperature:      0.4,
-            responseMimeType: "application/json",
-          },
-        }),
-      }
-    );
+    const raw = await callGroq(prompt, { maxTokens: 700, temperature: 0.4, json: true });
+    if (!raw) return null;
 
-    if (!res.ok) return null;
-
-    const data = await res.json() as {
-      candidates?: { content?: { parts?: { text?: string }[] } }[];
-    };
-
-    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
     const parsed = JSON.parse(raw) as GeneratedBrief;
 
     // Validar que tipoProyecto sea un valor válido
@@ -149,7 +127,7 @@ export async function POST(req: NextRequest) {
 
   if (!generated) {
     return NextResponse.json(
-      { success: false, error: "No se pudo generar el brief. Verifica la API key de Gemini." },
+      { success: false, error: "No se pudo generar el brief. Verifica la API key de Groq." },
       { status: 500 }
     );
   }

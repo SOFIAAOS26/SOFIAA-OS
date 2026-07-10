@@ -17,6 +17,7 @@ import { generateEmbedding }  from "@/lib/nexo/embeddings";
 import { upsertNexoNode }     from "@/lib/nexo/firestore";
 import { getAdminDb }         from "@/lib/firebase-admin";
 import { tecBiiPath }         from "@/lib/tec-bii/collections";
+import { callGroq }           from "@/lib/groq";
 import type { NexoNode }      from "@/types/nexo";
 import {
   NEXO_INITIAL_WEIGHT,
@@ -41,32 +42,9 @@ async function generateEntitySummary(
   entityType: TecBiiEntityType,
   entity:     TecBiiEntity,
 ): Promise<string> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return buildFallbackSummary(entityType, entity);
-
   const prompt = buildSummaryPrompt(entityType, entity);
-
-  try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { maxOutputTokens: 150, temperature: 0.3 },
-        }),
-      }
-    );
-    if (!res.ok) return buildFallbackSummary(entityType, entity);
-    const data = await res.json() as {
-      candidates?: { content?: { parts?: { text?: string }[] } }[];
-    };
-    return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim()
-      ?? buildFallbackSummary(entityType, entity);
-  } catch {
-    return buildFallbackSummary(entityType, entity);
-  }
+  const result = await callGroq(prompt, { maxTokens: 180, temperature: 0.3 });
+  return result?.trim() ?? buildFallbackSummary(entityType, entity);
 }
 
 function buildSummaryPrompt(entityType: TecBiiEntityType, entity: TecBiiEntity): string {
