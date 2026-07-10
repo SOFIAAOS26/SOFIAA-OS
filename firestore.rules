@@ -51,10 +51,13 @@ service cloud.firestore {
         allow write: if false;
       }
 
-      // TEC Bii — entidades cognitivas (proyectos, briefs, empleados, etc.)
-      match /tec_bii/{col}/{docId} {
-        allow read, write: if request.auth != null && request.auth.uid == uid;
-      }
+      // TEC Bii — entidades cognitivas (users/{uid}/tec_bii_{tipo}/{docId})
+      match /tec_bii_proyectos/{docId}   { allow read, write: if request.auth != null && request.auth.uid == uid; }
+      match /tec_bii_briefs/{docId}       { allow read, write: if request.auth != null && request.auth.uid == uid; }
+      match /tec_bii_empleados/{docId}    { allow read, write: if request.auth != null && request.auth.uid == uid; }
+      match /tec_bii_proveedores/{docId}  { allow read, write: if request.auth != null && request.auth.uid == uid; }
+      match /tec_bii_clientes/{docId}     { allow read, write: if request.auth != null && request.auth.uid == uid; }
+      match /tec_bii_evaluaciones/{docId} { allow read, write: if request.auth != null && request.auth.uid == uid; }
 
       // TEC Bii — reflexiones N.O.R.A. (generadas por Admin SDK + leídas por cliente)
       match /tec_bii_reflexiones/{reflId} {

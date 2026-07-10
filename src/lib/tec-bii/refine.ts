@@ -51,13 +51,14 @@ export interface RefineResult {
 
 // ── Colecciones de entidades TEC Bii ──────────────────────────────────────────
 
+// Nombres de colección con prefijo tec_bii_ (3 segmentos bajo users/{uid})
 const TEC_BII_COLLECTIONS: Record<TecBiiEntityType, string> = {
-  proyecto:   "proyectos",
-  brief:      "briefs",
-  empleado:   "empleados",
-  proveedor:  "proveedores",
-  cliente:    "clientes",
-  evaluacion: "evaluaciones",
+  proyecto:   "tec_bii_proyectos",
+  brief:      "tec_bii_briefs",
+  empleado:   "tec_bii_empleados",
+  proveedor:  "tec_bii_proveedores",
+  cliente:    "tec_bii_clientes",
+  evaluacion: "tec_bii_evaluaciones",
 };
 
 /** Antigüedad máxima de sync antes de re-publicar (24h en ms) */
@@ -78,7 +79,7 @@ async function discoverTecBiiUsers(): Promise<string[]> {
       .get();
 
     snap.docs.forEach((d) => {
-      // Path: users/{uid}/tec_bii/{col}/{docId}
+      // Path: users/{uid}/tec_bii_{col}/{docId}
       const parts = d.ref.path.split("/");
       if (parts.length >= 2 && parts[0] === "users") {
         uids.add(parts[1]);
@@ -97,7 +98,7 @@ async function republishStaleEntities(uid: string): Promise<number> {
   let   count = 0;
 
   for (const [type, col] of Object.entries(TEC_BII_COLLECTIONS) as [TecBiiEntityType, string][]) {
-    const colPath = `users/${uid}/tec_bii/${col}`;
+    const colPath = `users/${uid}/${col}`;
     const snap = await db.collection(colPath).limit(20).get();
 
     for (const doc of snap.docs) {

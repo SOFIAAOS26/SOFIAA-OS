@@ -17,7 +17,9 @@ const TYPE_COL: Record<TecBiiEntityType, string> = {
 
 /**
  * Ruta de colección para una entidad TEC Bii.
- * Formato: users/{uid}/tec_bii/{type_plural}
+ * Formato: users/{uid}/tec_bii_{type_plural}  ← 3 segmentos (impar = colección válida)
+ *
+ * IMPORTANTE: NO usar users/{uid}/tec_bii/{type} — 4 segmentos son documento, no colección.
  */
 export const tecBiiPath = (uid: string, type: TecBiiEntityType): string =>
-  `users/${uid}/tec_bii/${TYPE_COL[type]}`;
+  `users/${uid}/tec_bii_${TYPE_COL[type]}`;
