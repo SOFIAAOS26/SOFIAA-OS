@@ -73,24 +73,39 @@ INSTRUCCIONES:
   "language": "es o en"
 }`;
 
-  const res = await fetch(GEMINI_URL(apiKey), {
-    method:  "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{
-        role:  "user",
-        parts: [
-          { inlineData: { mimeType: "application/pdf", data: pdfBase64 } },
-          { text: prompt },
-        ],
-      }],
-      generationConfig: { temperature: 0.2, maxOutputTokens: 1024 },
-    }),
-  });
+  // Retry con backoff en caso de rate limit
+  let res;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    res = await fetch(GEMINI_URL(apiKey), {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{
+          role:  "user",
+          parts: [
+            { inlineData: { mimeType: "application/pdf", data: pdfBase64 } },
+            { text: prompt },
+          ],
+        }],
+        generationConfig: { temperature: 0.2, maxOutputTokens: 1024 },
+      }),
+    });
+
+    if (res.status === 429 && attempt < 3) {
+      const wait = attempt * 30; // 30s, 60s
+      console.log(`\n     ⏳ Rate limit — esperando ${wait}s (intento ${attempt}/3)...`);
+      await new Promise(r => setTimeout(r, wait * 1000));
+      continue;
+    }
+    break;
+  }
 
   if (!res.ok) {
     const errText = await res.text().catch(() => "");
-    throw new Error(`Gemini ${res.status}: ${errText.slice(0, 200)}`);
+    const msg = res.status === 429
+      ? `Cuota de Gemini agotada. Revisa https://aistudio.google.com/ o espera hasta mañana.`
+      : `Gemini ${res.status}: ${errText.slice(0, 200)}`;
+    throw new Error(msg);
   }
 
   const data     = await res.json();
@@ -175,6 +190,10 @@ async function main() {
       const dt     = ((Date.now() - start) / 1000).toFixed(1);
       console.log(`✅  "${result.title}" · ${result.topicCount} temas · ${dt}s`);
       processed++;
+      // Pausa entre documentos para respetar rate limits
+      if (pdfs.indexOf(filename) < pdfs.length - 1) {
+        await new Promise(r => setTimeout(r, 5000));
+      }
     } catch (err) {
       console.log(`❌\n     Error: ${err.message}`);
       errors++;

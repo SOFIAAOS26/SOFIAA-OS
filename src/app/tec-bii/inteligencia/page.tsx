@@ -15,6 +15,8 @@ import { useState } from "react";
 import { useAuth }  from "@/contexts/AuthContext";
 import PageGuard    from "@/components/tec-bi/PageGuard";
 import type { TecBiiInsight, InsightsResponse } from "@/app/api/tec-bii/insights/route";
+import type { CrossDomainResponse }             from "@/app/api/tec-bii/cross-domain/route";
+import type { Hypothesis, TecBiiEntityType }    from "@/extensions/tec-bii/schema";
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
@@ -108,12 +110,99 @@ function StatCard({
 
 // ── Página ────────────────────────────────────────────────────────────────────
 
+// ── HypothesisCard ────────────────────────────────────────────────────────────
+
+function HypothesisCard({
+  entityTitle,
+  entityType,
+  hypothesis,
+}: {
+  entityTitle: string;
+  entityType:  TecBiiEntityType;
+  hypothesis:  Hypothesis;
+}) {
+  const [hover, setHover] = useState(false);
+
+  const confidencePct = Math.round(hypothesis.confidence * 100);
+  const confColor = confidencePct >= 80 ? "#10B981" : confidencePct >= 65 ? "#F59E0B" : "#6366F1";
+
+  return (
+    <div
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        background:   hover ? "rgba(99,102,241,0.06)" : "rgba(99,102,241,0.03)",
+        border:       `1px solid ${hover ? "rgba(99,102,241,0.3)" : "rgba(99,102,241,0.12)"}`,
+        borderLeft:   "3px solid #6366F1",
+        borderRadius: 14,
+        padding:      "14px 18px",
+        transition:   "all 0.2s",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+        <span style={{ fontSize: 18, lineHeight: 1, flexShrink: 0, marginTop: 2 }}>✦</span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#6366F1", textTransform: "capitalize" }}>
+              {entityType}
+            </span>
+            <span style={{ fontSize: 11, color: "rgba(226,232,240,0.5)" }}>·</span>
+            <span style={{ fontSize: 12, fontWeight: 600, color: "#E2E8F0" }}>{entityTitle}</span>
+            <span style={{
+              fontSize: 9, fontWeight: 700, color: confColor,
+              background: confColor + "18", border: `1px solid ${confColor}33`,
+              borderRadius: 99, padding: "1px 7px", marginLeft: "auto",
+            }}>
+              {confidencePct}% similitud
+            </span>
+          </div>
+          <p style={{ margin: 0, fontSize: 12, color: "rgba(226,232,240,0.7)", lineHeight: 1.65 }}>
+            {hypothesis.text}
+          </p>
+          <p style={{ margin: "6px 0 0", fontSize: 10, color: "rgba(226,232,240,0.2)" }}>
+            {new Date(hypothesis.generatedAt).toLocaleString("es-MX")} · {hypothesis.sources.length - 1} captura{hypothesis.sources.length !== 2 ? "s" : ""} NEXO
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Página ────────────────────────────────────────────────────────────────────
+
 export default function InteligenciaPage() {
   const { user }              = useAuth();
   const [loading, setLoading] = useState(false);
   const [data, setData]       = useState<InsightsResponse | null>(null);
   const [error, setError]     = useState<string | null>(null);
   const [lastRun, setLastRun] = useState<Date | null>(null);
+
+  // Cross-domain state
+  const [xdLoading, setXdLoading]   = useState(false);
+  const [xdData, setXdData]         = useState<CrossDomainResponse | null>(null);
+  const [xdError, setXdError]       = useState<string | null>(null);
+  const [xdLastRun, setXdLastRun]   = useState<Date | null>(null);
+
+  const runCrossDomain = async () => {
+    if (!user || xdLoading) return;
+    setXdLoading(true);
+    setXdError(null);
+    try {
+      const token = await user.getIdToken();
+      const res   = await fetch("/api/tec-bii/cross-domain", {
+        method:  "POST",
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      const json = await res.json() as CrossDomainResponse;
+      if (!json.success) throw new Error(json.error ?? "Error desconocido");
+      setXdData(json);
+      setXdLastRun(new Date());
+    } catch (err) {
+      setXdError(err instanceof Error ? err.message : "Error en el razonamiento cruzado");
+    } finally {
+      setXdLoading(false);
+    }
+  };
 
   const runAnalysis = async () => {
     if (!user || loading) return;
@@ -347,6 +436,171 @@ export default function InteligenciaPage() {
             </p>
           </>
         )}
+
+        {/* ── Razonamiento Cruzado (T2-4) ─────────────────────────────── */}
+        <div style={{ marginTop: 40 }}>
+          <div style={{
+            background:   "rgba(99,102,241,0.05)",
+            border:       "1px solid rgba(99,102,241,0.18)",
+            borderRadius: 20,
+            padding:      "24px 24px 20px",
+          }}>
+            {/* Header de sección */}
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 18 }}>
+              <div>
+                <h2 style={{ margin: "0 0 4px", fontSize: 17, fontWeight: 800, color: "#E2E8F0" }}>
+                  ⌭ Razonamiento Cruzado
+                </h2>
+                <p style={{ margin: 0, fontSize: 12, color: "rgba(99,102,241,0.7)", fontWeight: 600 }}>
+                  NEXO ↔ TEC Bii · Conexiones semánticas entre capturas y entidades
+                </p>
+                {xdLastRun && (
+                  <p style={{ margin: "4px 0 0", fontSize: 10, color: "rgba(226,232,240,0.2)" }}>
+                    Última ejecución: {xdLastRun.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" })}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={runCrossDomain}
+                disabled={xdLoading}
+                style={{
+                  background:   xdLoading ? "rgba(99,102,241,0.15)" : "rgba(99,102,241,0.2)",
+                  border:       `1px solid ${xdLoading ? "rgba(99,102,241,0.1)" : "rgba(99,102,241,0.35)"}`,
+                  borderRadius: 12,
+                  padding:      "9px 20px",
+                  fontSize:     12,
+                  fontWeight:   700,
+                  color:        xdLoading ? "rgba(226,232,240,0.3)" : "#a5b4fc",
+                  cursor:       xdLoading ? "not-allowed" : "pointer",
+                  display:      "flex",
+                  alignItems:   "center",
+                  gap:          7,
+                  transition:   "all 0.2s",
+                }}
+              >
+                {xdLoading ? (
+                  <><span style={{ animation: "spin 1s linear infinite", display: "inline-block" }}>◌</span> Analizando…</>
+                ) : (
+                  <>⌭ Detectar conexiones</>
+                )}
+              </button>
+            </div>
+
+            {/* Estado vacío */}
+            {!xdData && !xdLoading && !xdError && (
+              <div style={{
+                textAlign: "center", padding: "32px 24px",
+                background: "rgba(255,255,255,0.01)",
+                border: "1px dashed rgba(99,102,241,0.15)",
+                borderRadius: 14,
+              }}>
+                <p style={{ margin: "0 0 8px", fontSize: 28 }}>⌭</p>
+                <p style={{ margin: "0 0 6px", fontSize: 13, fontWeight: 700, color: "rgba(226,232,240,0.6)" }}>
+                  Sin análisis cruzado aún
+                </p>
+                <p style={{ margin: 0, fontSize: 12, color: "rgba(226,232,240,0.3)", lineHeight: 1.6 }}>
+                  SOFIAA comparará tus capturas NEXO con las entidades TEC Bii
+                  para detectar conexiones semánticas y generar hipótesis de razonamiento.
+                </p>
+              </div>
+            )}
+
+            {/* Loading */}
+            {xdLoading && (
+              <div style={{ textAlign: "center", padding: "28px 24px" }}>
+                <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+                <div style={{
+                  width: 36, height: 36, borderRadius: "50%",
+                  border: "2px solid rgba(99,102,241,0.15)",
+                  borderTop: "2px solid #6366F1",
+                  margin: "0 auto 14px",
+                  animation: "spin 1s linear infinite",
+                }} />
+                <p style={{ margin: 0, fontSize: 13, color: "rgba(226,232,240,0.5)" }}>
+                  Comparando embeddings NEXO ↔ TEC Bii…
+                </p>
+              </div>
+            )}
+
+            {/* Error */}
+            {xdError && (
+              <div style={{
+                background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)",
+                borderRadius: 12, padding: "12px 16px",
+              }}>
+                <p style={{ margin: 0, fontSize: 12, color: "#EF4444" }}>⚠ {xdError}</p>
+              </div>
+            )}
+
+            {/* Resultados */}
+            {xdData && !xdLoading && (
+              <>
+                {/* Stats */}
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 18 }}>
+                  {[
+                    { label: "Pares detectados",   value: xdData.pairsDetected,     color: "#6366F1" },
+                    { label: "Hipótesis creadas",   value: xdData.hypothesesCreated, color: "#8B5CF6" },
+                    { label: "Entidades actualizadas", value: xdData.entitiesUpdated, color: "#10B981" },
+                  ].map((s) => (
+                    <div key={s.label} style={{
+                      background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)",
+                      borderRadius: 12, padding: "10px 16px", flex: "1 1 100px",
+                    }}>
+                      <p style={{ margin: "0 0 2px", fontSize: 9, color: "rgba(226,232,240,0.35)", textTransform: "uppercase", letterSpacing: "0.08em" }}>{s.label}</p>
+                      <p style={{ margin: 0, fontSize: 24, fontWeight: 800, color: s.color }}>{s.value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Sin hipótesis */}
+                {xdData.hypotheses.length === 0 && (
+                  <div style={{
+                    textAlign: "center", padding: "24px",
+                    background: "rgba(16,185,129,0.04)",
+                    border: "1px solid rgba(16,185,129,0.12)",
+                    borderRadius: 14,
+                  }}>
+                    <p style={{ margin: "0 0 4px", fontSize: 16 }}>✓</p>
+                    <p style={{ margin: "0 0 4px", fontSize: 13, fontWeight: 700, color: "#10B981" }}>
+                      Sin conexiones cruzadas detectadas
+                    </p>
+                    <p style={{ margin: 0, fontSize: 11, color: "rgba(226,232,240,0.3)" }}>
+                      Las capturas NEXO no superan el umbral de similitud (60%) con entidades TEC Bii.
+                      Agrega más proyectos o capturas para mejorar el análisis.
+                    </p>
+                  </div>
+                )}
+
+                {/* Lista de hipótesis */}
+                {xdData.hypotheses.length > 0 && (
+                  <div>
+                    <p style={{
+                      margin: "0 0 12px", fontSize: 10, fontWeight: 700,
+                      color: "rgba(226,232,240,0.3)", textTransform: "uppercase", letterSpacing: "0.1em",
+                    }}>
+                      Hipótesis generadas · {xdData.hypotheses.length}
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                      {xdData.hypotheses.map((h) => (
+                        <HypothesisCard
+                          key={h.hypothesis.id}
+                          entityTitle={h.entityTitle}
+                          entityType={h.entityType}
+                          hypothesis={h.hypothesis}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* ── Footer global ────────────────────────────────────────────── */}
+        <p style={{ marginTop: 24, textAlign: "center", fontSize: 11, color: "rgba(226,232,240,0.15)" }}>
+          TEC Bii v2 · RUMBO A TIER 4 · T2-4 Cross-Domain Reasoning
+        </p>
       </div>
     </>
   );
