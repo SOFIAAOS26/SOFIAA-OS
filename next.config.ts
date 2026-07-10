@@ -1,10 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  eslint: {
-    // ESLint corre en CI/pre-commit — no bloquear builds de Vercel
-    ignoreDuringBuilds: true,
-  },
+  /* config options here */
 };
 
 export default nextConfig;
