@@ -24,6 +24,8 @@ export const tecBiiExtension: SofiaExtension = {
     { path: "/tec-bii/proveedores",  label: "Proveedores",      icon: "🏢" },
     { path: "/tec-bii/clientes",     label: "Clientes",         icon: "🎓" },
     { path: "/tec-bii/evaluaciones", label: "Evaluaciones",     icon: "⭐" },
+    { path: "/tec-bii/analisis",     label: "Análisis",         icon: "📊" },
+    { path: "/tec-bii/roi",          label: "ROI",              icon: "💰" },
     { path: "/tec-bii/inteligencia", label: "Inteligencia",     icon: "✦" },
   ],
 
@@ -43,6 +45,8 @@ TEC Bii no es un CRUD. Cada proyecto, brief y persona publicada en el sistema ge
 - **Proveedores** (/tec-bii/proveedores): track record, predicción de costo, reliabilityScore
 - **Clientes** (/tec-bii/clientes): departamentos del TEC, historial y satisfacción
 - **Evaluaciones** (/tec-bii/evaluaciones): calificación con análisis cognitivo
+- **Análisis** (/tec-bii/analisis): análisis de costos, horas, calidad y cumplimiento de tiempos
+- **ROI** (/tec-bii/roi): simulador de retorno sobre inversión con parámetros ajustables
 - **Inteligencia** (/tec-bii/inteligencia): hipótesis cruzadas, patrones detectados, reflexiones N.O.R.A.
 
 ## Tus capacidades en este contexto

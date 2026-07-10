@@ -18,15 +18,20 @@ import { useAuth }             from "@/contexts/AuthContext";
 import PageGuard               from "@/components/tec-bi/PageGuard";
 import {
   subscribeProyectosV2,
+  subscribeBriefsV2,
+  subscribeEmpleadosV2,
+  subscribeProveedoresV2,
   createProyectoV2,
   updateProyectoV2,
   deleteProyectoV2,
 } from "@/lib/tec-bii/firestore";
 import {
   calcularUrgencia,
-  calcularImportancia,
   EMPTY_FOOTPRINT,
   type ProyectoV2,
+  type BriefV2,
+  type EmpleadoV2,
+  type ProveedorV2,
   type EstadoProyecto,
   type TipoAlcance,
   type TipoAsignacion,
@@ -234,13 +239,19 @@ function ProyectoModal({
   onChange,
   onSubmit,
   onClose,
+  briefs,
+  empleados,
+  proveedores,
 }: {
-  editing:  ProyectoV2 | null;
-  form:     typeof EMPTY_FORM;
-  saving:   boolean;
-  onChange: (k: keyof typeof EMPTY_FORM, v: string | number) => void;
-  onSubmit: (e: React.FormEvent) => void;
-  onClose:  () => void;
+  editing:     ProyectoV2 | null;
+  form:        typeof EMPTY_FORM;
+  saving:      boolean;
+  onChange:    (k: keyof typeof EMPTY_FORM, v: string | number) => void;
+  onSubmit:    (e: React.FormEvent) => void;
+  onClose:     () => void;
+  briefs:      BriefV2[];
+  empleados:   EmpleadoV2[];
+  proveedores: ProveedorV2[];
 }) {
   const inputS: React.CSSProperties = {
     width: "100%", padding: "8px 12px",
@@ -290,9 +301,16 @@ function ProyectoModal({
             <input style={inputS} required value={form.titulo}
               onChange={(e) => onChange("titulo", e.target.value)} placeholder="Nombre del proyecto" />
           )}
-          {field("Brief ID",
-            <input style={inputS} value={form.briefId}
-              onChange={(e) => onChange("briefId", e.target.value)} placeholder="ID del brief origen (opcional)" />
+          {field("Brief origen",
+            <select style={{ ...inputS, cursor: "pointer" }} value={form.briefId}
+              onChange={(e) => onChange("briefId", e.target.value)}>
+              <option value="">— Sin brief —</option>
+              {briefs.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.titulo} ({b.estado})
+                </option>
+              ))}
+            </select>
           )}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             {field("Estado",
@@ -322,9 +340,19 @@ function ProyectoModal({
               </select>
             )}
           </div>
-          {field("Asignado (ID o nombre)",
-            <input style={inputS} value={form.asignadoId}
-              onChange={(e) => onChange("asignadoId", e.target.value)} placeholder="ID o nombre del responsable" />
+          {field(`Asignado (${form.tipoAsignacion === "Interno" ? "Empleado" : "Proveedor"})`,
+            <select style={{ ...inputS, cursor: "pointer" }} value={form.asignadoId}
+              onChange={(e) => onChange("asignadoId", e.target.value)}>
+              <option value="">— Sin asignar —</option>
+              {form.tipoAsignacion === "Interno"
+                ? empleados.map((emp) => (
+                    <option key={emp.id} value={emp.id}>{emp.nombre} — {emp.puesto}</option>
+                  ))
+                : proveedores.map((prov) => (
+                    <option key={prov.id} value={prov.id}>{prov.nombre} ({prov.tipoServicio})</option>
+                  ))
+              }
+            </select>
           )}
           {field("Valor estimado (MXN)",
             <input style={inputS} type="number" min={0} value={form.valorEstimado}
@@ -382,6 +410,10 @@ export default function ProyectosV2Page() {
   const [saving, setSaving]               = useState(false);
   const [toast, setToast]                 = useState<string | null>(null);
 
+  const [briefs, setBriefs]           = useState<BriefV2[]>([]);
+  const [empleados, setEmpleados]     = useState<EmpleadoV2[]>([]);
+  const [proveedores, setProveedores] = useState<ProveedorV2[]>([]);
+
   const uid = user?.uid ?? "";
 
   useEffect(() => {
@@ -391,6 +423,14 @@ export default function ProyectosV2Page() {
       setLoading(false);
     });
     return unsub;
+  }, [uid]);
+
+  useEffect(() => {
+    if (!uid) return;
+    const u1 = subscribeBriefsV2(uid, setBriefs);
+    const u2 = subscribeEmpleadosV2(uid, setEmpleados);
+    const u3 = subscribeProveedoresV2(uid, setProveedores);
+    return () => { u1(); u2(); u3(); };
   }, [uid]);
 
   useEffect(() => {
@@ -612,6 +652,9 @@ export default function ProyectosV2Page() {
           onChange={(k, v) => setForm((prev) => ({ ...prev, [k]: v }))}
           onSubmit={handleSubmit}
           onClose={() => { setModalOpen(false); setEditing(null); }}
+          briefs={briefs}
+          empleados={empleados}
+          proveedores={proveedores}
         />
       )}
 

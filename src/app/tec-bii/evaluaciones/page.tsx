@@ -5,12 +5,14 @@ import { useAuth }             from "@/contexts/AuthContext";
 import PageGuard               from "@/components/tec-bi/PageGuard";
 import {
   subscribeEvaluacionesV2,
+  subscribeProyectosV2,
   createEvaluacionV2,
   deleteEvaluacionV2,
 } from "@/lib/tec-bii/firestore";
 import { EMPTY_FOOTPRINT }     from "@/extensions/tec-bii/schema";
 import type {
   EvaluacionV2,
+  ProyectoV2,
   TipoEvaluacion,
   CumplimientoTiempo,
 } from "@/extensions/tec-bii/schema";
@@ -172,7 +174,7 @@ function MetricaSlider({ label, value, onChange }: { label: string; value: numbe
   );
 }
 
-function EvaluacionModal({ onClose, onSave }: { onClose: () => void; onSave: (d: FormState) => Promise<void> }) {
+function EvaluacionModal({ onClose, onSave, proyectos }: { onClose: () => void; onSave: (d: FormState) => Promise<void>; proyectos: ProyectoV2[] }) {
   const [form, setForm]     = useState<FormState>({ ...EMPTY_FORM });
   const [saving, setSaving] = useState(false);
   const [error,  setError]  = useState<string | null>(null);
@@ -205,8 +207,13 @@ function EvaluacionModal({ onClose, onSave }: { onClose: () => void; onSave: (d:
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <div>
-                <label style={LABEL}>ID del Proyecto *</label>
-                <input style={INPUT} placeholder="ID Firestore del proyecto" value={form.proyectoId} onChange={(e) => f("proyectoId", e.target.value)} autoFocus />
+                <label style={LABEL}>Proyecto *</label>
+                <select style={{ ...INPUT, cursor: "pointer" }} value={form.proyectoId} onChange={(e) => f("proyectoId", e.target.value)} autoFocus>
+                  <option value="">— Selecciona un proyecto —</option>
+                  {proyectos.map((p) => (
+                    <option key={p.id} value={p.id}>{p.titulo} ({p.estado})</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label style={LABEL}>Fecha</label>
@@ -306,13 +313,16 @@ function EvaluacionModal({ onClose, onSave }: { onClose: () => void; onSave: (d:
 export default function EvaluacionesPage() {
   const { user }                    = useAuth();
   const [evals, setEvals]           = useState<EvaluacionV2[]>([]);
+  const [proyectos, setProyectos]   = useState<ProyectoV2[]>([]);
   const [showModal, setShowModal]   = useState(false);
   const [filterTipo, setFilterTipo] = useState<"todos" | "Interno" | "Externo">("todos");
 
   useEffect(() => {
     const uid = user?.uid;
     if (!uid) return;
-    return subscribeEvaluacionesV2(uid, setEvals);
+    const u1 = subscribeEvaluacionesV2(uid, setEvals);
+    const u2 = subscribeProyectosV2(uid, setProyectos);
+    return () => { u1(); u2(); };
   }, [user?.uid]);
 
   const uid = user?.uid ?? "";
@@ -425,7 +435,7 @@ export default function EvaluacionesPage() {
         )}
 
         {showModal && (
-          <EvaluacionModal onClose={() => setShowModal(false)} onSave={handleCreate} />
+          <EvaluacionModal onClose={() => setShowModal(false)} onSave={handleCreate} proyectos={proyectos} />
         )}
 
         <p style={{ marginTop: 32, textAlign: "center", fontSize: 11, color: "rgba(226,232,240,0.15)" }}>TEC Bii v2 · Evaluaciones · RUMBO A TIER 4</p>

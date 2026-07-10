@@ -624,7 +624,11 @@ export default function BriefsPage() {
     if (!uid || saving) return;
     setSaving(true);
     try {
-      const payload = { ...EMPTY_FOOTPRINT, ...form };
+      // Firebase SDK throws on undefined values — strip them before write
+      const raw = { ...EMPTY_FOOTPRINT, ...form };
+      const payload = Object.fromEntries(
+        Object.entries(raw).filter(([, v]) => v !== undefined)
+      ) as Omit<BriefV2, "id" | "createdAt" | "updatedAt">;
       if (editing?.id) {
         await updateBriefV2(uid, editing.id, payload);
         setToast("Brief actualizado · publicando al grafo…");
