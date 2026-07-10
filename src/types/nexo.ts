@@ -26,7 +26,8 @@ export type NexoSource =
   | "pwa_share"         // PWA Share Target mobile
   | "screenshot"        // imagen / captura de pantalla via Gemini Vision
   | "manual"            // pegado manual en el chat
-  | "pdf_library";      // documento PDF subido a la biblioteca (Sprint M-1)
+  | "pdf_library"       // documento PDF subido a la biblioteca (Sprint M-1)
+  | "tec_bii";          // entidades TEC Bii publicadas al grafo (Sprint T2-1)
 
 // ── Payload que llega al endpoint /api/nexo/ingest ────────────────────────────
 
