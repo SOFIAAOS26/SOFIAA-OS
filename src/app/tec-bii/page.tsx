@@ -9,10 +9,11 @@
  */
 
 import { useRouter }           from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth }             from "@/contexts/AuthContext";
 import { subscribeProyectosV2, subscribeEmpleadosV2 } from "@/lib/tec-bii/firestore";
 import type { ProyectoV2, EmpleadoV2 }              from "@/extensions/tec-bii/schema";
+import type { RefineResult }                         from "@/lib/tec-bii/refine";
 
 const ACCENT  = "#6366F1";
 const ACCENT2 = "#8B5CF6";
@@ -184,8 +185,10 @@ export default function TecBiiDashboard() {
   const router              = useRouter();
   const { profile, user }   = useAuth();
   const [time, setTime]     = useState("");
-  const [proyectos, setProyectos] = useState<ProyectoV2[]>([]);
-  const [empleados, setEmpleados] = useState<EmpleadoV2[]>([]);
+  const [proyectos, setProyectos]     = useState<ProyectoV2[]>([]);
+  const [empleados, setEmpleados]     = useState<EmpleadoV2[]>([]);
+  const [lastRefine, setLastRefine]   = useState<RefineResult | null>(null);
+  const [refineLoading, setRefineLoading] = useState(false);
 
   useEffect(() => {
     const update = () => setTime(new Date().toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" }));
@@ -201,6 +204,35 @@ export default function TecBiiDashboard() {
     const unsubE = subscribeEmpleadosV2(uid, setEmpleados);
     return () => { unsubP(); unsubE(); };
   }, [user?.uid]);
+
+  // Cargar último log de refinamiento al montar
+  useEffect(() => {
+    if (!user) return;
+    user.getIdToken().then((token) =>
+      fetch("/api/tec-bii/refine", {
+        method: "PATCH",
+        headers: { "Authorization": `Bearer ${token}` },
+      })
+        .then((r) => r.json() as Promise<{ success: boolean; lastRun?: RefineResult }>)
+        .then((json) => { if (json.lastRun) setLastRefine(json.lastRun); })
+        .catch(() => {})
+    );
+  }, [user]);
+
+  const triggerRefine = useCallback(async () => {
+    if (!user || refineLoading) return;
+    setRefineLoading(true);
+    try {
+      const token = await user.getIdToken();
+      const res   = await fetch("/api/tec-bii/refine", {
+        method:  "POST",
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      const json = await res.json() as { success: boolean; result?: RefineResult };
+      if (json.result) setLastRefine(json.result);
+    } catch {/* silencioso */}
+    finally { setRefineLoading(false); }
+  }, [user, refineLoading]);
 
   // KPIs reales
   const activos    = proyectos.filter((p) => p.estado === "En producción").length;
@@ -310,10 +342,53 @@ export default function TecBiiDashboard() {
         </div>
       </div>
 
+      {/* ── Motor de Refinamiento M-7 ────────────────────────────────── */}
+      <div style={{
+        marginTop:    24,
+        background:   "rgba(99,102,241,0.04)",
+        border:       "1px solid rgba(99,102,241,0.14)",
+        borderRadius: 16,
+        padding:      "16px 20px",
+        display:      "flex",
+        alignItems:   "center",
+        gap:          16,
+        flexWrap:     "wrap",
+      }}>
+        <div style={{ flex: 1, minWidth: 200 }}>
+          <p style={{ margin: "0 0 2px", fontSize: 12, fontWeight: 700, color: ACCENT }}>
+            ⚙ Motor de Refinamiento Cognitivo
+          </p>
+          <p style={{ margin: 0, fontSize: 11, color: "rgba(226,232,240,0.35)" }}>
+            {lastRefine
+              ? `Último run: ${new Date(lastRefine.runAt).toLocaleString("es-MX")} · ${lastRefine.usersProcessed} usuario(s) · ${lastRefine.totalRepublish} re-publicaciones · ${lastRefine.totalXdHyp} hipótesis nuevas`
+              : "CRON diario 05:00 CST · Re-publica entidades, reflexión NORA y razonamiento cruzado"
+            }
+          </p>
+        </div>
+        <button
+          onClick={triggerRefine}
+          disabled={refineLoading}
+          style={{
+            background:   refineLoading ? "rgba(99,102,241,0.1)" : "rgba(99,102,241,0.15)",
+            border:       "1px solid rgba(99,102,241,0.25)",
+            borderRadius: 10,
+            padding:      "8px 16px",
+            fontSize:     12,
+            fontWeight:   700,
+            color:        refineLoading ? "rgba(99,102,241,0.4)" : ACCENT,
+            cursor:       refineLoading ? "not-allowed" : "pointer",
+            whiteSpace:   "nowrap",
+            transition:   "all 0.2s",
+          }}
+        >
+          {refineLoading ? "Ejecutando…" : "▶ Ejecutar ahora"}
+        </button>
+      </div>
+
       {/* ── Nota del usuario ─────────────────────────────────────────── */}
       {profile && (
         <p style={{
-          marginTop:  24,
+          marginTop:  20,
           textAlign:  "center",
           fontSize:   11,
           color:      "rgba(226,232,240,0.2)",

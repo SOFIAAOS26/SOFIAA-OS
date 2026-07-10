@@ -31,7 +31,7 @@ import { calcularImportancia } from "@/extensions/tec-bii/schema";
 
 // ── Tipo unión de entidades ───────────────────────────────────────────────────
 
-type TecBiiEntity =
+export type TecBiiEntity =
   | ProyectoV2 | BriefV2 | EmpleadoV2
   | ProveedorV2 | ClienteInternoV2 | EvaluacionV2;
 
