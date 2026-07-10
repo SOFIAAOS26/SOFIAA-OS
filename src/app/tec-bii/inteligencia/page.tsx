@@ -11,12 +11,14 @@
  * - Historial de análisis en sesión
  */
 
-import { useState } from "react";
-import { useAuth }  from "@/contexts/AuthContext";
-import PageGuard    from "@/components/tec-bi/PageGuard";
+import { useState, useEffect } from "react";
+import { useAuth }             from "@/contexts/AuthContext";
+import PageGuard               from "@/components/tec-bi/PageGuard";
 import type { TecBiiInsight, InsightsResponse } from "@/app/api/tec-bii/insights/route";
 import type { CrossDomainResponse }             from "@/app/api/tec-bii/cross-domain/route";
 import type { Hypothesis, TecBiiEntityType }    from "@/extensions/tec-bii/schema";
+import type { NoraReflection }                  from "@/lib/tec-bii/nora-reflection";
+import type { NoraReflectResponse, NoraHistoryResponse } from "@/app/api/tec-bii/nora-reflect/route";
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
@@ -201,6 +203,57 @@ export default function InteligenciaPage() {
       setXdError(err instanceof Error ? err.message : "Error en el razonamiento cruzado");
     } finally {
       setXdLoading(false);
+    }
+  };
+
+  // NORA state
+  const [noraLoading, setNoraLoading]     = useState(false);
+  const [noraData, setNoraData]           = useState<NoraReflection | null>(null);
+  const [noraHistory, setNoraHistory]     = useState<NoraReflection[]>([]);
+  const [noraError, setNoraError]         = useState<string | null>(null);
+  const [noraLastRun, setNoraLastRun]     = useState<Date | null>(null);
+  const [showNoraHistory, setShowNoraHistory] = useState(false);
+
+  // Cargar historial NORA al montar
+  useEffect(() => {
+    if (!user) return;
+    user.getIdToken().then((token) =>
+      fetch("/api/tec-bii/nora-reflect", {
+        headers: { "Authorization": `Bearer ${token}` },
+      })
+        .then((r) => r.json() as Promise<NoraHistoryResponse>)
+        .then((json) => {
+          if (json.success && json.reflexiones.length > 0) {
+            setNoraHistory(json.reflexiones);
+            setNoraData(json.reflexiones[0]);
+          }
+        })
+        .catch(() => {/* silencioso */})
+    );
+  }, [user]);
+
+  const runNora = async (force = false) => {
+    if (!user || noraLoading) return;
+    setNoraLoading(true);
+    setNoraError(null);
+    try {
+      const token = await user.getIdToken();
+      const res   = await fetch("/api/tec-bii/nora-reflect", {
+        method:  "POST",
+        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+        body:    JSON.stringify({ force }),
+      });
+      const json = await res.json() as NoraReflectResponse;
+      if (!json.success) throw new Error(json.error ?? "Error desconocido");
+      if (json.reflection) {
+        setNoraData(json.reflection);
+        setNoraHistory((h) => [json.reflection!, ...h].slice(0, 5));
+        setNoraLastRun(new Date());
+      }
+    } catch (err) {
+      setNoraError(err instanceof Error ? err.message : "Error en N.O.R.A.");
+    } finally {
+      setNoraLoading(false);
     }
   };
 
@@ -597,9 +650,280 @@ export default function InteligenciaPage() {
           </div>
         </div>
 
+        {/* ── N.O.R.A. Reflection (T2-6) ──────────────────────────────── */}
+        <div style={{ marginTop: 32 }}>
+          <div style={{
+            background:   "rgba(139,92,246,0.05)",
+            border:       "1px solid rgba(139,92,246,0.18)",
+            borderRadius: 20,
+            padding:      "24px 24px 20px",
+          }}>
+            {/* Header */}
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 18 }}>
+              <div>
+                <h2 style={{ margin: "0 0 4px", fontSize: 17, fontWeight: 800, color: "#E2E8F0" }}>
+                  🧠 Reflexión N.O.R.A.
+                </h2>
+                <p style={{ margin: 0, fontSize: 12, color: "rgba(139,92,246,0.8)", fontWeight: 600 }}>
+                  Neural Observer & Reasoning Architecture · Visión cognitiva del área
+                </p>
+                {noraLastRun && (
+                  <p style={{ margin: "4px 0 0", fontSize: 10, color: "rgba(226,232,240,0.2)" }}>
+                    Última reflexión: {noraLastRun.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" })}
+                  </p>
+                )}
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                {noraHistory.length > 1 && (
+                  <button
+                    onClick={() => setShowNoraHistory(!showNoraHistory)}
+                    style={{
+                      padding: "9px 14px", borderRadius: 10, fontSize: 11, fontWeight: 600,
+                      background: "rgba(139,92,246,0.1)",
+                      border: "1px solid rgba(139,92,246,0.25)",
+                      color: "#a78bfa", cursor: "pointer",
+                    }}
+                  >
+                    Historial ({noraHistory.length})
+                  </button>
+                )}
+                <button
+                  onClick={() => runNora(!!noraData)}
+                  disabled={noraLoading}
+                  style={{
+                    background:   noraLoading ? "rgba(139,92,246,0.15)" : "rgba(139,92,246,0.2)",
+                    border:       `1px solid ${noraLoading ? "rgba(139,92,246,0.1)" : "rgba(139,92,246,0.35)"}`,
+                    borderRadius: 12,
+                    padding:      "9px 20px", fontSize: 12, fontWeight: 700,
+                    color:        noraLoading ? "rgba(226,232,240,0.3)" : "#c4b5fd",
+                    cursor:       noraLoading ? "not-allowed" : "pointer",
+                    display:      "flex", alignItems: "center", gap: 7,
+                    transition:   "all 0.2s",
+                  }}
+                >
+                  {noraLoading ? (
+                    <><span style={{ animation: "spin 1s linear infinite", display: "inline-block" }}>◌</span> Reflexionando…</>
+                  ) : noraData ? (
+                    <>↺ Nueva reflexión</>
+                  ) : (
+                    <>🧠 Activar N.O.R.A.</>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Error */}
+            {noraError && (
+              <div style={{
+                background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)",
+                borderRadius: 12, padding: "12px 16px", marginBottom: 16,
+              }}>
+                <p style={{ margin: 0, fontSize: 12, color: "#EF4444" }}>⚠ {noraError}</p>
+              </div>
+            )}
+
+            {/* Loading */}
+            {noraLoading && (
+              <div style={{ textAlign: "center", padding: "28px 24px" }}>
+                <div style={{
+                  width: 36, height: 36, borderRadius: "50%",
+                  border: "2px solid rgba(139,92,246,0.15)",
+                  borderTop: "2px solid #8B5CF6",
+                  margin: "0 auto 14px",
+                  animation: "spin 1s linear infinite",
+                }} />
+                <p style={{ margin: 0, fontSize: 13, color: "rgba(226,232,240,0.45)" }}>
+                  N.O.R.A. analizando el estado del área…
+                </p>
+              </div>
+            )}
+
+            {/* Estado vacío */}
+            {!noraData && !noraLoading && !noraError && (
+              <div style={{
+                textAlign: "center", padding: "32px 24px",
+                background: "rgba(255,255,255,0.01)",
+                border: "1px dashed rgba(139,92,246,0.15)",
+                borderRadius: 14,
+              }}>
+                <p style={{ margin: "0 0 6px", fontSize: 24 }}>🧠</p>
+                <p style={{ margin: "0 0 6px", fontSize: 13, fontWeight: 700, color: "rgba(226,232,240,0.55)" }}>
+                  N.O.R.A. lista para reflexionar
+                </p>
+                <p style={{ margin: 0, fontSize: 12, color: "rgba(226,232,240,0.3)", lineHeight: 1.6 }}>
+                  Activar una reflexión cognitiva profunda sobre proyectos, equipo, briefs y conexiones NEXO del área.
+                </p>
+              </div>
+            )}
+
+            {/* Reflexión activa */}
+            {noraData && !noraLoading && (
+              <>
+                {/* Estado general badge */}
+                {(() => {
+                  const ESTADO_META: Record<NoraReflection["estadoGeneral"], { color: string; bg: string; icon: string }> = {
+                    crítico: { color: "#EF4444", bg: "rgba(239,68,68,0.1)", icon: "🔴" },
+                    alerta:  { color: "#F59E0B", bg: "rgba(245,158,11,0.1)", icon: "🟡" },
+                    estable: { color: "#06B6D4", bg: "rgba(6,182,212,0.1)",  icon: "🔵" },
+                    óptimo:  { color: "#10B981", bg: "rgba(16,185,129,0.1)", icon: "🟢" },
+                  };
+                  const meta = ESTADO_META[noraData.estadoGeneral] ?? ESTADO_META["estable"];
+                  return (
+                    <div style={{
+                      display: "inline-flex", alignItems: "center", gap: 6,
+                      padding: "4px 12px", borderRadius: 99,
+                      background: meta.bg, border: `1px solid ${meta.color}33`,
+                      marginBottom: 14,
+                    }}>
+                      <span>{meta.icon}</span>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: meta.color, textTransform: "capitalize" }}>
+                        Estado {noraData.estadoGeneral}
+                      </span>
+                    </div>
+                  );
+                })()}
+
+                {/* Narrativa */}
+                <div style={{
+                  background:   "rgba(139,92,246,0.06)",
+                  border:       "1px solid rgba(139,92,246,0.15)",
+                  borderLeft:   "4px solid #8B5CF6",
+                  borderRadius: 14,
+                  padding:      "14px 18px",
+                  marginBottom: 16,
+                }}>
+                  <p style={{ margin: "0 0 4px", fontSize: 10, fontWeight: 700, color: "#8B5CF6", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                    Observación N.O.R.A.
+                  </p>
+                  <p style={{ margin: 0, fontSize: 13, color: "rgba(226,232,240,0.8)", lineHeight: 1.7 }}>
+                    {noraData.narrativa}
+                  </p>
+                </div>
+
+                {/* Patrones detectados */}
+                {noraData.patrones.length > 0 && (
+                  <div style={{ marginBottom: 14 }}>
+                    <p style={{ margin: "0 0 10px", fontSize: 10, fontWeight: 700, color: "rgba(226,232,240,0.3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                      Patrones detectados
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {noraData.patrones.map((p: NoraReflection["patrones"][number], i: number) => {
+                        const TIPO_META: Record<string, { icon: string; color: string }> = {
+                          carga:       { icon: "⚖",  color: "#F59E0B" },
+                          urgencia:    { icon: "⏱",  color: "#EF4444" },
+                          talento:     { icon: "⭐", color: "#06B6D4" },
+                          oportunidad: { icon: "✦",  color: "#10B981" },
+                          riesgo:      { icon: "⚠",  color: "#EF4444" },
+                          tendencia:   { icon: "↗",  color: "#8B5CF6" },
+                        };
+                        const meta = TIPO_META[p.tipo] ?? { icon: "·", color: "#6366F1" };
+                        return (
+                          <div key={i} style={{
+                            display: "flex", alignItems: "flex-start", gap: 10,
+                            background: "rgba(255,255,255,0.02)",
+                            border: "1px solid rgba(255,255,255,0.05)",
+                            borderRadius: 10, padding: "10px 14px",
+                          }}>
+                            <span style={{ fontSize: 16, color: meta.color, flexShrink: 0, marginTop: 1 }}>{meta.icon}</span>
+                            <div>
+                              <span style={{
+                                fontSize: 9, fontWeight: 700, color: meta.color,
+                                background: meta.color + "15", border: `1px solid ${meta.color}30`,
+                                borderRadius: 99, padding: "1px 6px", marginRight: 8,
+                                textTransform: "capitalize",
+                              }}>
+                                {p.tipo}
+                              </span>
+                              <span style={{ fontSize: 12, color: "rgba(226,232,240,0.65)" }}>{p.descripcion}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Recomendación */}
+                <div style={{
+                  background:   "rgba(16,185,129,0.06)",
+                  border:       "1px solid rgba(16,185,129,0.2)",
+                  borderRadius: 12,
+                  padding:      "12px 16px",
+                  display:      "flex", alignItems: "flex-start", gap: 10,
+                }}>
+                  <span style={{ fontSize: 16, color: "#10B981", flexShrink: 0, marginTop: 1 }}>→</span>
+                  <div>
+                    <p style={{ margin: "0 0 3px", fontSize: 10, fontWeight: 700, color: "#10B981", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                      Acción recomendada
+                    </p>
+                    <p style={{ margin: 0, fontSize: 12, color: "rgba(226,232,240,0.7)", lineHeight: 1.55 }}>
+                      {noraData.recomendacion}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Contexto analizado */}
+                <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
+                  {[
+                    { label: "Proyectos", value: noraData.contexto.proyectosAnalizados },
+                    { label: "Equipo",    value: noraData.contexto.empleadosAnalizados },
+                    { label: "Briefs",    value: noraData.contexto.briefsAnalizados },
+                    { label: "Hipótesis", value: noraData.contexto.hipotesisActivas },
+                  ].map((c) => (
+                    <div key={c.label} style={{
+                      flex: "1 1 80px",
+                      background: "rgba(255,255,255,0.02)",
+                      border: "1px solid rgba(255,255,255,0.05)",
+                      borderRadius: 10, padding: "8px 12px", textAlign: "center",
+                    }}>
+                      <p style={{ margin: "0 0 2px", fontSize: 18, fontWeight: 800, color: "#8B5CF6" }}>{c.value}</p>
+                      <p style={{ margin: 0, fontSize: 9, color: "rgba(226,232,240,0.3)", textTransform: "uppercase", letterSpacing: "0.06em" }}>{c.label}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Timestamp */}
+                <p style={{ margin: "10px 0 0", fontSize: 10, color: "rgba(226,232,240,0.2)", textAlign: "right" }}>
+                  {new Date(noraData.generadoEn).toLocaleString("es-MX")}
+                </p>
+
+                {/* Historial colapsable */}
+                {showNoraHistory && noraHistory.length > 1 && (
+                  <div style={{ marginTop: 16 }}>
+                    <p style={{ margin: "0 0 10px", fontSize: 10, fontWeight: 700, color: "rgba(226,232,240,0.25)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                      Reflexiones anteriores
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {noraHistory.slice(1).map((r) => (
+                        <div
+                          key={r.id}
+                          onClick={() => setNoraData(r)}
+                          style={{
+                            cursor: "pointer",
+                            background: "rgba(255,255,255,0.02)",
+                            border: "1px solid rgba(139,92,246,0.1)",
+                            borderRadius: 10, padding: "10px 14px",
+                          }}
+                        >
+                          <p style={{ margin: "0 0 4px", fontSize: 11, color: "rgba(226,232,240,0.55)", lineHeight: 1.5 }}>
+                            {r.narrativa.slice(0, 100)}…
+                          </p>
+                          <p style={{ margin: 0, fontSize: 10, color: "rgba(226,232,240,0.2)" }}>
+                            {new Date(r.generadoEn).toLocaleString("es-MX")} · {r.estadoGeneral}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
         {/* ── Footer global ────────────────────────────────────────────── */}
         <p style={{ marginTop: 24, textAlign: "center", fontSize: 11, color: "rgba(226,232,240,0.15)" }}>
-          TEC Bii v2 · RUMBO A TIER 4 · T2-4 Cross-Domain Reasoning
+          TEC Bii v2 · RUMBO A TIER 4 · T2-6 N.O.R.A. Reflection
         </p>
       </div>
     </>
