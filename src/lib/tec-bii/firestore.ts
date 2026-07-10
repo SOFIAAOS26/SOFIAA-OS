@@ -188,8 +188,9 @@ export function subscribeProveedoresV2(uid: string, cb: (data: ProveedorV2[]) =>
     collection(db, tecBiiPath(uid, "proveedor")),
     orderBy("nombre", "asc"),
   );
-  return onSnapshot(q, (snap) =>
-    cb(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as ProveedorV2))
+  return onSnapshot(q,
+    (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as ProveedorV2)),
+    (_err) => cb([])
   );
 }
 
@@ -230,8 +231,9 @@ export function subscribeClientesV2(uid: string, cb: (data: ClienteInternoV2[]) 
     collection(db, tecBiiPath(uid, "cliente")),
     orderBy("departamento", "asc"),
   );
-  return onSnapshot(q, (snap) =>
-    cb(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as ClienteInternoV2))
+  return onSnapshot(q,
+    (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as ClienteInternoV2)),
+    (_err) => cb([])
   );
 }
 
@@ -272,8 +274,9 @@ export function subscribeEvaluacionesV2(uid: string, cb: (data: EvaluacionV2[]) 
     collection(db, tecBiiPath(uid, "evaluacion")),
     orderBy("createdAt", "desc"),
   );
-  return onSnapshot(q, (snap) =>
-    cb(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as EvaluacionV2))
+  return onSnapshot(q,
+    (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as EvaluacionV2)),
+    (_err) => cb([])
   );
 }
 

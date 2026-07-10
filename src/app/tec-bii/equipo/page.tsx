@@ -593,7 +593,7 @@ export default function EquipoPage() {
 
   return (
     <>
-      <PageGuard section="equipo" />
+      <PageGuard section="empleados" />
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
 
         {/* ── Header ─────────────────────────────────────────────────────── */}
