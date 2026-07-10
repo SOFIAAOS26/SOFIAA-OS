@@ -763,7 +763,7 @@ export default function Home() {
       onClose={() => setShowLogin(false)}
       onSuccess={(email) => {
         setShowLogin(false);
-        setMessages((prev) => [...prev, { role: "assistant", content: `✅ Sesión iniciada. Bienvenido al sistema TEC BI.` }]);
+        setMessages((prev) => [...prev, { role: "assistant", content: `✅ Sesión iniciada. Bienvenido a SOFIAA OS.` }]);
       }}
     />
 
