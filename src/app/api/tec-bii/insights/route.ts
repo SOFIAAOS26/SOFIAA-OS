@@ -17,7 +17,7 @@ import { getAuth }                      from "firebase-admin/auth";
 import { getAdminDb }                   from "@/lib/firebase-admin";
 import { getAdminApp }                  from "@/lib/firebase-admin";
 import { tecBiiPath }                   from "@/lib/tec-bii/collections";
-import type { ProyectoV2 }             from "@/extensions/tec-bii/schema";
+import type { ProyectoV2, EmpleadoV2, ProveedorV2 } from "@/extensions/tec-bii/schema";
 import { callGroq }                    from "@/lib/groq";
 
 // ── Tipos de respuesta ────────────────────────────────────────────────────────
@@ -55,10 +55,103 @@ async function getUid(req: NextRequest): Promise<string | null> {
   }
 }
 
-// ── Análisis Gemini ───────────────────────────────────────────────────────────
+// ── Alertas predictivas (rule-based, sin LLM) ─────────────────────────────────
+
+function buildPredictiveInsights(
+  proyectos: ProyectoV2[],
+  empleados: EmpleadoV2[],
+  proveedores: ProveedorV2[],
+  now: number,
+): TecBiiInsight[] {
+  const insights: TecBiiInsight[] = [];
+
+  // Índice rápido por id
+  const empMap = new Map(empleados.map((e) => [e.id!, e]));
+  const provMap = new Map(proveedores.map((p) => [p.id!, p]));
+
+  const activos = proyectos.filter(
+    (p) => p.estado === "En producción" || p.estado === "En revisión"
+  );
+
+  for (const proyecto of activos) {
+    const asignado = proyecto.tipoAsignacion === "Interno"
+      ? empMap.get(proyecto.asignadoId)
+      : provMap.get(proyecto.asignadoId);
+
+    if (!asignado) continue;
+
+    const calidad     = asignado.calidadPromedio ?? null;
+    const cumplimiento = (asignado as EmpleadoV2 | ProveedorV2).cumplimientoRate ?? null;
+    const nombre      = "nombre" in asignado ? asignado.nombre : "—";
+    const evaluaciones = asignado.totalEvaluaciones ?? 0;
+
+    // Solo alertar si hay al menos 2 evaluaciones (evitar falsos positivos)
+    if (evaluaciones < 2) continue;
+
+    if (calidad !== null && calidad < 3.0) {
+      insights.push({
+        id:         `pred-calidad-${proyecto.id}-${now}`,
+        tipo:       "riesgo",
+        titulo:     `Riesgo de calidad: "${proyecto.titulo}"`,
+        cuerpo:     `${nombre} tiene calidad promedio de ${calidad.toFixed(1)}/5 en ${evaluaciones} evaluaciones. Este proyecto podría no cumplir los estándares esperados.`,
+        prioridad:  calidad < 2.0 ? "alta" : "media",
+        entityIds:  [proyecto.id!, proyecto.asignadoId],
+        generadoEn: now,
+      });
+    }
+
+    if (cumplimiento !== null && cumplimiento < 0.6) {
+      insights.push({
+        id:         `pred-tiempo-${proyecto.id}-${now}`,
+        tipo:       "alerta",
+        titulo:     `Riesgo de retraso: "${proyecto.titulo}"`,
+        cuerpo:     `${nombre} solo entrega a tiempo el ${Math.round(cumplimiento * 100)}% de sus proyectos (${evaluaciones} evaluaciones). Alta probabilidad de retraso.`,
+        prioridad:  cumplimiento < 0.4 ? "alta" : "media",
+        entityIds:  [proyecto.id!, proyecto.asignadoId],
+        generadoEn: now,
+      });
+    }
+
+    // Tendencia negativa
+    const tendencia = (asignado as EmpleadoV2 | ProveedorV2).tendenciaCalidad;
+    if (tendencia === "bajando" && evaluaciones >= 4) {
+      insights.push({
+        id:         `pred-tendencia-${proyecto.id}-${now}`,
+        tipo:       "patron",
+        titulo:     `Tendencia negativa detectada: ${nombre}`,
+        cuerpo:     `La calidad de ${nombre} ha bajado en sus últimas evaluaciones. Considera una revisión intermedia en "${proyecto.titulo}".`,
+        prioridad:  "media",
+        entityIds:  [proyecto.asignadoId],
+        generadoEn: now,
+      });
+    }
+
+    // Proveedor con exceso de costo
+    if (proyecto.tipoAsignacion === "Externo") {
+      const prov = provMap.get(proyecto.asignadoId) as ProveedorV2 | undefined;
+      if (prov?.variacionCosto !== undefined && prov.variacionCosto > 20) {
+        insights.push({
+          id:         `pred-costo-${proyecto.id}-${now}`,
+          tipo:       "alerta",
+          titulo:     `Riesgo de sobrecosto: ${nombre}`,
+          cuerpo:     `Este proveedor excede su cotización en promedio ${prov.variacionCosto.toFixed(0)}% sobre el precio pactado. Considera solicitar desglose de costos.`,
+          prioridad:  prov.variacionCosto > 40 ? "alta" : "media",
+          entityIds:  [proyecto.id!, proyecto.asignadoId],
+          generadoEn: now,
+        });
+      }
+    }
+  }
+
+  return insights;
+}
+
+// ── Análisis con Groq ─────────────────────────────────────────────────────────
 
 async function generateInsightsWithGemini(
-  proyectos: ProyectoV2[]
+  proyectos:   ProyectoV2[],
+  empleados:   EmpleadoV2[],
+  proveedores: ProveedorV2[],
 ): Promise<{ insights: TecBiiInsight[]; resumen: string }> {
   const activos   = proyectos.filter((p) => p.estado === "En producción");
   const revision  = proyectos.filter((p) => p.estado === "En revisión");
@@ -70,9 +163,16 @@ async function generateInsightsWithGemini(
     return buildFallbackInsights(proyectos);
   }
 
-  const proyectosResumen = activos.slice(0, 8).map((p) =>
-    `- "${p.titulo}" | Estado: ${p.estado} | Urgencia: ${Math.round((p.urgencyScore ?? 0) * 100)}% | Valor: $${(p.valorEstimado ?? 0).toLocaleString("es-MX")} MXN${p.notas ? ` | Notas: ${p.notas.slice(0, 80)}` : ""}`
-  ).join("\n");
+  // Alertas predictivas rule-based (siempre, sin LLM)
+  const now               = Date.now();
+  const predictiveInsights = buildPredictiveInsights(proyectos, empleados, proveedores, now);
+
+  const proyectosResumen = activos.slice(0, 8).map((p) => {
+    const riesgoStr = p.assigneeRisk
+      ? ` ⚠ RIESGO ASIGNADO (cal:${p.assigneeCalidad?.toFixed(1)} cumpl:${Math.round((p.assigneeCumplimiento ?? 0) * 100)}%)`
+      : "";
+    return `- "${p.titulo}" | Urgencia: ${Math.round((p.urgencyScore ?? 0) * 100)}% | Valor: $${(p.valorEstimado ?? 0).toLocaleString("es-MX")} MXN${riesgoStr}`;
+  }).join("\n");
 
   const prompt = `Eres el motor de inteligencia operacional del Área de Producción Audiovisual del TEC de Monterrey.
 
@@ -119,8 +219,7 @@ Genera entre 3 y 6 insights relevantes. Sé específico, no genérico. Si hay pr
       }>;
     };
 
-    const now = Date.now();
-    const insights: TecBiiInsight[] = parsed.insights.map((ins, i) => ({
+    const llmInsights: TecBiiInsight[] = parsed.insights.map((ins, i) => ({
       id:         `insight-${now}-${i}`,
       tipo:       ins.tipo,
       titulo:     ins.titulo,
@@ -129,7 +228,11 @@ Genera entre 3 y 6 insights relevantes. Sé específico, no genérico. Si hay pr
       generadoEn: now,
     }));
 
-    return { insights, resumen: parsed.resumen };
+    // Mezclar: predictivas primero (son más específicas), luego LLM
+    return {
+      insights: [...predictiveInsights, ...llmInsights],
+      resumen:  parsed.resumen,
+    };
   } catch {
     return buildFallbackInsights(proyectos);
   }
@@ -197,16 +300,18 @@ export async function POST(req: NextRequest) {
   try {
     const db = getAdminDb();
 
-    // Leer proyectos activos (los más relevantes para el análisis)
-    const snap = await db
-      .collection(tecBiiPath(uid, "proyecto"))
-      .orderBy("createdAt", "desc")
-      .limit(20)
-      .get();
+    // Leer proyectos, empleados y proveedores en paralelo
+    const [snapProyectos, snapEmpleados, snapProveedores] = await Promise.all([
+      db.collection(tecBiiPath(uid, "proyecto")).orderBy("createdAt", "desc").limit(20).get(),
+      db.collection(tecBiiPath(uid, "empleado")).get(),
+      db.collection(tecBiiPath(uid, "proveedor")).get(),
+    ]);
 
-    const proyectos = snap.docs.map((d) => ({ id: d.id, ...d.data() }) as ProyectoV2);
+    const proyectos  = snapProyectos.docs.map((d) => ({ id: d.id, ...d.data() }) as ProyectoV2);
+    const empleados  = snapEmpleados.docs.map((d) => ({ id: d.id, ...d.data() }) as EmpleadoV2);
+    const proveedores = snapProveedores.docs.map((d) => ({ id: d.id, ...d.data() }) as ProveedorV2);
 
-    const { insights, resumen } = await generateInsightsWithGemini(proyectos);
+    const { insights, resumen } = await generateInsightsWithGemini(proyectos, empleados, proveedores);
 
     const urgentes = proyectos.filter((p) => (p.urgencyScore ?? 0) >= 0.7).length;
     const enGrafo  = proyectos.filter((p) => !!p.nexoNodeId).length;

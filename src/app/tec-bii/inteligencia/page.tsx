@@ -19,6 +19,7 @@ import type { CrossDomainResponse }             from "@/app/api/tec-bii/cross-do
 import type { Hypothesis, TecBiiEntityType }    from "@/extensions/tec-bii/schema";
 import type { NoraReflection }                  from "@/lib/tec-bii/nora-reflection";
 import type { NoraReflectResponse, NoraHistoryResponse } from "@/app/api/tec-bii/nora-reflect/route";
+import type { RiskResponse, RiskEmpleado, RiskProveedor, RiskProyecto } from "@/app/api/tec-bii/risk/route";
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
@@ -170,6 +171,103 @@ function HypothesisCard({
   );
 }
 
+// ── RiskEntityCard ────────────────────────────────────────────────────────────
+
+function RiskEntityCard({
+  nombre, sub, entity, variacionCosto,
+}: {
+  nombre:          string;
+  sub:             string;
+  entity:          { calidadPromedio: number; cumplimientoRate: number; totalEvaluaciones: number; tendenciaCalidad: string };
+  variacionCosto?: number;
+}) {
+  const calidadColor = entity.calidadPromedio < 3.0 ? "#EF4444" : "#F59E0B";
+  const cumplColor   = entity.cumplimientoRate < 0.6 ? "#EF4444" : "#F59E0B";
+  const tendMeta: Record<string, { icon: string; color: string }> = {
+    mejorando: { icon: "↑", color: "#10B981" },
+    estable:   { icon: "→", color: "#06B6D4" },
+    bajando:   { icon: "↓", color: "#EF4444" },
+  };
+  const tend = tendMeta[entity.tendenciaCalidad] ?? tendMeta["estable"];
+
+  return (
+    <div style={{
+      background:   "rgba(239,68,68,0.05)",
+      border:       "1px solid rgba(239,68,68,0.15)",
+      borderLeft:   "3px solid #EF4444",
+      borderRadius: 12,
+      padding:      "12px 16px",
+    }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+        <div>
+          <p style={{ margin: "0 0 2px", fontSize: 13, fontWeight: 700, color: "#E2E8F0" }}>{nombre}</p>
+          <p style={{ margin: 0, fontSize: 11, color: "rgba(226,232,240,0.4)" }}>{sub}</p>
+        </div>
+        <span style={{
+          fontSize: 10, fontWeight: 700, color: tend.color,
+          background: tend.color + "15", border: `1px solid ${tend.color}30`,
+          borderRadius: 99, padding: "2px 8px",
+        }}>
+          {tend.icon} {entity.tendenciaCalidad}
+        </span>
+      </div>
+
+      {/* Barras de métricas */}
+      <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+        {/* Calidad */}
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+            <span style={{ fontSize: 10, color: "rgba(226,232,240,0.4)" }}>Calidad promedio</span>
+            <span style={{ fontSize: 10, fontWeight: 700, color: calidadColor }}>
+              {entity.calidadPromedio.toFixed(1)} / 5.0
+            </span>
+          </div>
+          <div style={{ height: 4, borderRadius: 99, background: "rgba(255,255,255,0.06)" }}>
+            <div style={{
+              height: 4, borderRadius: 99,
+              width: `${(entity.calidadPromedio / 5) * 100}%`,
+              background: calidadColor,
+              transition: "width 0.4s ease",
+            }} />
+          </div>
+        </div>
+
+        {/* Cumplimiento */}
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+            <span style={{ fontSize: 10, color: "rgba(226,232,240,0.4)" }}>Cumplimiento a tiempo</span>
+            <span style={{ fontSize: 10, fontWeight: 700, color: cumplColor }}>
+              {Math.round(entity.cumplimientoRate * 100)}%
+            </span>
+          </div>
+          <div style={{ height: 4, borderRadius: 99, background: "rgba(255,255,255,0.06)" }}>
+            <div style={{
+              height: 4, borderRadius: 99,
+              width: `${entity.cumplimientoRate * 100}%`,
+              background: cumplColor,
+              transition: "width 0.4s ease",
+            }} />
+          </div>
+        </div>
+
+        {/* Variación de costo (proveedores) */}
+        {variacionCosto !== undefined && variacionCosto > 0 && (
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span style={{ fontSize: 10, color: "rgba(226,232,240,0.4)" }}>Variación de costo prom.</span>
+            <span style={{ fontSize: 10, fontWeight: 700, color: variacionCosto > 20 ? "#EF4444" : "#F59E0B" }}>
+              +{variacionCosto.toFixed(1)}%
+            </span>
+          </div>
+        )}
+      </div>
+
+      <p style={{ margin: "8px 0 0", fontSize: 10, color: "rgba(226,232,240,0.2)" }}>
+        {entity.totalEvaluaciones} evaluación{entity.totalEvaluaciones !== 1 ? "es" : ""}
+      </p>
+    </div>
+  );
+}
+
 // ── Página ────────────────────────────────────────────────────────────────────
 
 export default function InteligenciaPage() {
@@ -205,6 +303,25 @@ export default function InteligenciaPage() {
       setXdLoading(false);
     }
   };
+
+  // Riesgo Predictivo state
+  const [riskData, setRiskData]   = useState<RiskResponse | null>(null);
+  const [riskLoading, setRiskLoading] = useState(false);
+
+  // Cargar datos de riesgo al montar (auto)
+  useEffect(() => {
+    if (!user) return;
+    setRiskLoading(true);
+    user.getIdToken().then((token) =>
+      fetch("/api/tec-bii/risk", {
+        headers: { "Authorization": `Bearer ${token}` },
+      })
+        .then((r) => r.json() as Promise<RiskResponse>)
+        .then((json) => { if (json.success) setRiskData(json); })
+        .catch(() => {/* silencioso */})
+        .finally(() => setRiskLoading(false))
+    );
+  }, [user]);
 
   // NORA state
   const [noraLoading, setNoraLoading]     = useState(false);
@@ -916,6 +1033,192 @@ export default function InteligenciaPage() {
                     </div>
                   </div>
                 )}
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* ── Riesgo Predictivo (P-1) ─────────────────────────────────── */}
+        <div style={{ marginTop: 32 }}>
+          <div style={{
+            background:   "rgba(239,68,68,0.04)",
+            border:       "1px solid rgba(239,68,68,0.18)",
+            borderRadius: 20,
+            padding:      "24px 24px 20px",
+          }}>
+            {/* Header */}
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 18 }}>
+              <div>
+                <h2 style={{ margin: "0 0 4px", fontSize: 17, fontWeight: 800, color: "#E2E8F0" }}>
+                  ⚠ Riesgo Predictivo
+                </h2>
+                <p style={{ margin: 0, fontSize: 12, color: "rgba(239,68,68,0.7)", fontWeight: 600 }}>
+                  Basado en historial de evaluaciones · Actualizado automáticamente
+                </p>
+              </div>
+              {riskData && (
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 6,
+                  padding: "6px 14px", borderRadius: 99,
+                  background: riskData.totalRiesgo > 0
+                    ? "rgba(239,68,68,0.12)"
+                    : "rgba(16,185,129,0.1)",
+                  border: `1px solid ${riskData.totalRiesgo > 0 ? "rgba(239,68,68,0.3)" : "rgba(16,185,129,0.3)"}`,
+                }}>
+                  <span style={{ fontSize: 14 }}>
+                    {riskData.totalRiesgo > 0 ? "🔴" : "🟢"}
+                  </span>
+                  <span style={{
+                    fontSize: 12, fontWeight: 700,
+                    color: riskData.totalRiesgo > 0 ? "#EF4444" : "#10B981",
+                  }}>
+                    {riskData.totalRiesgo > 0
+                      ? `${riskData.totalRiesgo} entidad${riskData.totalRiesgo !== 1 ? "es" : ""} en riesgo`
+                      : "Sin riesgos detectados"}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Loading */}
+            {riskLoading && (
+              <div style={{ textAlign: "center", padding: "28px 24px" }}>
+                <div style={{
+                  width: 32, height: 32, borderRadius: "50%",
+                  border: "2px solid rgba(239,68,68,0.15)",
+                  borderTop: "2px solid #EF4444",
+                  margin: "0 auto 12px",
+                  animation: "spin 1s linear infinite",
+                }} />
+                <p style={{ margin: 0, fontSize: 12, color: "rgba(226,232,240,0.4)" }}>
+                  Leyendo historial predictivo…
+                </p>
+              </div>
+            )}
+
+            {/* Sin datos aún */}
+            {!riskLoading && !riskData && (
+              <div style={{
+                textAlign: "center", padding: "28px 24px",
+                background: "rgba(255,255,255,0.01)",
+                border: "1px dashed rgba(239,68,68,0.12)",
+                borderRadius: 14,
+              }}>
+                <p style={{ margin: "0 0 6px", fontSize: 12, color: "rgba(226,232,240,0.35)" }}>
+                  El ciclo predictivo se activa al guardar evaluaciones.
+                </p>
+              </div>
+            )}
+
+            {/* Resultados */}
+            {!riskLoading && riskData && (
+              <>
+                {/* Estado limpio */}
+                {riskData.totalRiesgo === 0 && riskData.proyectos.length === 0 && (
+                  <div style={{
+                    textAlign: "center", padding: "28px 24px",
+                    background: "rgba(16,185,129,0.05)",
+                    border: "1px solid rgba(16,185,129,0.15)",
+                    borderRadius: 14,
+                  }}>
+                    <p style={{ margin: "0 0 4px", fontSize: 20 }}>✓</p>
+                    <p style={{ margin: "0 0 4px", fontSize: 13, fontWeight: 700, color: "#10B981" }}>
+                      Todo el equipo dentro de parámetros
+                    </p>
+                    <p style={{ margin: 0, fontSize: 11, color: "rgba(226,232,240,0.3)" }}>
+                      Calidad ≥ 3.0 y cumplimiento ≥ 60% en todos los asignados evaluados
+                    </p>
+                  </div>
+                )}
+
+                {/* Empleados en riesgo */}
+                {riskData.empleados.length > 0 && (
+                  <div style={{ marginBottom: 18 }}>
+                    <p style={{ margin: "0 0 10px", fontSize: 10, fontWeight: 700, color: "rgba(226,232,240,0.3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                      Equipo interno · {riskData.empleados.length} en riesgo
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {riskData.empleados.map((e: RiskEmpleado) => (
+                        <RiskEntityCard key={e.id} nombre={e.nombre} sub={e.puesto} entity={e} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Proveedores en riesgo */}
+                {riskData.proveedores.length > 0 && (
+                  <div style={{ marginBottom: 18 }}>
+                    <p style={{ margin: "0 0 10px", fontSize: 10, fontWeight: 700, color: "rgba(226,232,240,0.3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                      Proveedores externos · {riskData.proveedores.length} en riesgo
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {riskData.proveedores.map((p: RiskProveedor) => (
+                        <RiskEntityCard
+                          key={p.id}
+                          nombre={p.nombre}
+                          sub={p.tipoServicio}
+                          entity={p}
+                          variacionCosto={(p as RiskProveedor).variacionCosto}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Proyectos afectados */}
+                {riskData.proyectos.length > 0 && (
+                  <div>
+                    <p style={{ margin: "0 0 10px", fontSize: 10, fontWeight: 700, color: "rgba(226,232,240,0.3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                      Proyectos activos en riesgo · {riskData.proyectos.length}
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {riskData.proyectos.map((p: RiskProyecto) => (
+                        <div key={p.id} style={{
+                          background: "rgba(239,68,68,0.05)",
+                          border: "1px solid rgba(239,68,68,0.15)",
+                          borderLeft: "3px solid #EF4444",
+                          borderRadius: 12, padding: "12px 16px",
+                          display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap",
+                        }}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <p style={{ margin: "0 0 2px", fontSize: 13, fontWeight: 700, color: "#E2E8F0" }}>{p.titulo}</p>
+                            <p style={{ margin: 0, fontSize: 11, color: "rgba(226,232,240,0.45)" }}>
+                              {p.asignadoNombre} · {p.estado}
+                            </p>
+                          </div>
+                          <div style={{ display: "flex", gap: 8 }}>
+                            {p.assigneeCalidad !== undefined && (
+                              <span style={{
+                                fontSize: 10, fontWeight: 700,
+                                color: p.assigneeCalidad < 3 ? "#EF4444" : "#F59E0B",
+                                background: "rgba(239,68,68,0.1)",
+                                border: "1px solid rgba(239,68,68,0.2)",
+                                borderRadius: 99, padding: "2px 8px",
+                              }}>
+                                ★ {p.assigneeCalidad.toFixed(1)}
+                              </span>
+                            )}
+                            {p.assigneeCumplimiento !== undefined && (
+                              <span style={{
+                                fontSize: 10, fontWeight: 700,
+                                color: p.assigneeCumplimiento < 0.6 ? "#EF4444" : "#F59E0B",
+                                background: "rgba(239,68,68,0.1)",
+                                border: "1px solid rgba(239,68,68,0.2)",
+                                borderRadius: 99, padding: "2px 8px",
+                              }}>
+                                ⏱ {Math.round(p.assigneeCumplimiento * 100)}%
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <p style={{ margin: "14px 0 0", fontSize: 10, color: "rgba(226,232,240,0.15)", textAlign: "right" }}>
+                  Sprint P-1 · {new Date(riskData.generadoEn).toLocaleString("es-MX")}
+                </p>
               </>
             )}
           </div>
