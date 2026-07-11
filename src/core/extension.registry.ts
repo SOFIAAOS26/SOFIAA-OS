@@ -19,15 +19,17 @@ import type {
 } from "@/types/sofiaa-platform";
 
 // ── Imports de extensiones registradas ───────────────────────────────────────
-import { tecBiExtension }      from "@/extensions/tec-bi";
-import { jpMemorialExtension } from "@/extensions/jp-memorial";
-import { marketingExtension }  from "@/extensions/marketing-sofia";
+import { tecBiExtension }          from "@/extensions/tec-bi";
+import { tecBiiCoreExtension }     from "@/extensions/tec-bii";      // v2 — con tools v2
+import { jpMemorialExtension }     from "@/extensions/jp-memorial";
+import { marketingExtension }      from "@/extensions/marketing-sofia";
 
 // ── Registro centralizado ─────────────────────────────────────────────────────
 // Agregar nuevas versiones de una extensión = añadir otra entrada aquí.
 // El Registry elige la más alta automáticamente (o la pinada).
 const REGISTRY: SofiaaExtension[] = [
   tecBiExtension,
+  tecBiiCoreExtension,   // TEC Bii v2 — /tec-bii con tools cognitivas
   jpMemorialExtension,
   marketingExtension,
 ];

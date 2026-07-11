@@ -42,6 +42,7 @@ import { attendNexoNodes }       from "@/lib/nexo/attention";
 import { getCognitiveProfile, updateCognitiveProfile, buildCognitiveBlock } from "@/lib/cognitive/profile";
 import { extractSignals }        from "@/lib/cognitive/signals";
 import type { NexoContext }      from "@/types/nexo";
+import type { ExtensionContext } from "@/types/sofiaa-platform";
 
 // ── Registro de providers (módulo, se ejecuta una vez) ────────────────────
 const _useMock = process.env.NEXT_PUBLIC_MOCK_CAPABILITIES === "true";
@@ -423,6 +424,18 @@ export async function POST(req: NextRequest) {
   }
   // ─────────────────────────────────────────────────────────────────────
 
+  // Extension tools — merge con SOFIAA_TOOLS cuando la extensión activa los tiene
+  const extToolDefs = resolvedExt?.extension.tools?.tools ?? [];
+  const allTools = extToolDefs.length > 0
+    ? [
+        ...SOFIAA_TOOLS,
+        ...extToolDefs.map((t) => ({
+          type: "function" as const,
+          function: { name: t.name, description: t.description, parameters: t.parameters },
+        })),
+      ]
+    : SOFIAA_TOOLS;
+
   const llmRequest = {
     messages: [
       {
@@ -431,7 +444,7 @@ export async function POST(req: NextRequest) {
       },
       ...messages.map(({ role, content }) => ({ role, content })),
     ],
-    tools: SOFIAA_TOOLS as unknown as import("@/core/llm.client").LLMTool[],
+    tools: allTools as unknown as import("@/core/llm.client").LLMTool[],
     tool_choice: "auto" as const,
     temperature: 0.7,
     max_tokens: 1024,
@@ -555,6 +568,76 @@ export async function POST(req: NextRequest) {
                 if (serialized) {
                   fullText += "\n" + serialized;
                   controller.enqueue(encoder.encode("\n" + serialized));
+                }
+              }
+
+              // ── Extension tool calls (Sprint Q-2) ──────────────────────
+              // Herramientas específicas de la extensión activa (e.g. TEC Bii v2)
+              if (extToolDefs.length > 0 && resolvedExt?.extension.tools) {
+                const extToolNames = new Set(extToolDefs.map((t) => t.name));
+                const extCalls = toolCallList.filter((tc) =>
+                  extToolNames.has(tc.function.name)
+                );
+
+                for (const tc of extCalls) {
+                  try {
+                    const args = JSON.parse(tc.function.arguments || "{}") as Record<string, unknown>;
+                    const extCtx: ExtensionContext = {
+                      traceId:     tracer.id,
+                      extensionId: activeExtId ?? resolvedExt.extension.manifest.id,
+                      userId:      userId      ?? undefined,
+                      userRole:    userRole    ?? undefined,
+                      activePath:  path,
+                      userMessage: lastUserMsg?.content ?? "",
+                      timestamp:   Date.now(),
+                    };
+
+                    tracer.log("ext_tool_call", "ok", "info", { tool: tc.function.name });
+                    const result = await resolvedExt.extension.tools.handler(
+                      tc.function.name, args, extCtx
+                    );
+
+                    // Re-run LLM con el resultado (mismo patrón que capabilities)
+                    const toolMessages = [
+                      { role: "system" as const, content: systemContent },
+                      ...messages.map(({ role, content }) => ({ role, content })),
+                      {
+                        role: "user" as const,
+                        content:
+                          `RESULTADO DE HERRAMIENTA "${tc.function.name}" ` +
+                          `(responde de forma natural con esta información, no menciones "herramienta" ni "resultado"):\n` +
+                          JSON.stringify(result, null, 2),
+                      },
+                    ];
+
+                    const toolLlmResult = await orchestrator.complete({
+                      ...llmRequest,
+                      messages:    toolMessages,
+                      tools:       undefined,
+                      tool_choice: undefined,
+                    });
+
+                    const toolReader = toolLlmResult.stream.getReader();
+                    while (true) {
+                      const { done: tDone, value: tChunk } = await toolReader.read();
+                      if (tDone) break;
+                      if (tChunk.content) {
+                        fullText += tChunk.content;
+                        controller.enqueue(encoder.encode(tChunk.content));
+                      }
+                    }
+
+                    tracer.log("ext_tool_done", "ok", "info", { tool: tc.function.name });
+                  } catch (extErr) {
+                    console.error("[SOFIAA][ext-tool] error:", tc.function.name, extErr);
+                    tracer.log("ext_tool_error", "failed", "error", {
+                      tool: tc.function.name,
+                      error: String(extErr),
+                    });
+                    const errMsg = `\n\nNo pude ejecutar "${tc.function.name}" en este momento. Intenta directamente desde la interfaz.`;
+                    fullText += errMsg;
+                    controller.enqueue(encoder.encode(errMsg));
+                  }
                 }
               }
             }
