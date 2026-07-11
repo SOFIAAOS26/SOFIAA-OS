@@ -13,7 +13,7 @@
 
 import { useState, useEffect }    from "react";
 import { useAuth }                 from "@/contexts/AuthContext";
-import PageGuard                   from "@/components/tec-bi/PageGuard";
+import PageGuard                   from "@/components/tec-bii/PageGuard";
 import {
   subscribeEmpleadosV2,
   createEmpleadoV2,
@@ -593,7 +593,7 @@ export default function EquipoPage() {
 
   return (
     <>
-      <PageGuard section="empleados" />
+      <PageGuard />
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
 
         {/* ── Header ─────────────────────────────────────────────────────── */}

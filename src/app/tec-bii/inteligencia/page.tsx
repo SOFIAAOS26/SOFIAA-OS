@@ -13,7 +13,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth }             from "@/contexts/AuthContext";
-import PageGuard               from "@/components/tec-bi/PageGuard";
+import PageGuard               from "@/components/tec-bii/PageGuard";
 import type { TecBiiInsight, InsightsResponse } from "@/app/api/tec-bii/insights/route";
 import type { CrossDomainResponse }             from "@/app/api/tec-bii/cross-domain/route";
 import type { Hypothesis, TecBiiEntityType }    from "@/extensions/tec-bii/schema";
@@ -405,7 +405,7 @@ export default function InteligenciaPage() {
 
   return (
     <>
-      <PageGuard section="proyectos" />
+      <PageGuard />
       <div style={{ maxWidth: 900, margin: "0 auto" }}>
 
         {/* ── Header ───────────────────────────────────────────────────── */}

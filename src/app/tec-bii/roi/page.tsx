@@ -13,7 +13,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth }             from "@/contexts/AuthContext";
-import PageGuard               from "@/components/tec-bi/PageGuard";
+import PageGuard               from "@/components/tec-bii/PageGuard";
 import {
   subscribeProyectosV2,
   subscribeEvaluacionesV2,
@@ -167,7 +167,7 @@ export default function RoiPage() {
 
   return (
     <>
-      <PageGuard section="roi" />
+      <PageGuard />
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
 
         {/* Header */}

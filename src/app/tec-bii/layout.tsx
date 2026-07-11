@@ -12,6 +12,7 @@ import Link                        from "next/link";
 import { tecBiiExtension }         from "@/extensions/tec-bii/manifest";
 import ExtHamburger                from "@/components/ui/ExtHamburger";
 import { useAuth }                 from "@/contexts/AuthContext";
+import { TecBiiProvider }          from "@/contexts/TecBiiContext";
 
 const NAV    = tecBiiExtension.routes;
 const ACCENT = tecBiiExtension.theme.badgeColor;   // #6366F1 (indigo)
@@ -181,8 +182,8 @@ export default function TecBiiLayout({ children }: { children: React.ReactNode }
           margin:    "0 auto",
         }}
       >
-        {children}
-      </main>
+        <TecBiiProvider>{children}</TecBiiProvider>
+</main>
 
       {/* ── Hamburger móvil ──────────────────────────────────────────── */}
       <ExtHamburger

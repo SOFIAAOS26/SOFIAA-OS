@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth }             from "@/contexts/AuthContext";
-import PageGuard               from "@/components/tec-bi/PageGuard";
+import PageGuard               from "@/components/tec-bii/PageGuard";
 import {
   subscribeClientesV2,
   createClienteV2,
@@ -232,7 +232,7 @@ export default function ClientesPage() {
 
   return (
     <>
-      <PageGuard section="clientes" />
+      <PageGuard />
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
 
         <div style={{ marginBottom: 28 }}>

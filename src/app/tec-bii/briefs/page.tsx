@@ -16,7 +16,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth }             from "@/contexts/AuthContext";
-import PageGuard               from "@/components/tec-bi/PageGuard";
+import PageGuard               from "@/components/tec-bii/PageGuard";
 import {
   subscribeBriefsV2,
   createBriefV2,
@@ -662,7 +662,7 @@ export default function BriefsPage() {
 
   return (
     <>
-      <PageGuard section="briefs" />
+      <PageGuard />
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
 
         {/* Header */}
