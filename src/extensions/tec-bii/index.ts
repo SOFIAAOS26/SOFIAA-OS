@@ -39,6 +39,7 @@ Rutas: /tec-bii · /tec-bii/proyectos · /tec-bii/briefs · /tec-bii/equipo · /
       "  • listar_proyectos: muestra proyectos con urgencia y riesgo (opcionalmente filtrar por estado)\n" +
       "  • consultar_riesgo: alerta de empleados, proveedores y proyectos en riesgo predictivo\n" +
       "  • generar_analisis: genera métricas del área para diagnóstico operacional",
+      "CRÍTICO: En TEC Bii v2 NUNCA uses request_capability. Las capabilities del sistema son del módulo v1 y sus rutas de datos están deprecadas. SOLO usa las 5 herramientas de extensión listadas arriba para acceder a datos de TEC Bii.",
       "Para navegar usa [NAVIGATE:/tec-bii/proyectos] y similares. Para volver al chat: [NAVIGATE:/]",
       "El sistema es cognitivo: cada entidad publicada genera un nodo en el grafo NEXO. " +
       "Puedes razonar sobre conexiones entre capturas de memoria y proyectos activos.",
