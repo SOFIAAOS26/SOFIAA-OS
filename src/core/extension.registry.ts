@@ -23,6 +23,7 @@ import { tecBiExtension }          from "@/extensions/tec-bi";
 import { tecBiiCoreExtension }     from "@/extensions/tec-bii";      // v2 — con tools v2
 import { jpMemorialExtension }     from "@/extensions/jp-memorial";
 import { marketingExtension }      from "@/extensions/marketing-sofia";
+import { atenaExtension }          from "@/extensions/atena";         // ATENA Scientific Engine
 
 // ── Registro centralizado ─────────────────────────────────────────────────────
 // Agregar nuevas versiones de una extensión = añadir otra entrada aquí.
@@ -32,6 +33,7 @@ const REGISTRY: SofiaaExtension[] = [
   tecBiiCoreExtension,   // TEC Bii v2 — /tec-bii con tools cognitivas
   jpMemorialExtension,
   marketingExtension,
+  atenaExtension,        // ATENA Scientific Intelligence Engine — /atena
 ];
 
 // ── Semver utils ──────────────────────────────────────────────────────────────
