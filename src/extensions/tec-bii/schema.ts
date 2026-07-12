@@ -131,6 +131,13 @@ export interface EmpleadoV2 extends CognitiveFootprint {
   // Cognitivo v2
   skillProfile?:   SkillProfile; // generado por SOFIAA desde historial
   momentum?:       number;       // actividad reciente 0.0-1.0
+
+  // Predictivo — calculado automáticamente al guardar evaluaciones
+  cumplimientoRate?:    number;  // 0.0-1.0 — % de proyectos entregados a tiempo o antes
+  totalEvaluaciones?:   number;  // número de evaluaciones recibidas
+  tendenciaCalidad?:    "mejorando" | "estable" | "bajando";
+  alertaRiesgo?:        boolean; // true si calidadPromedio < 3.0 o cumplimientoRate < 0.6
+  ultimaEvaluacionAt?:  number;  // timestamp de la última evaluación recibida
 }
 
 /** Perfil de habilidades generado automáticamente desde evaluaciones históricas */
@@ -160,6 +167,14 @@ export interface ProveedorV2 extends CognitiveFootprint {
   // Cognitivo v2
   reliabilityScore?:     number;   // 0.0-1.0 confiabilidad histórica
   costPrediction?:       CostPrediction;
+
+  // Predictivo — calculado automáticamente al guardar evaluaciones
+  cumplimientoRate?:    number;  // 0.0-1.0 — % de proyectos entregados a tiempo o antes
+  totalEvaluaciones?:   number;
+  tendenciaCalidad?:    "mejorando" | "estable" | "bajando";
+  alertaRiesgo?:        boolean; // true si calidadPromedio < 3.0 o cumplimientoRate < 0.6
+  ultimaEvaluacionAt?:  number;
+  variacionCosto?:      number;  // % promedio de variación cotizado vs final (+ = exceso)
 }
 
 export interface CostPrediction {
@@ -246,6 +261,11 @@ export interface ProyectoV2 extends CognitiveFootprint {
   deadlineDays?:   number;         // días restantes hasta fechaLimite del brief
   assigneeLoad?:   number;         // 0.0-1.0 carga actual del asignado
   valueScore?:     number;         // importancia estratégica 0.0-1.0
+
+  // Predictivo — propagado desde el historial del asignado
+  assigneeRisk?:         boolean;  // true si el asignado tiene alertaRiesgo
+  assigneeCalidad?:      number;   // calidadPromedio histórico del asignado
+  assigneeCumplimiento?: number;   // cumplimientoRate histórico del asignado
 }
 
 // ── Evaluaciones (sin cambios estructurales, añade footprint) ─────────────────

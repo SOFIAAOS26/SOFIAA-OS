@@ -12,7 +12,7 @@
 import { db, auth }  from "@/lib/firebase";
 import {
   collection, addDoc, updateDoc, doc, deleteDoc,
-  onSnapshot, query, orderBy, getDoc,
+  onSnapshot, query, orderBy, getDoc, getDocs, where,
 } from "firebase/firestore";
 import { tecBiiPath } from "@/lib/tec-bii/collections";
 import {
@@ -47,6 +47,122 @@ async function triggerCognitivePublish(
     }).catch(() => {}); // Silenciar errores de red — publish es opcional
   } catch {
     // Silenciar — publish nunca bloquea ni propaga errores al usuario
+  }
+}
+
+// ── Motor predictivo: recalcular stats desde evaluaciones ────────────────────
+//
+// Se llama cada vez que se crea una evaluación.
+// Flujo:
+//   1. Lee el proyecto de la evaluación → obtiene asignadoId + tipoAsignación
+//   2. Busca todas las evaluaciones que corresponden a ese asignadoId
+//      (via proyectos del mismo asignado)
+//   3. Recalcula métricas predictivas y actualiza empleado o proveedor
+//   4. Propaga assigneeRisk al proyecto activo si aplica
+//
+async function updateEntityStatsFromEvaluaciones(
+  uid:        string,
+  evaluacion: EvaluacionV2 & { id: string },
+): Promise<void> {
+  try {
+    // 1. Obtener el proyecto referenciado
+    const proySnap = await getDoc(doc(db, tecBiiPath(uid, "proyecto"), evaluacion.proyectoId));
+    if (!proySnap.exists()) return;
+    const proyecto = { id: proySnap.id, ...proySnap.data() } as ProyectoV2;
+    const { asignadoId, tipoAsignacion } = proyecto;
+    if (!asignadoId) return;
+
+    // 2. Buscar todos los proyectos del mismo asignado
+    const proySnaps = await getDocs(
+      query(collection(db, tecBiiPath(uid, "proyecto")), where("asignadoId", "==", asignadoId))
+    );
+    const proyectosIds = proySnaps.docs.map((d) => d.id);
+
+    // 3. Buscar todas las evaluaciones de esos proyectos
+    const allEvals: EvaluacionV2[] = [];
+    for (const pid of proyectosIds) {
+      const eSnaps = await getDocs(
+        query(collection(db, tecBiiPath(uid, "evaluacion")), where("proyectoId", "==", pid))
+      );
+      eSnaps.docs.forEach((d) => allEvals.push(d.data() as EvaluacionV2));
+    }
+
+    if (allEvals.length === 0) return;
+
+    // 4. Calcular métricas
+    const totalEvaluaciones = allEvals.length;
+
+    const calidadPromedio = parseFloat(
+      (allEvals.reduce((s, e) => s + (e.metricas?.calidadGeneral ?? 0), 0) / totalEvaluaciones).toFixed(2)
+    );
+
+    const aTiempoCount = allEvals.filter(
+      (e) => e.cumplimientoTiempo === "A tiempo" || e.cumplimientoTiempo === "Temprano"
+    ).length;
+    const cumplimientoRate = parseFloat((aTiempoCount / totalEvaluaciones).toFixed(2));
+
+    // Tendencia: comparar promedio última mitad vs primera mitad
+    const sorted    = [...allEvals].sort((a, b) => a.createdAt - b.createdAt);
+    const half      = Math.floor(sorted.length / 2);
+    let tendenciaCalidad: "mejorando" | "estable" | "bajando" = "estable";
+    if (sorted.length >= 4) {
+      const old = sorted.slice(0, half).reduce((s, e) => s + e.metricas.calidadGeneral, 0) / half;
+      const rec = sorted.slice(half).reduce((s, e) => s + e.metricas.calidadGeneral, 0) / (sorted.length - half);
+      if (rec - old > 0.3)      tendenciaCalidad = "mejorando";
+      else if (old - rec > 0.3) tendenciaCalidad = "bajando";
+    }
+
+    const alertaRiesgo = calidadPromedio < 3.0 || cumplimientoRate < 0.6;
+    const ultimaEvaluacionAt = Math.max(...allEvals.map((e) => e.createdAt));
+
+    // 5. Actualizar empleado o proveedor
+    const entityCol = tipoAsignacion === "Interno" ? "empleado" : "proveedor";
+    const entityRef = doc(db, tecBiiPath(uid, entityCol), asignadoId);
+    const entitySnap = await getDoc(entityRef);
+    if (!entitySnap.exists()) return;
+
+    const statsUpdate: Record<string, unknown> = {
+      calidadPromedio,
+      cumplimientoRate,
+      totalEvaluaciones,
+      tendenciaCalidad,
+      alertaRiesgo,
+      ultimaEvaluacionAt,
+      proyectosTotales: proyectosIds.length,
+      updatedAt: Date.now(),
+    };
+
+    // Para proveedores: calcular variación de costo cotizado vs final
+    if (tipoAsignacion === "Externo") {
+      const externals = allEvals.filter((e) => e.datosExternos);
+      if (externals.length > 0) {
+        const varPct = externals.reduce((s, e) => {
+          const ext = e.datosExternos!;
+          if (!ext.costoCotizado || ext.costoCotizado === 0) return s;
+          return s + ((ext.costoFinal - ext.costoCotizado) / ext.costoCotizado) * 100;
+        }, 0) / externals.length;
+        statsUpdate.variacionCosto = parseFloat(varPct.toFixed(1));
+      }
+      // reliabilityScore = combinación de calidad y cumplimiento
+      statsUpdate.reliabilityScore = parseFloat(
+        ((calidadPromedio / 5) * 0.5 + cumplimientoRate * 0.5).toFixed(2)
+      );
+    }
+
+    await updateDoc(entityRef, statsUpdate);
+
+    // 6. Propagar riesgo al proyecto activo (si no está entregado/cancelado)
+    if (proyecto.estado !== "Entregado" && proyecto.estado !== "Cancelado") {
+      await updateDoc(doc(db, tecBiiPath(uid, "proyecto"), proyecto.id!), {
+        assigneeRisk:         alertaRiesgo,
+        assigneeCalidad:      calidadPromedio,
+        assigneeCumplimiento: cumplimientoRate,
+        updatedAt:            Date.now(),
+      });
+    }
+
+  } catch {
+    // Silenciar — las stats son enriquecimiento opcional, nunca bloquean el CRUD
   }
 }
 
@@ -292,6 +408,11 @@ export async function createEvaluacionV2(
   };
   const ref = await addDoc(collection(db, tecBiiPath(uid, "evaluacion")), payload);
   triggerCognitivePublish("evaluacion", ref.id, { ...payload, id: ref.id });
+
+  // Actualizar stats predictivas del empleado/proveedor (fire-and-forget)
+  updateEntityStatsFromEvaluaciones(uid, { ...payload, id: ref.id } as EvaluacionV2 & { id: string })
+    .catch(() => {});
+
   return ref.id;
 }
 
