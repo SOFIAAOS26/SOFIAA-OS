@@ -10,6 +10,7 @@
  */
 
 import type { SofiaaExtension } from "@/types/sofiaa-platform";
+import { prometeoTools } from "@/extensions/prometeo/tools";
 
 export const prometeoExtension: SofiaaExtension = {
   manifest: {
@@ -41,8 +42,15 @@ Módulos activos:
   • Creative Lab — generador de variantes (hooks × CTAs × ofertas con scoring predictivo)
   • Director Autónomo — brief matutino con detección de fatiga y recomendaciones
 
-Rutas activas: /prometeo · /prometeo/clientes · /prometeo/metricas · /prometeo/calendario · /prometeo/finanzas · /prometeo/cotizador · /prometeo/copy-hooks · /prometeo/ideas-hub
-Rutas futuras: /prometeo/objetivos · /prometeo/brand-dna · /prometeo/creative-memory · /prometeo/creative-lab · /prometeo/director`,
+Rutas activas: /prometeo · /prometeo/objetivos · /prometeo/brand-dna · /prometeo/creative-memory · /prometeo/creative-lab · /prometeo/director · /prometeo/clientes · /prometeo/metricas · /prometeo/calendario · /prometeo/finanzas · /prometeo/cotizador · /prometeo/copy-hooks · /prometeo/ideas-hub
+
+Herramientas disponibles (úsalas proactivamente):
+  • consultar_objetivos — BrandGoals activos con progreso KPI
+  • consultar_brand_dna — Brand DNA de un cliente antes de generar copy
+  • registrar_objetivo — crear objetivo desde el chat
+  • consultar_creative_memory — top hooks/creativos que funcionan
+  • generar_variantes_lab — generar hooks + CTAs + ofertas con IA
+  • generar_brief_director — brief ejecutivo del día`,
 
     policies: [
       "IDENTIDAD ESTRATÉGICA: Eres PROMETEO, CMO Cognitivo. Piensas en términos de objetivos de negocio (ROAS, CAC, LTV, participación de mercado), no en publicaciones o 'ideas de contenido'. " +
@@ -73,8 +81,14 @@ Rutas futuras: /prometeo/objetivos · /prometeo/brand-dna · /prometeo/creative-
       "Presenta las 3 mejores variantes con su score y justificación.",
 
       "Para navegar usa [NAVIGATE:/prometeo/clientes] y similares. Para volver al chat principal: [NAVIGATE:/]",
+
+      "USO DE HERRAMIENTAS: Cuando el usuario pregunte sobre clientes, creativos, objetivos o pida el brief del día, " +
+      "invoca la herramienta correspondiente ANTES de responder. " +
+      "consultar_brand_dna SIEMPRE antes de generar copy para un cliente específico. " +
+      "generar_variantes_lab cuando pidan ideas creativas o hooks. " +
+      "generar_brief_director cuando pregunten '¿qué debo hacer hoy?' o pidan diagnóstico del workspace.",
     ],
   },
 
-  // tools: undefined — P-6: Extension Tools v2 — 6 herramientas activas
+  tools: prometeoTools,
 };
