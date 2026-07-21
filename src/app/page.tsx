@@ -1655,9 +1655,9 @@ export default function Home() {
         {/* Atajos de extensiones */}
         <div className="flex justify-center gap-2 mt-2.5">
           {[
-            { label: "TEC Bii", icon: "🧠", path: "/tec-bii",        color: "rgba(6,182,212,0.13)",   border: "rgba(6,182,212,0.30)"  },
-            { label: "MK-s",   icon: "📱", path: "/marketing-sofia", color: "rgba(168,85,247,0.13)", border: "rgba(168,85,247,0.30)" },
-            { label: "JP",     icon: "💙", path: "/jp-memorial",     color: "rgba(244,114,182,0.13)", border: "rgba(244,114,182,0.30)" },
+            { label: "TEC Bii",  icon: "🧠", path: "/tec-bii",   color: "rgba(6,182,212,0.13)",   border: "rgba(6,182,212,0.30)"  },
+            { label: "PROMETEO", icon: "🔥", path: "/prometeo",  color: "rgba(249,115,22,0.13)",  border: "rgba(249,115,22,0.30)"  },
+            { label: "ATENA",    icon: "⚡", path: "/atena",     color: "rgba(168,85,247,0.13)",  border: "rgba(168,85,247,0.30)" },
           ].map(({ label, icon, path, color, border }) => (
             <button
               key={path}
