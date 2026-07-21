@@ -29,10 +29,10 @@ const NAV = [
   { href: "/prometeo/brand-dna",   label: "Brand DNA",        icon: "🧬" },
   { href: "/prometeo/objetivos",        label: "Objetivos",      icon: "🎯" },
   { href: "/prometeo/creative-memory", label: "Creative Memory", icon: "🧠" },
+  { href: "/prometeo/creative-lab",    label: "Creative Lab",    icon: "🧪" },
 ];
 
 const NAV_SOON = [
-  { label: "Creative Lab",     icon: "🧪", badge: "P-4" },
   { label: "Director Autónomo",icon: "🤖", badge: "P-5" },
 ];
 

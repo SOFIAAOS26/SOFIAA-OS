@@ -11,7 +11,7 @@ import {
   setDoc, getDocs, query, orderBy, serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import type { BrandDNA, BrandGoal, GoalState, CreativeMemory } from "@/extensions/prometeo/schema";
+import type { BrandDNA, BrandGoal, GoalState, CreativeMemory, CreativeLab } from "@/extensions/prometeo/schema";
 
 // ── Path helpers ──────────────────────────────────────────────────────────────
 
@@ -205,4 +205,49 @@ export async function updateCreativeMemory(
   patch:       Partial<Omit<CreativeMemory, "id" | "createdAt">>,
 ): Promise<void> {
   await updateDoc(d(workspaceId, "prometeo_creative_memory", id), patch);
+}
+
+// ── Creative Lab ──────────────────────────────────────────────────────────────
+
+/**
+ * Suscripción en tiempo real a las sesiones de Creative Lab del workspace.
+ * Ordenadas por createdAt descendente (las más recientes primero).
+ */
+export function subscribeCreativeLabs(
+  workspaceId: string,
+  cb: (list: CreativeLab[]) => void,
+) {
+  return onSnapshot(
+    query(col(workspaceId, "prometeo_creative_labs"), orderBy("createdAt", "desc")),
+    (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...d.data() } as CreativeLab))),
+  );
+}
+
+/**
+ * Crea una nueva sesión de Creative Lab.
+ */
+export async function createCreativeLab(
+  workspaceId: string,
+  data: Omit<CreativeLab, "id" | "createdAt" | "updatedAt">,
+): Promise<string> {
+  const ref = await addDoc(col(workspaceId, "prometeo_creative_labs"), {
+    ...data,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  });
+  return ref.id;
+}
+
+/**
+ * Actualiza una sesión de Creative Lab (variantes seleccionadas, estado, etc.).
+ */
+export async function updateCreativeLab(
+  workspaceId: string,
+  id:          string,
+  patch:       Partial<Omit<CreativeLab, "id" | "createdAt">>,
+): Promise<void> {
+  await updateDoc(d(workspaceId, "prometeo_creative_labs", id), {
+    ...patch,
+    updatedAt: Date.now(),
+  });
 }
