@@ -100,14 +100,15 @@ function InsightCard({
 
 // ── Constantes visuales ───────────────────────────────────────────────────────
 const CAT_META: Record<NexoCategory, { label: string; icon: string; color: string }> = {
-  food:     { label: "Comida",         icon: "🍜", color: "#F59E0B" },
-  work:     { label: "Trabajo",        icon: "💼", color: "#60A5FA" },
-  travel:   { label: "Viaje",          icon: "✈️", color: "#2DD4BF" },
-  shopping: { label: "Compras",        icon: "🛍️", color: "#34D399" },
-  research: { label: "Investigación",  icon: "🔬", color: "#818CF8" },
-  social:   { label: "Social",         icon: "👥", color: "#F472B6" },
-  media:    { label: "Media",          icon: "🎬", color: "#A855F7" },
-  other:    { label: "Otro",           icon: "📌", color: "#94A3B8" },
+  food:           { label: "Comida",         icon: "🍜", color: "#F59E0B" },
+  work:           { label: "Trabajo",        icon: "💼", color: "#60A5FA" },
+  travel:         { label: "Viaje",          icon: "✈️", color: "#2DD4BF" },
+  shopping:       { label: "Compras",        icon: "🛍️", color: "#34D399" },
+  research:       { label: "Investigación",  icon: "🔬", color: "#818CF8" },
+  social:         { label: "Social",         icon: "👥", color: "#F472B6" },
+  media:          { label: "Media",          icon: "🎬", color: "#A855F7" },
+  brand_identity: { label: "Brand DNA",      icon: "🧬", color: "#f97316" },
+  other:          { label: "Otro",           icon: "📌", color: "#94A3B8" },
 };
 
 function weightColor(w: number): string {

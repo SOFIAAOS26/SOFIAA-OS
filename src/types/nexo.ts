@@ -10,14 +10,15 @@
 // ── Categorías de contenido capturado ────────────────────────────────────────
 
 export type NexoCategory =
-  | "food"       // restaurantes, recetas, platillos
-  | "work"       // artículos, herramientas, proyectos profesionales
-  | "travel"     // lugares, hoteles, itinerarios
-  | "shopping"   // productos, comparaciones, precios
-  | "research"   // papers, noticias, investigación
-  | "social"     // posts de redes sociales, personas
-  | "media"      // videos, podcasts, entretenimiento
-  | "other";     // fallback
+  | "food"           // restaurantes, recetas, platillos
+  | "work"           // artículos, herramientas, proyectos profesionales
+  | "travel"         // lugares, hoteles, itinerarios
+  | "shopping"       // productos, comparaciones, precios
+  | "research"       // papers, noticias, investigación
+  | "social"         // posts de redes sociales, personas
+  | "media"          // videos, podcasts, entretenimiento
+  | "brand_identity" // Brand DNA, identidad de marca — PROMETEO (Sprint P-1)
+  | "other";         // fallback
 
 // ── Fuente de la captura ──────────────────────────────────────────────────────
 
@@ -27,7 +28,8 @@ export type NexoSource =
   | "screenshot"        // imagen / captura de pantalla via Gemini Vision
   | "manual"            // pegado manual en el chat
   | "pdf_library"       // documento PDF subido a la biblioteca (Sprint M-1)
-  | "tec_bii";          // entidades TEC Bii publicadas al grafo (Sprint T2-1)
+  | "tec_bii"           // entidades TEC Bii publicadas al grafo (Sprint T2-1)
+  | "prometeo";         // Brand DNA y entidades PROMETEO (Sprint P-1)
 
 // ── Payload que llega al endpoint /api/nexo/ingest ────────────────────────────
 
@@ -239,12 +241,13 @@ export const NEXO_MAX_PROACTIVE_NODES = 2;
 
 /** Días sin referencia para cada categoría antes de considerar decay agresivo */
 export const NEXO_DECAY_DAYS: Record<NexoCategory, number> = {
-  work:     30, // trabajo decae más lento — sigue siendo relevante
-  research: 30,
-  travel:   21,
-  food:     14, // comida es más volátil
-  shopping: 14,
-  social:   10,
-  media:    10,
-  other:    14,
+  work:           30, // trabajo decae más lento — sigue siendo relevante
+  research:       30,
+  brand_identity: 90, // identidad de marca es estable — muy baja tasa de cambio
+  travel:         21,
+  food:           14, // comida es más volátil
+  shopping:       14,
+  social:         10,
+  media:          10,
+  other:          14,
 };

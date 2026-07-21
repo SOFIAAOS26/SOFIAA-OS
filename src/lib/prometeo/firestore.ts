@@ -1,0 +1,91 @@
+/**
+ * PROMETEO — Helpers Firestore (P-1)
+ * Growth Intelligence Engine v2.0
+ *
+ * Colecciones: smm_workspaces/{workspaceId}/prometeo_{col}
+ * Mismo workspace multi-tenant que Marketing Sofia.
+ */
+
+import {
+  collection, doc, onSnapshot, addDoc, updateDoc,
+  setDoc, getDocs, query, orderBy, serverTimestamp,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import type { BrandDNA } from "@/extensions/prometeo/schema";
+
+// ── Path helpers ──────────────────────────────────────────────────────────────
+
+const ROOT = "smm_workspaces";
+
+const col = (workspaceId: string, sub: string) =>
+  collection(db, ROOT, workspaceId, sub);
+
+const d = (workspaceId: string, sub: string, id: string) =>
+  doc(db, ROOT, workspaceId, sub, id);
+
+// ── Brand DNA ─────────────────────────────────────────────────────────────────
+
+/**
+ * Suscripción en tiempo real a todos los Brand DNA del workspace.
+ * Ordenados por clienteNombre.
+ */
+export function subscribeBrandDNA(
+  workspaceId: string,
+  cb: (list: BrandDNA[]) => void,
+) {
+  return onSnapshot(
+    query(col(workspaceId, "prometeo_brand_dna"), orderBy("clienteNombre")),
+    (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...d.data() } as BrandDNA))),
+  );
+}
+
+/**
+ * Obtiene el Brand DNA de un cliente específico (lectura única).
+ * Retorna null si no existe.
+ */
+export async function getBrandDNAByCliente(
+  workspaceId: string,
+  clienteId:   string,
+): Promise<BrandDNA | null> {
+  const snap = await getDocs(col(workspaceId, "prometeo_brand_dna"));
+  const match = snap.docs.find((d) => d.data().clienteId === clienteId);
+  if (!match) return null;
+  return { id: match.id, ...match.data() } as BrandDNA;
+}
+
+/**
+ * Guarda o actualiza el Brand DNA de un cliente.
+ * Si existe un documento con ese clienteId, lo actualiza.
+ * Si no, crea uno nuevo.
+ */
+export async function saveBrandDNA(
+  workspaceId: string,
+  data: Omit<BrandDNA, "id" | "createdAt" | "updatedAt">,
+  existingId?: string,
+): Promise<string> {
+  if (existingId) {
+    const ref = d(workspaceId, "prometeo_brand_dna", existingId);
+    await updateDoc(ref, { ...data, updatedAt: serverTimestamp() });
+    return existingId;
+  }
+  const ref = await addDoc(col(workspaceId, "prometeo_brand_dna"), {
+    ...data,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+/**
+ * Actualiza campos parciales de un Brand DNA existente.
+ */
+export async function updateBrandDNA(
+  workspaceId: string,
+  id:          string,
+  patch:       Partial<Omit<BrandDNA, "id" | "createdAt">>,
+): Promise<void> {
+  await updateDoc(d(workspaceId, "prometeo_brand_dna", id), {
+    ...patch,
+    updatedAt: serverTimestamp(),
+  });
+}
