@@ -24,6 +24,7 @@ import { tecBiiCoreExtension }     from "@/extensions/tec-bii";      // v2 — c
 import { jpMemorialExtension }     from "@/extensions/jp-memorial";
 import { marketingExtension }      from "@/extensions/marketing-sofia";
 import { atenaExtension }          from "@/extensions/atena";         // ATENA Scientific Engine
+import { prometeoExtension }       from "@/extensions/prometeo";       // PROMETEO Growth Intelligence
 
 // ── Registro centralizado ─────────────────────────────────────────────────────
 // Agregar nuevas versiones de una extensión = añadir otra entrada aquí.
@@ -34,6 +35,7 @@ const REGISTRY: SofiaaExtension[] = [
   jpMemorialExtension,
   marketingExtension,
   atenaExtension,        // ATENA Scientific Intelligence Engine — /atena
+  prometeoExtension,     // PROMETEO Growth Intelligence Engine v2 — /prometeo
 ];
 
 // ── Semver utils ──────────────────────────────────────────────────────────────
