@@ -30,11 +30,10 @@ const NAV = [
   { href: "/prometeo/objetivos",        label: "Objetivos",      icon: "🎯" },
   { href: "/prometeo/creative-memory", label: "Creative Memory", icon: "🧠" },
   { href: "/prometeo/creative-lab",    label: "Creative Lab",    icon: "🧪" },
+  { href: "/prometeo/director",        label: "Director",         icon: "🤖" },
 ];
 
-const NAV_SOON = [
-  { label: "Director Autónomo",icon: "🤖", badge: "P-5" },
-];
+const NAV_SOON: { label: string; icon: string; badge: string }[] = [];
 
 export default function PrometeoLayout({ children }: { children: React.ReactNode }) {
   const router   = useRouter();

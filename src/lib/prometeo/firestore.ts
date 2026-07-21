@@ -11,7 +11,7 @@ import {
   setDoc, getDocs, query, orderBy, serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import type { BrandDNA, BrandGoal, GoalState, CreativeMemory, CreativeLab } from "@/extensions/prometeo/schema";
+import type { BrandDNA, BrandGoal, GoalState, CreativeMemory, CreativeLab, DirectorBrief } from "@/extensions/prometeo/schema";
 
 // ── Path helpers ──────────────────────────────────────────────────────────────
 
@@ -250,4 +250,53 @@ export async function updateCreativeLab(
     ...patch,
     updatedAt: Date.now(),
   });
+}
+
+// ── Director Briefs ───────────────────────────────────────────────────────────
+
+/**
+ * Suscripción en tiempo real a los briefs del Director Autónomo.
+ * Ordenados por generadoAt descendente (el más reciente primero).
+ */
+export function subscribeDirectorBriefs(
+  workspaceId: string,
+  cb: (list: DirectorBrief[]) => void,
+) {
+  return onSnapshot(
+    query(col(workspaceId, "prometeo_director_briefs"), orderBy("generadoAt", "desc")),
+    (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...d.data() } as DirectorBrief))),
+  );
+}
+
+/**
+ * Guarda un nuevo DirectorBrief generado por el Director Autónomo.
+ */
+export async function saveDirectorBrief(
+  workspaceId: string,
+  data: Omit<DirectorBrief, "id">,
+): Promise<string> {
+  const ref = await addDoc(col(workspaceId, "prometeo_director_briefs"), data);
+  return ref.id;
+}
+
+/**
+ * Marca una recomendación como accionada (actualiza el array en el brief).
+ */
+export async function accionarRecomendacion(
+  workspaceId: string,
+  briefId:     string,
+  clienteId:   string,
+): Promise<void> {
+  // Leemos el brief, actualizamos el item y escribimos de vuelta
+  const snap = await getDocs(
+    query(col(workspaceId, "prometeo_director_briefs"), orderBy("generadoAt", "desc")),
+  );
+  const briefDoc = snap.docs.find((d) => d.id === briefId);
+  if (!briefDoc) return;
+
+  const brief = { id: briefDoc.id, ...briefDoc.data() } as DirectorBrief;
+  const recomendaciones = brief.recomendaciones.map((r) =>
+    r.clienteId === clienteId ? { ...r, accionada: true } : r,
+  );
+  await updateDoc(d(workspaceId, "prometeo_director_briefs", briefId), { recomendaciones });
 }
