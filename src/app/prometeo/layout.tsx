@@ -27,11 +27,11 @@ const NAV = [
   { href: "/prometeo/copy-hooks",  label: "Copy & Hooks",     icon: "🪝" },
   { href: "/prometeo/ideas-hub",   label: "Ideas Hub",        icon: "💡" },
   { href: "/prometeo/brand-dna",   label: "Brand DNA",        icon: "🧬" },
-  { href: "/prometeo/objetivos",   label: "Objetivos",         icon: "🎯" },
+  { href: "/prometeo/objetivos",        label: "Objetivos",      icon: "🎯" },
+  { href: "/prometeo/creative-memory", label: "Creative Memory", icon: "🧠" },
 ];
 
 const NAV_SOON = [
-  { label: "Creative Memory",  icon: "🧠", badge: "P-3" },
   { label: "Creative Lab",     icon: "🧪", badge: "P-4" },
   { label: "Director Autónomo",icon: "🤖", badge: "P-5" },
 ];

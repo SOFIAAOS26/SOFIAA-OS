@@ -11,7 +11,7 @@ import {
   setDoc, getDocs, query, orderBy, serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import type { BrandDNA, BrandGoal, GoalState } from "@/extensions/prometeo/schema";
+import type { BrandDNA, BrandGoal, GoalState, CreativeMemory } from "@/extensions/prometeo/schema";
 
 // ── Path helpers ──────────────────────────────────────────────────────────────
 
@@ -164,4 +164,45 @@ export async function updateGoalState(
     ...patch,
     updatedAt: Date.now(),
   });
+}
+
+// ── Creative Memory ───────────────────────────────────────────────────────────
+
+/**
+ * Suscripción en tiempo real a todos los creativos del workspace.
+ * Ordenados por performanceScore descendente (los mejores primero).
+ */
+export function subscribeCreativeMemory(
+  workspaceId: string,
+  cb: (list: CreativeMemory[]) => void,
+) {
+  return onSnapshot(
+    query(col(workspaceId, "prometeo_creative_memory"), orderBy("performanceScore", "desc")),
+    (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...d.data() } as CreativeMemory))),
+  );
+}
+
+/**
+ * Registra un nuevo creativo en la Creative Memory.
+ */
+export async function createCreativeMemory(
+  workspaceId: string,
+  data: Omit<CreativeMemory, "id" | "createdAt">,
+): Promise<string> {
+  const ref = await addDoc(col(workspaceId, "prometeo_creative_memory"), {
+    ...data,
+    createdAt: Date.now(),
+  });
+  return ref.id;
+}
+
+/**
+ * Actualiza campos de un CreativeMemory existente.
+ */
+export async function updateCreativeMemory(
+  workspaceId: string,
+  id:          string,
+  patch:       Partial<Omit<CreativeMemory, "id" | "createdAt">>,
+): Promise<void> {
+  await updateDoc(d(workspaceId, "prometeo_creative_memory", id), patch);
 }
