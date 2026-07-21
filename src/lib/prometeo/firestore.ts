@@ -11,7 +11,7 @@ import {
   setDoc, getDocs, query, orderBy, serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import type { BrandDNA } from "@/extensions/prometeo/schema";
+import type { BrandDNA, BrandGoal, GoalState } from "@/extensions/prometeo/schema";
 
 // ── Path helpers ──────────────────────────────────────────────────────────────
 
@@ -87,5 +87,81 @@ export async function updateBrandDNA(
   await updateDoc(d(workspaceId, "prometeo_brand_dna", id), {
     ...patch,
     updatedAt: serverTimestamp(),
+  });
+}
+
+// ── BrandGoals ────────────────────────────────────────────────────────────────
+
+/**
+ * Suscripción en tiempo real a todos los objetivos del workspace.
+ * Ordenados por fechaLimite ascendente (primero los más urgentes).
+ */
+export function subscribeGoals(
+  workspaceId: string,
+  cb: (list: BrandGoal[]) => void,
+) {
+  return onSnapshot(
+    query(col(workspaceId, "prometeo_goals"), orderBy("fechaLimite")),
+    (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...d.data() } as BrandGoal))),
+  );
+}
+
+/**
+ * Crea un nuevo objetivo estratégico.
+ */
+export async function createGoal(
+  workspaceId: string,
+  data: Omit<BrandGoal, "id" | "createdAt" | "updatedAt">,
+): Promise<string> {
+  const ref = await addDoc(col(workspaceId, "prometeo_goals"), {
+    ...data,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  });
+  return ref.id;
+}
+
+/**
+ * Actualiza campos parciales de un BrandGoal existente.
+ */
+export async function updateGoal(
+  workspaceId: string,
+  id:          string,
+  patch:       Partial<Omit<BrandGoal, "id" | "createdAt">>,
+): Promise<void> {
+  await updateDoc(d(workspaceId, "prometeo_goals", id), {
+    ...patch,
+    updatedAt: Date.now(),
+  });
+}
+
+// ── GoalStates ────────────────────────────────────────────────────────────────
+
+/**
+ * Crea un nuevo GoalState (árbol de decisiones para un objetivo).
+ */
+export async function createGoalState(
+  workspaceId: string,
+  data: Omit<GoalState, "id" | "createdAt" | "updatedAt">,
+): Promise<string> {
+  const ref = await addDoc(col(workspaceId, "prometeo_goal_states"), {
+    ...data,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  });
+  return ref.id;
+}
+
+/**
+ * Actualiza el estado del árbol de decisiones de un objetivo.
+ */
+export async function updateGoalState(
+  workspaceId: string,
+  id:          string,
+  patch:       Partial<Omit<GoalState, "id" | "createdAt">>,
+): Promise<void> {
+  await updateDoc(d(workspaceId, "prometeo_goal_states", id), {
+    ...patch,
+    updatedAt: Date.now(),
   });
 }
