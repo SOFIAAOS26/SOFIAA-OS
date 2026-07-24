@@ -68,12 +68,13 @@ async function initFirebase() {
 
 // ── Gemini Embeddings (opcional) ──────────────────────────────────────────────
 
-const GEMINI_EMBED_MODEL = "text-embedding-004";
-const GEMINI_EMBED_URL   = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_EMBED_MODEL}:embedContent`;
-const EMBED_DELAY_MS     = 300;   // delay entre requests para respetar rate limits
+const GEMINI_EMBED_MODEL = "gemini-embedding-001";
+const GEMINI_EMBED_URL   = `https://generativelanguage.googleapis.com/v1/models/${GEMINI_EMBED_MODEL}:embedContent`;
+const EMBED_DELAY_MS     = 1500;  // delay entre requests para respetar rate limits
 const EMBED_MAX_CHARS    = 9000;  // max chars por request (Gemini límite seguro)
+const EMBED_MAX_RETRIES  = 3;     // reintentos por rate limit
 
-async function generateEmbedding(apiKey, text) {
+async function generateEmbedding(apiKey, text, retries = EMBED_MAX_RETRIES) {
   const truncated = text.slice(0, EMBED_MAX_CHARS);
   const res = await fetch(`${GEMINI_EMBED_URL}?key=${apiKey}`, {
     method:  "POST",
@@ -84,12 +85,19 @@ async function generateEmbedding(apiKey, text) {
     }),
   });
 
+  if (res.status === 429 && retries > 0) {
+    const wait = (EMBED_MAX_RETRIES - retries + 1) * 5000; // 5s, 10s, 15s
+    process.stdout.write(` ⏳ 429 — reintentando en ${wait/1000}s...`);
+    await sleep(wait);
+    return generateEmbedding(apiKey, text, retries - 1);
+  }
+
   if (!res.ok) {
     const err = await res.text();
     throw new Error(`Gemini embed error ${res.status}: ${err.slice(0, 200)}`);
   }
 
-  const data  = await res.json();
+  const data   = await res.json();
   const values = data?.embedding?.values;
   if (!Array.isArray(values) || values.length === 0) {
     throw new Error("Gemini no retornó un vector válido");
@@ -130,13 +138,16 @@ async function batchWrite(db, uid, nodes) {
   let count = 0;
   const colPath = `users/${uid}/alejandria_nodos`;
 
-  for (let i = 0; i < nodes.length; i += 499) {
+  // Batch pequeño (10) para evitar "Transaction too big" con vectores de 768 floats
+  for (let i = 0; i < nodes.length; i += 10) {
     const batch = db.batch();
-    const chunk = nodes.slice(i, i + 499);
+    const chunk = nodes.slice(i, i + 10);
 
     for (const node of chunk) {
       const ref = db.collection(colPath).doc(node.id);
-      const { id, ...data } = node;
+      // Excluir texto_embedding de Firestore (pesado, no usado en queries)
+      // El texto completo vive en alejandria_corpus/ localmente
+      const { id, texto_embedding, ...data } = node;
       batch.set(ref, data, { merge: true });
     }
 
