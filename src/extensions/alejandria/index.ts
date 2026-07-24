@@ -8,6 +8,7 @@
  */
 
 import type { SofiaaExtension } from "@/types/sofiaa-platform";
+import { alejandriaTools }       from "@/extensions/alejandria/tools";
 
 export const alejandriaExtension: SofiaaExtension = {
   manifest: {
@@ -40,8 +41,7 @@ sobre SOFIAA, tus módulos, tus decisiones o tu historia — ALEJANDRÍA te da l
     ],
   },
 
-  // Tools se añaden en Sprint AJ-4
-  // hooks se añaden en Sprint AJ-1
+  tools: alejandriaTools,
 };
 
 export default alejandriaExtension;
