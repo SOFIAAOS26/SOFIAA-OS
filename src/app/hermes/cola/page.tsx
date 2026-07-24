@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useWorkspace } from "@/hooks/useWorkspace";
+import { getAuth } from "firebase/auth";
 import { subscribeHermesQueue, approveAction, rejectAction } from "@/lib/hermes/firestore";
 import type { HermesAction } from "@/extensions/hermes/schema";
 import { CONNECTOR_LABELS, URGENCIA_COLOR, ESTADO_COLOR } from "@/extensions/hermes/schema";
@@ -42,7 +43,25 @@ export default function ColaPage() {
     if (!activeWorkspaceId) return;
     setProcesando(accion.id);
     try {
+      // 1. Cambiar estado a "aprobada" en Firestore
       await approveAction(activeWorkspaceId, accion.id);
+
+      // 2. Disparar ejecución — fire-and-forget con token de Auth
+      const currentUser = getAuth().currentUser;
+      if (currentUser) {
+        const token = await currentUser.getIdToken();
+        fetch("/api/hermes/execute", {
+          method:  "POST",
+          headers: {
+            "Content-Type":  "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            workspaceId: activeWorkspaceId,
+            actionId:    accion.id,
+          }),
+        }).catch((err) => console.error("[HERMES execute fire-and-forget]", err));
+      }
     } catch (e) { console.error(e); }
     finally { setProcesando(null); }
   };
