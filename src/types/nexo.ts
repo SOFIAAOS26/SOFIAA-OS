@@ -29,7 +29,8 @@ export type NexoSource =
   | "manual"            // pegado manual en el chat
   | "pdf_library"       // documento PDF subido a la biblioteca (Sprint M-1)
   | "tec_bii"           // entidades TEC Bii publicadas al grafo (Sprint T2-1)
-  | "prometeo";         // Brand DNA y entidades PROMETEO (Sprint P-1)
+  | "prometeo"          // Brand DNA y entidades PROMETEO (Sprint P-1)
+  | "marketing_sofia";  // clientes y métricas SMM publicadas al grafo (Sprint P-8)
 
 // ── Payload que llega al endpoint /api/nexo/ingest ────────────────────────────
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, FormEvent } from "react";
 import { useWorkspace } from "@/hooks/useWorkspace";
+import { getAuth } from "firebase/auth";
 import { subscribeClientes, subscribeMetricas, upsertMetrica, deleteMetrica } from "@/lib/marketing/firestore";
 import type { SmmCliente, SmmMetrica, PlataformaMetrica } from "@/lib/marketing/types";
 import { PLATAFORMAS } from "@/lib/marketing/types";
@@ -100,7 +101,24 @@ export default function MetricasPage() {
     if (!activeWorkspaceId) return;
     setSaving(true);
     try {
-      await upsertMetrica(activeWorkspaceId, form);
+      const ref = await upsertMetrica(activeWorkspaceId, form);
+      const savedId = (ref as { id?: string } | undefined)?.id ?? editId ?? undefined;
+      // Publicar al grafo N.E.X.O. + sync Creative Memory en background
+      getAuth().currentUser?.getIdToken().then((token) => {
+        const saved = { ...form, id: savedId };
+        fetch("/api/marketing-sofia/publish", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+          body: JSON.stringify({ workspaceId: activeWorkspaceId, type: "metrica", data: saved }),
+        }).catch(() => {});
+        if (form.retorno > 0) {
+          fetch("/api/marketing-sofia/sync-creative-memory", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({ workspaceId: activeWorkspaceId, metrica: saved }),
+          }).catch(() => {});
+        }
+      }).catch(() => {});
       setModalOpen(false);
     } catch (err) { console.error(err); }
     finally { setSaving(false); }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, FormEvent } from "react";
 import { useWorkspace } from "@/hooks/useWorkspace";
+import { getAuth } from "firebase/auth";
 import {
   subscribeClientes, createCliente, updateCliente, deleteCliente,
 } from "@/lib/marketing/firestore";
@@ -100,8 +101,26 @@ export default function ClientesPage() {
     }
     setSaving(true);
     try {
-      if (editing?.id) await updateCliente(activeWorkspaceId, editing.id, form);
-      else             await createCliente(activeWorkspaceId, form);
+      let savedId: string | undefined;
+      if (editing?.id) {
+        await updateCliente(activeWorkspaceId, editing.id, form);
+        savedId = editing.id;
+      } else {
+        const ref = await createCliente(activeWorkspaceId, form);
+        savedId = ref.id;
+      }
+      // Publicar al grafo N.E.X.O. en background (fire & forget)
+      getAuth().currentUser?.getIdToken().then((token) => {
+        fetch("/api/marketing-sofia/publish", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+          body: JSON.stringify({
+            workspaceId: activeWorkspaceId,
+            type: "cliente",
+            data: { ...form, id: savedId },
+          }),
+        }).catch(() => { /* silencioso — no bloquea la UI */ });
+      }).catch(() => {});
       setModalOpen(false);
     } catch (err: unknown) {
       console.error("Error guardando cliente:", err);
