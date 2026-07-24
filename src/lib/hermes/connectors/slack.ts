@@ -10,6 +10,7 @@
  */
 
 import type { HermesAction, HermesResultado } from "@/extensions/hermes/schema";
+import { resolveSlackWebhook }                 from "@/lib/hermes/connector-secrets";
 
 interface SlackBlock {
   type:  string;
@@ -29,11 +30,12 @@ async function postSlack(webhookUrl: string, payload: Record<string, unknown>): 
 }
 
 export async function ejecutarSlackAction(accion: HermesAction): Promise<HermesResultado> {
-  const webhookUrl = process.env.SLACK_WEBHOOK_URL;
+  // Resolver webhook: env var tiene prioridad, luego Firestore secrets (H-6)
+  const webhookUrl = await resolveSlackWebhook(accion.workspaceId).catch(() => null);
   if (!webhookUrl) {
     return {
       exito:     false,
-      mensaje:   "SLACK_WEBHOOK_URL no está configurado en .env.local",
+      mensaje:   "Slack no está configurado. Ve a HERMES → Conectores y agrega el Webhook URL.",
       errorCode: "CONNECTOR_NOT_CONFIGURED",
     };
   }
