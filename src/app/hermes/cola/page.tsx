@@ -17,12 +17,15 @@ const MUTED  = "#64748b";
 const CARD   = "#0f0f1e";
 const BORDER = "#1a1a30";
 
+interface ExecResult { ok: boolean; titulo: string; mensaje: string }
+
 export default function ColaPage() {
   const { activeWorkspaceId } = useWorkspace();
   const [acciones,   setAcciones]   = useState<HermesAction[]>([]);
   const [loading,    setLoading]    = useState(true);
   const [procesando, setProcesando] = useState<string | null>(null);
   const [motivoRec,  setMotivoRec]  = useState<Record<string, string>>({});
+  const [notifs,     setNotifs]     = useState<ExecResult[]>([]);
 
   useEffect(() => {
     if (!activeWorkspaceId) return;
@@ -39,6 +42,9 @@ export default function ColaPage() {
       return (urgOrder[a.urgencia] ?? 4) - (urgOrder[b.urgencia] ?? 4);
     });
 
+  const pushNotif = (n: ExecResult) =>
+    setNotifs((prev) => [n, ...prev].slice(0, 5));
+
   const handleApprove = async (accion: HermesAction) => {
     if (!activeWorkspaceId) return;
     setProcesando(accion.id);
@@ -46,21 +52,26 @@ export default function ColaPage() {
       // 1. Cambiar estado a "aprobada" en Firestore
       await approveAction(activeWorkspaceId, accion.id);
 
-      // 2. Disparar ejecución — fire-and-forget con token de Auth
+      // 2. Disparar ejecución y capturar resultado
       const currentUser = getAuth().currentUser;
       if (currentUser) {
         const token = await currentUser.getIdToken();
-        fetch("/api/hermes/execute", {
-          method:  "POST",
-          headers: {
-            "Content-Type":  "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            workspaceId: activeWorkspaceId,
-            actionId:    accion.id,
-          }),
-        }).catch((err) => console.error("[HERMES execute fire-and-forget]", err));
+        try {
+          const res  = await fetch("/api/hermes/execute", {
+            method:  "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body:    JSON.stringify({ workspaceId: activeWorkspaceId, actionId: accion.id }),
+          });
+          const data = await res.json() as { resultado?: { exito: boolean; mensaje: string } };
+          const r    = data.resultado;
+          pushNotif({
+            ok:      r?.exito ?? false,
+            titulo:  accion.titulo,
+            mensaje: r?.mensaje ?? (res.ok ? "Ejecutado" : "Error al ejecutar"),
+          });
+        } catch {
+          pushNotif({ ok: false, titulo: accion.titulo, mensaje: "Error de red al ejecutar" });
+        }
       }
     } catch (e) { console.error(e); }
     finally { setProcesando(null); }
@@ -86,6 +97,28 @@ export default function ColaPage() {
           Revisa y aprueba las acciones generadas por PROMETEO y otros motores. Toda ejecución requiere tu aprobación.
         </p>
       </div>
+
+      {/* Notificaciones de ejecución reciente */}
+      {notifs.length > 0 && (
+        <div style={{ marginBottom: 20, display: "flex", flexDirection: "column", gap: 8 }}>
+          {notifs.map((n, i) => (
+            <div key={i} style={{
+              background: n.ok ? `${GREEN}10` : `${RED}10`,
+              border: `1px solid ${n.ok ? GREEN : RED}33`,
+              borderRadius: 10, padding: "10px 16px",
+              display: "flex", alignItems: "center", gap: 10,
+            }}>
+              <span style={{ fontSize: 16 }}>{n.ok ? "✅" : "❌"}</span>
+              <div>
+                <span style={{ fontSize: 12, fontWeight: 700, color: n.ok ? GREEN : RED }}>
+                  {n.titulo}
+                </span>
+                <span style={{ fontSize: 12, color: MUTED, marginLeft: 8 }}>{n.mensaje}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {loading && (
         <div style={{ textAlign: "center", padding: 40, color: MUTED }}>Cargando cola…</div>
