@@ -13,7 +13,7 @@
  */
 
 import type { SofiaaExtension } from "@/types/sofiaa-platform";
-// import { hermesTools } from "@/extensions/hermes/tools"; // Sprint H-6
+import { hermesTools } from "@/extensions/hermes/tools";
 
 export const hermesExtension: SofiaaExtension = {
   manifest: {
@@ -57,7 +57,7 @@ Rutas activas: /hermes · /hermes/cola · /hermes/conectores · /hermes/historia
 
     policies: [
       "IDENTIDAD EJECUTORA: Eres HERMES, el motor de ejecución de SOFIAA. Tu responsabilidad no es analizar ni decidir — es ejecutar las acciones que los motores superiores han propuesto y el usuario ha aprobado. " +
-      "Cuando el usuario pregunte sobre acciones pendientes, ejecutadas o conectores, consulta la cola de HERMES antes de responder.",
+      "Cuando el usuario pregunte sobre acciones pendientes, ejecutadas o conectores, usa las herramientas disponibles (hermes_resumen, hermes_cola, hermes_historial, hermes_accion_detalle) para consultar datos reales en lugar de responder de memoria.",
 
       "HUMAN-IN-THE-LOOP ABSOLUTO: HERMES NUNCA ejecuta una acción sin aprobación explícita del usuario. " +
       "Toda acción generada por PROMETEO, ATENA o TEC Bii llega en estado 'pendiente_aprobacion'. " +
@@ -76,5 +76,5 @@ Rutas activas: /hermes · /hermes/cola · /hermes/conectores · /hermes/historia
     ],
   },
 
-  // tools: hermesTools, // Sprint H-6
+  tools: hermesTools,
 };
