@@ -14,6 +14,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb }                from "@/lib/firebase-admin";
 import { callGroq }                  from "@/lib/groq";
 import { FieldValue }                from "firebase-admin/firestore";
+import { enqueueBriefActions }       from "@/lib/hermes/prometeo-bridge";
 import type { BrandGoal, CreativeMemory, DirectorBrief } from "@/extensions/prometeo/schema";
 
 // ── Auth CRON ─────────────────────────────────────────────────────────────────
@@ -136,9 +137,13 @@ async function generateBriefForWorkspace(workspaceId: string): Promise<boolean> 
     generadoAt:    Date.now(),
   };
 
-  await db
+  const ref = await db
     .collection(`smm_workspaces/${workspaceId}/prometeo_director_briefs`)
     .add({ ...brief, serverTimestamp: FieldValue.serverTimestamp() });
+
+  // Encolar acciones en HERMES
+  await enqueueBriefActions(workspaceId, { id: ref.id, ...brief })
+    .catch((err) => console.error("[CRON][bridge] HERMES enqueue error:", err));
 
   return true;
 }

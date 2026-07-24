@@ -13,6 +13,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuth }                   from "firebase-admin/auth";
 import { getAdminApp, getAdminDb }   from "@/lib/firebase-admin";
 import { callGroq }                  from "@/lib/groq";
+import { enqueueBriefActions }       from "@/lib/hermes/prometeo-bridge";
 import type {
   BrandGoal,
   CreativeMemory,
@@ -215,7 +216,20 @@ export async function POST(req: NextRequest) {
       .collection(`smm_workspaces/${workspaceId}/prometeo_director_briefs`)
       .add(brief);
 
-    return NextResponse.json({ ok: true, briefId: ref.id, brief: { id: ref.id, ...brief } });
+    // Encolar acciones en HERMES (fire-and-forget — no bloquea la respuesta)
+    const savedBrief: DirectorBrief & { id: string } = { id: ref.id, ...brief };
+    const accionesEncoladas = await enqueueBriefActions(workspaceId, savedBrief)
+      .catch((err) => {
+        console.error("[PROMETEO][DIRECTOR][bridge] Error encolando en HERMES:", err);
+        return 0;
+      });
+
+    return NextResponse.json({
+      ok: true,
+      briefId: ref.id,
+      brief: savedBrief,
+      hermes: { accionesEncoladas },
+    });
 
   } catch (err) {
     console.error("[PROMETEO][DIRECTOR][brief]", err);

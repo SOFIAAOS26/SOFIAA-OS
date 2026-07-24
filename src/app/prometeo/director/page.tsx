@@ -79,9 +79,10 @@ export default function DirectorPage() {
   const { activeWorkspaceId } = useWorkspace();
   const [briefs,     setBriefs]     = useState<DirectorBrief[]>([]);
   const [loading,    setLoading]    = useState(true);
-  const [generating, setGenerating] = useState(false);
-  const [error,      setError]      = useState<string | null>(null);
-  const [selected,   setSelected]   = useState<DirectorBrief | null>(null);
+  const [generating,        setGenerating]        = useState(false);
+  const [error,             setError]             = useState<string | null>(null);
+  const [selected,          setSelected]          = useState<DirectorBrief | null>(null);
+  const [accionesEncoladas, setAccionesEncoladas] = useState<number | null>(null);
 
   // ── Subscribe briefs ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -114,9 +115,17 @@ export default function DirectorPage() {
         body: JSON.stringify({ workspaceId: activeWorkspaceId }),
       });
 
-      const data = await res.json() as { ok?: boolean; brief?: DirectorBrief; error?: string };
+      const data = await res.json() as {
+        ok?: boolean;
+        brief?: DirectorBrief;
+        error?: string;
+        hermes?: { accionesEncoladas: number };
+      };
       if (!data.ok) throw new Error(data.error ?? "Error generando brief");
       if (data.brief) setSelected(data.brief);
+      if (data.hermes?.accionesEncoladas !== undefined) {
+        setAccionesEncoladas(data.hermes.accionesEncoladas);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido");
     } finally {
@@ -177,6 +186,44 @@ export default function DirectorPage() {
           border: `1px solid ${CRIMSON}33`,
         }}>
           ⚠ {error}
+        </div>
+      )}
+
+      {/* Banner HERMES — acciones encoladas */}
+      {accionesEncoladas !== null && (
+        <div style={{
+          marginBottom: 20, display: "flex", alignItems: "center",
+          justifyContent: "space-between",
+          background: "linear-gradient(135deg, #6366f115, #8b5cf610)",
+          border: "1px solid #6366f133", borderRadius: 12, padding: "12px 18px",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 20 }}>⚡</span>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#e2e8f0" }}>
+                {accionesEncoladas > 0
+                  ? `${accionesEncoladas} acción${accionesEncoladas !== 1 ? "es" : ""} enviada${accionesEncoladas !== 1 ? "s" : ""} a HERMES`
+                  : "Brief generado — sin acciones nuevas para HERMES"}
+              </div>
+              <div style={{ fontSize: 11, color: "#64748b" }}>
+                {accionesEncoladas > 0
+                  ? "Revisa y aprueba cada acción antes de ejecutarla"
+                  : "El brief fue guardado correctamente"}
+              </div>
+            </div>
+          </div>
+          {accionesEncoladas > 0 && (
+            <a
+              href="/hermes/cola"
+              style={{
+                background: "#6366f1", color: "#fff", borderRadius: 8,
+                padding: "7px 14px", fontSize: 12, fontWeight: 700,
+                textDecoration: "none", flexShrink: 0,
+              }}
+            >
+              Ver cola →
+            </a>
+          )}
         </div>
       )}
 
