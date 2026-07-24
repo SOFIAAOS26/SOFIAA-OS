@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
     if (!token) return NextResponse.json({ error: "No auth token" }, { status: 401 });
 
     try {
-      await getAuth().verifyIdToken(token);
+      await getAuth(getAdminApp()).verifyIdToken(token);
     } catch {
       return NextResponse.json({ error: "Token inválido" }, { status: 401 });
     }

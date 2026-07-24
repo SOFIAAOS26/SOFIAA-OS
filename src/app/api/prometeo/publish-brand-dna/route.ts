@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
 
     let uid: string;
     try {
-      const decoded = await getAuth().verifyIdToken(token);
+      const decoded = await getAuth(getAdminApp()).verifyIdToken(token);
       uid = decoded.uid;
     } catch {
       return NextResponse.json({ error: "Token inválido" }, { status: 401 });
