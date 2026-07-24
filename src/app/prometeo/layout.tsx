@@ -231,7 +231,7 @@ export default function PrometeoLayout({ children }: { children: React.ReactNode
           width: 220, flexShrink: 0, background: SIDE,
           borderRight: `1px solid ${BORDER}`,
           position: "sticky", top: 0, height: "100dvh",
-          overflowY: "auto", display: "flex", flexDirection: "column",
+          overflowY: "auto", flexDirection: "column",
         }}
           className="hidden md:flex"
         >

@@ -30,10 +30,11 @@ const ROL_LABEL: Record<string, string> = {
 
 export default function AtenaProyectosPage() {
   const router  = useRouter();
-  const [uid,   setUid]      = useState<string | null>(null);
-  const [proyectos, setProyectos] = useState<(ProjectCharter & { id: string })[]>([]);
-  const [selected, setSelected]   = useState<string | null>(null);
-  const [loading,  setLoading]    = useState(true);
+  const [uid,         setUid]         = useState<string | null>(null);
+  const [proyectos,   setProyectos]   = useState<(ProjectCharter & { id: string })[]>([]);
+  const [selected,    setSelected]    = useState<string | null>(null);
+  const [loading,     setLoading]     = useState(true);
+  const [showDetalle, setShowDetalle] = useState(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -131,13 +132,13 @@ export default function AtenaProyectosPage() {
             </button>
           </div>
         ) : (
-          <div className="flex gap-0 h-[calc(100vh-89px)]">
-            {/* Lista de proyectos */}
-            <div className="w-72 border-r border-[#1e1e2e] overflow-auto shrink-0">
+          <div className="flex gap-0 h-[calc(100vh-89px)] md:h-[calc(100vh-89px)]">
+            {/* Lista de proyectos — oculta en móvil cuando se muestra el detalle */}
+            <div className={`border-r border-[#1e1e2e] overflow-auto shrink-0 w-full md:w-72 ${showDetalle ? "hidden md:block" : "block"}`}>
               {proyectos.map((p) => {
                 const style = FASE_COLOR[p.faseActual] ?? FASE_COLOR.DEFINE;
                 return (
-                  <button key={p.id} onClick={() => setSelected(p.id)}
+                  <button key={p.id} onClick={() => { setSelected(p.id); setShowDetalle(true); }}
                     className={`w-full text-left p-4 border-b border-[#1e1e2e] hover:bg-[#111118] transition-colors ${selected === p.id ? "bg-[#111118]" : ""}`}>
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <p className="text-white text-sm font-semibold leading-tight line-clamp-2">{p.nombre}</p>
@@ -159,9 +160,16 @@ export default function AtenaProyectosPage() {
               })}
             </div>
 
-            {/* Detalle del proyecto */}
+            {/* Detalle del proyecto — oculto en móvil cuando se muestra la lista */}
             {proyecto && faseStyle && (
-              <div className="flex-1 overflow-auto p-8 space-y-8">
+              <div className={`flex-1 overflow-auto p-4 md:p-8 space-y-8 ${showDetalle ? "block" : "hidden md:block"}`}>
+                {/* Botón volver — solo móvil */}
+                <button
+                  onClick={() => setShowDetalle(false)}
+                  className="md:hidden flex items-center gap-2 text-[#60a5fa] text-sm mb-2"
+                >
+                  ← Lista de proyectos
+                </button>
                 {/* Header */}
                 <div className="flex items-start justify-between gap-4">
                   <div>
