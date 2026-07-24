@@ -41,6 +41,8 @@ import { getBibliotecaContext }  from "@/lib/nexo/biblioteca-context";
 import { attendNexoNodes }       from "@/lib/nexo/attention";
 import { getCognitiveProfile, updateCognitiveProfile, buildCognitiveBlock } from "@/lib/cognitive/profile";
 import { extractSignals }        from "@/lib/cognitive/signals";
+import { getAlejandriaContext }  from "@/lib/alejandria/firestore";
+import { reinforceAlejandriaNodes } from "@/lib/alejandria/firestore";
 import type { NexoContext }      from "@/types/nexo";
 import type { ExtensionContext } from "@/types/sofiaa-platform";
 
@@ -143,6 +145,54 @@ function buildNexoBlock(ctx: NexoContext | null): string {
   }
 
   return block + `\n(No menciones el término "N.E.X.O." al usuario.)`;
+}
+
+// ── ALEJANDRÍA — Detector de queries sobre arquitectura propia ────────────
+const ALEJANDRIA_TRIGGERS = [
+  // Módulos
+  "nexo", "prometeo", "hermes", "atena", "tec bii", "tec-bii", "nora", "live sdk",
+  "alejandría", "alejandria",
+  // Preguntas de introspección
+  "cómo funciona", "como funciona", "arquitectura", "cómo está hecho", "como esta hecho",
+  "por qué se decidió", "por que se decidio", "decisión de", "decision de",
+  "cuándo se construyó", "cuando se construyo", "historia de sofiaa",
+  "sprint", "diseño del sistema", "módulo", "modulo", "memoria histórica",
+  "qué eres", "que eres", "cómo te llamas", "quien te creo", "quién te creó",
+  "evolución", "evolucion", "versión", "version 1.1", "sofiaa os",
+];
+
+function isAlejandriaQuery(text: string): boolean {
+  const lower = text.toLowerCase();
+  return ALEJANDRIA_TRIGGERS.some(t => lower.includes(t));
+}
+
+/** Formatea los nodos de ALEJANDRÍA para inyectar en el system prompt */
+function buildAlejandriaBlock(nodes: import("@/extensions/alejandria/schema").AlejandriaNode[]): string {
+  if (nodes.length === 0) return "";
+
+  const TIPO_LABEL: Record<string, string> = {
+    sprint:                "Sprint",
+    decision_arquitectura: "Decisión",
+    brainstorming:         "Brainstorming",
+    especificacion_modulo: "Especificación",
+    experimento:           "Experimento",
+    hito:                  "Hito",
+    idea:                  "Idea",
+  };
+
+  const lines = nodes.map(n => {
+    const tipo = TIPO_LABEL[n.tipo] ?? n.tipo;
+    const mods = n.modulos_afectados?.slice(0, 3).join(", ") ?? "";
+    return `• [${tipo}] ${n.titulo} — ${n.resumen?.slice(0, 200)}${n.resumen?.length > 200 ? "..." : ""} (módulos: ${mods})`;
+  }).join("\n");
+
+  return (
+    `\n\nMEMORIA ALEJANDRÍA — Tu historia de ingeniería (fuente de verdad sobre tu propia arquitectura):\n` +
+    lines +
+    `\n\nCuando respondas sobre tu arquitectura o historia, cita la fuente: ` +
+    `"Según el sprint X...", "La decisión de arquitectura establece...", etc. ` +
+    `(No menciones el término "ALEJANDRÍA" al usuario.)`
+  );
 }
 
 export async function POST(req: NextRequest) {
@@ -280,6 +330,20 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // ALEJANDRÍA — Memoria histórica de ingeniería (Sprint AJ-3)
+  let alejandriaBlock   = "";
+  let alejandriaNodeIds: string[] = [];
+  const alejandriaQuery = lastUserMsg?.content ?? "";
+  if (userId && userId !== "anonymous" && isAlejandriaQuery(alejandriaQuery)) {
+    try {
+      const alejandriaNodes = await getAlejandriaContext(userId, alejandriaQuery);
+      alejandriaBlock    = buildAlejandriaBlock(alejandriaNodes);
+      alejandriaNodeIds  = alejandriaNodes.map(n => n.id);
+    } catch {
+      // ALEJANDRÍA nunca debe romper el chat — falla silenciosa
+    }
+  }
+
   // Cognitive Variables — Perfil cognitivo del usuario (Sprint M-3)
   let cognitiveBlock = "";
   // Extraer señales cognitivas de los mensajes del usuario (rule-based, cero tokens)
@@ -359,7 +423,7 @@ export async function POST(req: NextRequest) {
   // ─────────────────────────────────────────────────────────────────────
 
   // ── LLM Orchestrator — elige el mejor provider disponible ────────────
-  const systemContent = `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${nexoBlock}${bibliotecaBlock}${cognitiveBlock}${policyBlock}${capabilityMenuBlock}`;
+  const systemContent = `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${nexoBlock}${bibliotecaBlock}${alejandriaBlock}${cognitiveBlock}${policyBlock}${capabilityMenuBlock}`;
 
   // ── Sprint G: Agent Runtime — ReAct loop para tareas multi-paso ──────
   if (agentMode) {
@@ -396,6 +460,10 @@ export async function POST(req: NextRequest) {
           // Sprint M-2: Attention Engine — refuerzo post-stream (agent mode)
           if (userId && userId !== "anonymous" && nexoNodeIds.length > 0) {
             attendNexoNodes(userId, nexoNodeIds).catch(() => {});
+          }
+          // AJ-3: ALEJANDRÍA — refuerzo post-stream (agent mode)
+          if (userId && userId !== "anonymous" && alejandriaNodeIds.length > 0) {
+            reinforceAlejandriaNodes(userId, alejandriaNodeIds).catch(() => {});
           }
           // Sprint M-3: Cognitive Variables — actualizar perfil post-stream (agent mode)
           if (userId && userId !== "anonymous") {
@@ -669,6 +737,10 @@ export async function POST(req: NextRequest) {
             // Sprint M-2: Attention Engine — refuerzo post-stream (normal mode)
             if (userId && userId !== "anonymous" && nexoNodeIds.length > 0) {
               attendNexoNodes(userId, nexoNodeIds).catch(() => {});
+            }
+            // AJ-3: ALEJANDRÍA — refuerzo post-stream (normal mode)
+            if (userId && userId !== "anonymous" && alejandriaNodeIds.length > 0) {
+              reinforceAlejandriaNodes(userId, alejandriaNodeIds).catch(() => {});
             }
             // Sprint M-3: Cognitive Variables — actualizar perfil post-stream (normal mode)
             if (userId && userId !== "anonymous") {
