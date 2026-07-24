@@ -12,7 +12,8 @@
     "test:coverage": "vitest run --coverage",
     "biblioteca:ingest": "node --env-file=.env.local scripts/ingest-biblioteca.mjs",
     "nexo:backfill-embeddings": "node --env-file=.env.local scripts/backfill-embeddings.mjs",
-    "atena:seed": "node --env-file=.env.local scripts/seed-atena.mjs"
+    "atena:seed": "node --env-file=.env.local scripts/seed-atena.mjs",
+    "alejandria:ingest": "node scripts/ingest-alejandria.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
