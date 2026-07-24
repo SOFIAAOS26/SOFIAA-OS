@@ -1,0 +1,46 @@
+{
+  "id": "especificacion_modulo_prometeo_growth_intelligence_20260721",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-21",
+  "fase_corpus": "fase_1",
+  "titulo": "MKT SOFIAA 2.0 / PROMETEO",
+  "resumen": "Evolución de la extensión /tec-mktg hacia un Growth Intelligence Engine (PROMETEO) con capacidades de Director de Marketing Autónomo, Marketing Memory & Creative Graph, Brand DNA, Creative Lab & Genome y Autonomous Marketing Loop. Conecta estrategia C-Level, finanzas y operaciones para ofrecer una solución integral de marketing y crecimiento empresarial.",
+  "modulos_afectados": [
+    "PROMETEO",
+    "TEC BII",
+    "ATENA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [
+    "Utilizar un enfoque de Growth Intelligence Engine para el desarrollo de PROMETEO",
+    "Incorporar capacidades de Director de Marketing Autónomo y Marketing Memory & Creative Graph",
+    "Desarrollar un Creative Lab & Genome para la generación de anuncios personalizados",
+    "Implementar un bucle continuo de Analizar → Hipótesis → Crear → Publicar → Medir → Aprender → Optimizar → Repetir"
+  ],
+  "conceptos_clave": [
+    "Growth Intelligence Engine",
+    "Director de Marketing Autónomo",
+    "Marketing Memory & Creative Graph",
+    "Brand DNA",
+    "Creative Lab & Genome"
+  ],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cuál es el objetivo principal de PROMETEO?",
+    "¿Cómo se integra PROMETEO con otros módulos de SOFIAA?",
+    "¿Qué capacidades tiene el Director de Marketing Autónomo en PROMETEO?",
+    "¿Cómo se utiliza el Marketing Memory & Creative Graph en PROMETEO?"
+  ],
+  "tags": [
+    "Growth Intelligence Engine",
+    "Marketing Autónomo",
+    "Creative Graph",
+    "Brand DNA",
+    "Machine Learning"
+  ],
+  "texto_embedding": "La evolución de la extensión /tec-mktg hacia un Growth Intelligence Engine (PROMETEO) busca ofrecer una solución integral de marketing y crecimiento empresarial. Conecta estrategia C-Level, finanzas y operaciones para proporcionar una visión holística del negocio. El Director de Marketing Autónomo es capaz de diagnosticar y recomendar acciones para mejorar el rendimiento de los anuncios. El Marketing Memory & Creative Graph aprende de las relaciones entre Hooks, Emoción, Audiencias y Resultados para generar anuncios personalizados. El Creative Lab & Genome descompone anuncios en componentes atómicos para generar laboratorios multi-combinación predichos por modelos analíticos. El bucle continuo de Analizar → Hipótesis → Crear → Publicar → Medir → Aprender → Optimizar → Repetir permite una optimización constante de los anuncios.",
+  "documento_original": "gemini-code-1784915381521.json",
+  "procesado_por": "groq",
+  "fecha_procesamiento": "2026-07-24"
+}

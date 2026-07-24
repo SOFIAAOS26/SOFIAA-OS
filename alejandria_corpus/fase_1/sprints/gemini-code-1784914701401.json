@@ -1,0 +1,37 @@
+{
+  "id": "sprint_sprint_m_motor_cognitivo_continuo_20260724",
+  "tipo": "sprint",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "Sprint M — Motor Cognitivo Continuo",
+  "resumen": "Propuesta y desglose técnico de la Serie M para transicionar a SOFIAA hacia un Sistema Operativo Cognitivo con procesamiento continuo, lectura de documentos y gestión de estados internos.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO"
+  ],
+  "sprint_referencia": "Sprint M",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Qué se implementó en el sprint Sprint M?",
+    "¿Cuáles fueron los cambios técnicos en esta etapa?",
+    "¿Qué archivos y funcionalidades se crearon?",
+    "¿Cómo se implementó NEXO en esta fase?"
+  ],
+  "tags": [
+    "sprint",
+    "sofiaa",
+    "nexo",
+    "motor",
+    "cognitivo",
+    "continuo",
+    "firebase",
+    "firestore"
+  ],
+  "texto_embedding": "Sprint M — Motor Cognitivo Continuo Serie M — Motor Cognitivo Continuo Plan de Sprints e Ingeniería de Arquitectura Cognitiva Propuesta y desglose técnico de la Serie M para transicionar a SOFIAA hacia un Sistema Operativo Cognitivo con procesamiento continuo, lectura de documentos y gestión de estados internos. Hoja de ruta hacia un Sistema Operativo Cognitivo que aprovecha que el 70% de la infraestructura requerida ya existe en SOFIAA[cite: 5]. Procesamiento de PDFs en estado de inactividad (idle)[cite: 5]. No requiere reentrenar el modelo, sino extraer conceptos clave, relaciones y resúmenes para integrarlos al grafo N.E.X.O. como nodos permanentes[cite: 5]. 1. Reflection Engine (Procesamiento nocturno vía CRON, construible en un sprint)[cite: 5] 2. Lector de PDFs / Biblioteca (Subida de documentos procesados en idle)[cite: 5] 3. Attention Engine (Selección de nodos por relevancia contextual en lugar de solo por peso)[cite: 5] 4. Variables cognitivas (Estados internos modificadores del system prompt)[cite: 5] Sprint M-0 Reflection Engine SOFIAA piensa mientras duermes[cite: 5] Un endpoint POST /api/nexo/reflect disparado por CRON cada noche[cite: 5]. Gemini analiza el grafo completo del usuario, detecta patrones, genera insights y los guarda como nodos especiales en Firestore[cite: 5]. También refuerza o debilita conexiones entre nodos que co-aparecen (Edge Reinforcement)[cite: 5]. Endpoint /api/nexo/reflect[cite: 5] Nodos tipo insight en Firestore[cite: 5] CRON nocturno[cite: 5] Insights visibles en Mi Grafo[cite: 5] Sprint M-1 Biblioteca de Documentos Sube un libro, SOFIAA lo lee[cite: 5] Página /nexo/biblioteca con upload de PDFs[cite: 5]. El documento se procesa en background — Gemini extrae conceptos, resúmenes y entidades — y se convierte en nodos N.E.X.O. permanentes[cite: 5]. SOFIAA los usa igual que cualquier captura web[cite: 5]. UI de upload[cite: 5] Procesamiento con Gemini[cite: 5] Nodos de tipo document en grafo[cite: 5] Firebase Storage[cite: 5] Sprint M-2 Attention Engine Contexto por relevancia, no solo por peso[cite: 5] Reemplazar el Top 5 por peso del context injection por un scoring contextual real[cite: 5]. Cada nodo recibe un score dinámico combinando peso + recencia + relevancia al tema actual de la conversación + objetivo activo[cite: 5]. Top 20 nodos en lugar de Top 5[cite: 5]. getAttentiveContext()[cite: 5] Scoring semántico[cite: 5] Mejor context injection en route.ts[cite: 5] Sprint M-3 Variables Cognitivas Estados internos que modifican cómo responde[cite: 5] Un CognitiveState con variables como confidence, novelty, urgency, exploration que se actualizan por conversación y modifican el system prompt[cite: 5]. Alta confianza → propone más. Alta incertidumbre → pregunta más. Alta novedad → explora[cite: 5]. CognitiveState type[cite: 5] Lógica de actualización[cite: 5] Modificadores en system prompt[cite: 5]",
+  "documento_original": "gemini-code-1784914701401.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

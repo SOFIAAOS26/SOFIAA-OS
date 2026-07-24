@@ -1,0 +1,37 @@
+{
+  "id": "especificacionmodulo_resumen_de_actualizaciones_sofiaa_dia_28_20260628",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-06-28",
+  "fase_corpus": "fase_1",
+  "titulo": "Resumen de Actualizaciones SOFIAA — Día 28 Actualización 3 (Capability Runtime Enterprise)",
+  "resumen": "Resumen de Actualizaciones SOFIAA — Día 28 Actualización 3 (Capability Runtime Enterprise) 28 de junio 2026 v1.3 Engine Capability Runtime & Enterprise Function Calling $0 MXN (Serverless / Edge) Capability Runtime Enterprise-Grade 1 USUARIO Consulta de datos ('¿Qué tan rentable es el proveedor X?') 2 LLM (Groq/Gemini) Detecta la necesidad de datos y emite un Function Calling estructurado 3 SECURITY GATEWAY Intercepta la llamada y valida sesión y rol RBAC (Admin/Director) en el Edge 4 FIRESTORE QUERY Ejecuta consulta síncrona exacta (Snapshot) aislada por canal/workspace 5 COGNITIVE SUMMARIZER",
+  "modulos_afectados": [
+    "SOFIAA",
+    "ATENA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona Resumen de Actualizaciones SOFIAA — Día ?",
+    "¿Cuál es la arquitectura de SOFIAA y ATENA?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó ATENA en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "atena",
+    "resumen",
+    "actualizaciones",
+    "actualizacion",
+    "firebase",
+    "groq"
+  ],
+  "texto_embedding": "Resumen de Actualizaciones SOFIAA — Día 28 Actualización 3 (Capability Runtime Enterprise) 28 de junio 2026 v1.3 Engine Capability Runtime & Enterprise Function Calling $0 MXN (Serverless / Edge) Capability Runtime Enterprise-Grade 1 USUARIO Consulta de datos ('¿Qué tan rentable es el proveedor X?') 2 LLM (Groq/Gemini) Detecta la necesidad de datos y emite un Function Calling estructurado 3 SECURITY GATEWAY Intercepta la llamada y valida sesión y rol RBAC (Admin/Director) en el Edge 4 FIRESTORE QUERY Ejecuta consulta síncrona exacta (Snapshot) aislada por canal/workspace 5 COGNITIVE SUMMARIZER Procesa el JSON crudo y lo comprime en un bloque semántico miniaturizado 6 INFERENCIA + RENDER El LLM responde y el IntentEngine renderiza la tarjeta líquida (ComparisonCard) en pantalla Gobernanza Estricta a Nivel Gateway Verificación RBAC perimetral previa al acceso a base de datos, blindando el sistema contra Prompt Injections y extracciones no autorizadas. Summarizer Semántico Pipeline de compresión intermedia que extrae la esencia numérica y elimina metadatos redundantes de Firebase, optimizando costos y la ventana de contexto. Invocación Bajo Demanda (On-Demand Fetching) Ejecución epímera sin listeners síncronos permanentes abiertos, manteniendo cero consumo inútil de ancho de banda y memoria. VPs del TEC / Gerardo Orduña Consulta en tiempo real del estado de proyectos y porcentaje de retraso de campañas. Activación de Function Calling + validación RBAC + renderizado de barra de progreso con métricas Six Sigma. Cerebro Industrial / Área de Innovación Consulta por streaming sobre disponibilidad de tecnología e inventarios de planta sin comprometer ciberseguridad industrial. v1.3 Engine $970,000 MXN a $1,150,000 MXN $54,000 USD a $64,000 USD $0 MXN",
+  "documento_original": "gemini-code-1784913967350.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

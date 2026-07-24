@@ -1,0 +1,52 @@
+{
+  "id": "documento_fundacional_sofiaa_arquitectura_20260724",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-06-01",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA: Sistema Operativo de Experiencias Inteligentes (SOEI / IX-OS)",
+  "resumen": "SOFIAA es una plataforma de acompañamiento inteligente que actúa como capa cognitiva entre las personas y los sistemas digitales. Su misión es reducir la complejidad intrínseca y extrínseca de las experiencias digitales mediante interacciones conversacionales contextuales. El sistema se basa en una arquitectura de cinco niveles que incluye ontología, epistemología, comportamiento, interacción y evolución. El objetivo es sustituir el paradigma dominante de navegación web jerárquica por un modelo de acompañamiento dinámico adaptable a cualquier vertical de negocio.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "PROMETEO",
+    "NORA",
+    "HERMES",
+    "ATENA",
+    "TEC BII",
+    "ALEJANDRÍA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": "0.1 Alpha",
+  "decisiones": [
+    "Utilizar una arquitectura de cinco niveles",
+    "Implementar un sistema de acompañamiento inteligente",
+    "Utilizar Firebase Firestore para la gobernanza de datos"
+  ],
+  "conceptos_clave": [
+    "Sistema Operativo de Experiencias Inteligentes",
+    "Capa cognitiva",
+    "Acompañamiento inteligente",
+    "Arquitectura de cinco niveles"
+  ],
+  "hitos": [
+    "Desarrollo de la arquitectura de cinco niveles",
+    "Implementación del sistema de acompañamiento inteligente"
+  ],
+  "preguntas_que_responde": [
+    "¿Qué es SOFIAA?",
+    "¿Cómo funciona SOFIAA?",
+    "¿Cuál es el objetivo de SOFIAA?"
+  ],
+  "tags": [
+    "Sistema Operativo de Experiencias Inteligentes",
+    "Inteligencia Artificial",
+    "Acompañamiento Inteligente",
+    "Arquitectura de Software",
+    "Firebase",
+    "Next.js"
+  ],
+  "texto_embedding": "SOFIAA es una plataforma de acompañamiento inteligente que actúa como capa cognitiva entre las personas y los sistemas digitales. Su misión es reducir la complejidad intrínseca y extrínseca de las experiencias digitales mediante interacciones conversacionales contextuales. El sistema se basa en una arquitectura de cinco niveles que incluye ontología, epistemología, comportamiento, interacción y evolución. El objetivo es sustituir el paradigma dominante de navegación web jerárquica por un modelo de acompañamiento dinámico adaptable a cualquier vertical de negocio. La arquitectura de SOFIAA se basa en una serie de principios fundamentales, incluyendo la claridad sobre la complejidad, la orientación sobre la exploración y la comprensión sobre la respuesta. El sistema utiliza Firebase Firestore para la gobernanza de datos y se integra con una variedad de herramientas y tecnologías, incluyendo Next.js y Groq.",
+  "documento_original": "SOFIAA: Sistema Operativo de Experiencias Inteligentes (SOEI / IX-OS)",
+  "procesado_por": "groq",
+  "fecha_procesamiento": "2026-07-24"
+}

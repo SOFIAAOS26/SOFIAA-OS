@@ -1,0 +1,39 @@
+{
+  "id": "especificacionmodulo_sofiaa_al_26_de_junio_2026_20260626",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-06-26",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA al 26 de Junio 2026",
+  "resumen": "SOFIAA al 26 de Junio 2026 Evaluación del Estado Actual y Potencial de Evolución 26 de Junio 2026 Sólido y sorprendentemente maduro para su etapa. Streaming real Guardrails en doble capa Memoria persistente con timeline Caché de respuestas Goal detection Generative UI RBAC con Firebase Sistema de prompt modular de nivel de producción No es un wrapper de ChatGPT con un system prompt largo; es una arquitectura con capas claras y responsabilidades definidas. Identificación y optimización constante de componentes (system prompt, contexto de extensiones, layout) aplicando criterio de ingeniería. Ne",
+  "modulos_afectados": [
+    "SOFIAA",
+    "HERMES",
+    "TEC_BII"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona SOFIAA al 26 de Junio 2026?",
+    "¿Cuál es la arquitectura de SOFIAA y HERMES?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó HERMES en esta fase?",
+    "¿Cómo se implementó TEC_BII en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "hermes",
+    "tec-bii",
+    "junio",
+    "firebase",
+    "groq",
+    "firestore"
+  ],
+  "texto_embedding": "SOFIAA al 26 de Junio 2026 Evaluación del Estado Actual y Potencial de Evolución 26 de Junio 2026 Sólido y sorprendentemente maduro para su etapa. Streaming real Guardrails en doble capa Memoria persistente con timeline Caché de respuestas Goal detection Generative UI RBAC con Firebase Sistema de prompt modular de nivel de producción No es un wrapper de ChatGPT con un system prompt largo; es una arquitectura con capas claras y responsabilidades definidas. Identificación y optimización constante de componentes (system prompt, contexto de extensiones, layout) aplicando criterio de ingeniería. Next.js 16 App Router + React 19 + Tailwind v4 (techo actual del ecosistema web). Groq + LLaMA 3.3 70B (uno de los LLMs más rápidos disponibles). Arquitectura SEE con módulos acoplables. system.prompt.ts sigue vivo como legacy; requiere limpieza para evitar la convivencia de dos sistemas en el repositorio. El sistema modular abre tres caminos estratégicos: Multitenancy Real Cada cliente puede tener su propia extensión con su propio módulo de 60-100 tokens. Escalabilidad horizontal sin fricción (soporta 50+ extensiones sin cambiar el kernel base). Personalización por Usuario Evolucionar de memoria global por sesión a un bloque de contexto persistente por usuario en Firestore entre sesiones. Autonomía (Agente de Ejecución) Conectar la detección del Goal Engine a acciones reales (crear briefs en Monday, generar PDFs, disparar webhooks) para pasar de interfaz de consulta a agente autónomo. Monetización Billing en Groq para tener margen real de tokens. Onboarding Flujos de onboarding propios por extensión para clientes nuevos (ej. TEC BI, JP Memorial). Calidad Tests automatizados mínimos para cubrir el sistema modular antes de su escalamiento. El software funciona bien, está construido con criterio y la arquitectura actual soporta 10x el crecimiento sin refactorizaciones mayores. Plataforma con extensiones reales en producción.",
+  "documento_original": "gemini-code-1784913545055.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

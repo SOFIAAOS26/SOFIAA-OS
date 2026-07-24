@@ -1,0 +1,40 @@
+{
+  "id": "brainstorming_sofiaa_cuestionamientos_a_resolver_y_respuestas_20260724",
+  "tipo": "brainstorming",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA · Cuestionamientos a Resolver y Respuestas Estratégicas",
+  "resumen": "Análisis crítico de vulnerabilidades del proyecto SOFIAA TEC BI y argumentación para el comité ejecutivo del TEC",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "HERMES",
+    "ATENA",
+    "TEC_BII"
+  ],
+  "sprint_referencia": "Sprint 12",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Qué propone SOFIAA · Cuestionamientos a Resolver y R?",
+    "¿Cómo se relaciona con los módulos de SOFIAA?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó HERMES en esta fase?"
+  ],
+  "tags": [
+    "brainstorming",
+    "sofiaa",
+    "nexo",
+    "hermes",
+    "atena",
+    "tec-bii",
+    "cuestionamientos",
+    "resolver"
+  ],
+  "texto_embedding": "SOFIAA · Cuestionamientos a Resolver y Respuestas Estratégicas Preparación de Pitch y Simulacro de Objeciones Directivas (Gerardo Orduña, Astrid Brust, Javier Campos) Abrahan Cruz Urrutia (Benjacob) Análisis crítico de vulnerabilidades del proyecto SOFIAA TEC BI y argumentación para el comité ejecutivo del TEC 8.5/10[cite: 6] 9/10[cite: 6] 6/10[cite: 6] 5/10[cite: 6] 6/10[cite: 6] 4/10[cite: 6] Gerente Sr. de Transformación Estratégica. Enfoque: Eficiencia, procesos institucionales y dinero.[cite: 6] ¿Cuál es el problema económico real? Dinero perdido.[cite: 6] Traducción de 15-20 horas ahorradas/semana por coordinador en capacidad liberada monetizada[cite: 6]. Reducción de errores en briefs del 35% al 1% (evitando refilmaciones, horas extra de edición, penalizaciones de proveedores y retrasos de campañas)[cite: 6]. Arquitectura 100% serverless con costo adicional cero en licencias comerciales[cite: 6]. ¿Qué pasa si mañana desaparece SOFIAA? ¿Regresan a Excel?[cite: 6] El tiempo de respuesta operativa colapsa de 2 horas a 48 horas[cite: 6]. La visibilidad de costos se desploma de 9/10 a 2/10 sin trazabilidad Lean Six Sigma[cite: 6]. En el Sprint 12, rompería el puente automatizado de presupuestos hacia el ERP institucional (SAP/Banner)[cite: 6]. ¿Qué porcentaje del proceso audiovisual cubres?[cite: 6] Cubre el 85% del ciclo de vida de punta a punta: Solicitud/Estructuración (Briefs), Asignación/Costeo (CRUDs), Calidad/Entrega (Evaluaciones 1-5) y Auditoría (PDFs certificados)[cite: 6]. Flujo físico delegado vía sincronización bidireccional[cite: 6]. ¿Qué problema resuelves que Monday no resuelva?[cite: 6] Detallado en la respuesta de 60 segundos del 'Ataque más duro'[cite: 6]. ¿Cuál es el plan de escalamiento universal vs audiovisual?[cite: 6] Base tecnológica 100% agnóstica al tipo de entregable (Briefs, Proyectos, Proveedores, Clientes, Evaluaciones, Costos)[cite: 6]. La única especificidad de 'Audiovisual' son los campos de entrada[cite: 6]. Clonar SOFIAA para otras áreas (Diseño, Eventos, Logística) solo requiere ajustar metadata manteniendo intacta la IA, BI y RBAC[cite: 6]. Directora de Mercadotecnia y Comunicación Rectoría. Enfoque: Reputación, narrativa institucional, impacto y experiencia humana.[cite: 6] ¿Cuál es el titular de la historia?[cite: 6] 'SOFIAA: La plataforma de Inteligencia Operativa que blinda el presupuesto de Comunicación del TEC y acelera un 95% el tiempo de respuesta en campañas de Rectoría'[cite: 6]. ¿Por qué debería importarle a un director?[cite: 6] Acceso a dashboard en tiempo real con rentabilidad de proveedores, entrega a tiempo y calidad regional sin solicitar correos o esperar juntas trimestrales[cite: 6]. Otorga control absoluto, predictibilidad y paz mental[cite: 6]. ¿Por qué es estratégico?[cite: 6] Modelado sobre dolores reales bajo Lean Six Sigma (DMAIC) y Roadmap con Analítica Predictiva (Sprint 11) para proyectar desviaciones de costos antes de que ocurran[cite: 6]. ¿Dónde están los usuarios piloto?[cite: 6] En producción real dentro del Área de Producción Audiovisual[cite: 6]. Coordinadores y productores participaron codiseñando el sistema durante las fases MEASURE y ANALYZE de Lean Six Sigma[cite: 6]. Director Centro de Operaciones de Comunicación y Mercadotecnia. Enfoque: Riesgo, continuidad del negocio, soporte y compliance.[cite: 6] Riesgo de dependencia del creador y plan de soporte.[cite: 6] Programación bajo Next.js 16, TypeScript y enfoque cero defectos Lean Six Sigma en ~40 componentes legibles[cite: 6]. Arquitectura serverless en Vercel/Firebase sin mantenimiento de servidores locales[cite: 6]. Transferencia formal de repositorio Git y CI/CD al equipo de TI institucional para continuidad inmediata[cite: 6]. Seguridad institucional y Compliance.[cite: 6] Control RBAC granular, Firestore Security Rules, protección perimetral con Vercel Edge Functions (PageGuard), audit trail en base de datos y borrado lógico (soft-delete) para auditorías con PDF certificado[cite: 6]. Gobernanza de datos.[cite: 6] Datos operativos (Briefs/Evaluaciones) bajo el Área Audiovisual; agregados financieros y de desempeño bajo la Dirección de Comunicación y Mercadotecnia mediante roles activos[cite: 6]. ¿Por qué SOFIAA no es simplemente una configuración avanzada de Monday.com con dashboards?[cite: 6] Monday ejecuta la tarea; SOFIAA gobierna el impacto económico y la calidad[cite: 6]. 1) Costo: Monday cobra licencias Enterprise por usuario/directivo; SOFIAA da analíticas e IA ilimitadas con costo cero de licenciamiento[cite: 6]. 2) Gobernanza: Monday permite alterar columnas libremente; SOFIAA aplica compuertas inmutables Lean Six Sigma y PDFs certificados[cite: 6]. 3) Inteligencia Nativa: Monday carece de LLM en streaming <500ms con contexto profundo, analítica predictiva de costos (Sprint 11) e integración directa con ERP SAP/Banner (Sprint 12)[cite: 6]. Monday es el motor de arrastre; SOFIAA es el cerebro[cite: 6]. Monetizar el Simulador ROI (Sprint 9)[cite: 6] Configurar sliders interactivos para calcular automáticamente el dinero evitado en retrabajos por año[cite: 6]. Activar el Flag de Monday (Sprint 8)[cite: 6] Cambiar el estado de 'PREPARADO' a 'ACTIVO' demostrando el webhook bidireccional funcionando en vivo[cite: 6]. Formalizar el Plan de Continuidad[cite: 6] Añadir anexo técnico 'Plan de Sucesión y Transferencia Tecnológica de Activos Digitales' con la entrega de Git al TEC[cite: 6].",
+  "documento_original": "gemini-code-1784913003167.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

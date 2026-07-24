@@ -1,0 +1,44 @@
+{
+  "id": "especificacionmodulo_sofiaa_os_reporte_ejecutivo_de_arquitectura_20260721",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-21",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA OS — Reporte Ejecutivo de Arquitectura y Capacidades",
+  "resumen": "SOFIAA OS — Reporte Ejecutivo de Arquitectura y Capacidades 4.0 21 de Julio 2026 PROMETEO v2.0 + ATENA + TEC Bii + 6 Extensiones Activas Confidencial — Documento interno Estado completo de SOFIAA OS al 21 de julio de 2026. Muestra la evolución desde un asistente con chat contextual hasta una plataforma de inteligencia operacional con memoria semántica persistente, perfil cognitivo, grafo de conocimiento activo, seis extensiones especializadas, un motor estadístico determinista (ATENA) y un CMO Cognitivo activo (PROMETEO v2.0)[cite: 20]. Tier 3 → Tier 4[cite: 20] 15+[cite: 20] 6 ATENA (Determin",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "PROMETEO",
+    "NORA",
+    "HERMES",
+    "ATENA",
+    "TEC_BII",
+    "ALEJANDRIA"
+  ],
+  "sprint_referencia": "Sprint inmediato",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona SOFIAA OS — Reporte Ejecutivo de Arquite?",
+    "¿Cuál es la arquitectura de SOFIAA y NEXO?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó PROMETEO en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "nexo",
+    "prometeo",
+    "nora",
+    "hermes",
+    "atena",
+    "tec-bii"
+  ],
+  "texto_embedding": "SOFIAA OS — Reporte Ejecutivo de Arquitectura y Capacidades 4.0 21 de Julio 2026 PROMETEO v2.0 + ATENA + TEC Bii + 6 Extensiones Activas Confidencial — Documento interno Estado completo de SOFIAA OS al 21 de julio de 2026. Muestra la evolución desde un asistente con chat contextual hasta una plataforma de inteligencia operacional con memoria semántica persistente, perfil cognitivo, grafo de conocimiento activo, seis extensiones especializadas, un motor estadístico determinista (ATENA) y un CMO Cognitivo activo (PROMETEO v2.0)[cite: 20]. Tier 3 → Tier 4[cite: 20] 15+[cite: 20] 6 ATENA (Determinista)[cite: 20] PROMETEO v2.0 (Growth Intelligence)[cite: 20] M-2 — Attention Engine Refuerzo asíncrono de +0.03 al peso de nodos N.E.X.O. seleccionados por conversación vía waitUntil(). Badge reinforceCount en /nexo/mi-grafo[cite: 20]. M-3 — Cognitive Variables Detección de patrones en mensajes para acumular un perfil cognitivo persistente (preferredDepth, formalityScore, topicAffinity) sin costo adicional ($0) e inyectado en el systemPrompt[cite: 20]. M-4 — Semantic Retrieval Ranking semántico vectorial híbrido: hybridScore = cosine × 0.65 + weight × 0.35 con gemini-embedding-001 (3,072 dimensiones)[cite: 20]. M-5 — Proactive Surface Mención explícita del nodo cuando hybridScore >= 0.65, limitado a un máximo de 2 nodos por respuesta[cite: 20]. M-6 — Cognitive Dashboard Visualización del perfil cognitivo en tiempo real mediante suscripción onSnapshot en /nexo/perfil[cite: 20]. M-7 — Refinement CRON Batch diario a las 11h UTC para republicar entidades estancadas, ejecutar reflexiones N.O.R.A. y análisis cross-domain con log persistido en tec_bii_refine_logs/{runId}[cite: 20]. Segunda generación del módulo institucional del Tecnológico de Monterrey. Primera extensión que alimenta el grafo N.E.X.O., produce hipótesis cruzadas y ejecuta reflexiones institucionales[cite: 20]. T2-0 — Fundación Cognitiva CognitiveFootprint en 6 entidades. Ruta /tec-bii con layout y PageGuard[cite: 20]. T2-1 — Cognitive Publisher Publicación asíncrona de entidad a resumen Gemini, embedding y NexoNode[cite: 20]. T2-2 — Insights Cognitivos Análisis operacional completo vía Gemini Flash en POST /api/tec-bii/insights[cite: 20]. T2-3 — Brief Intelligence Generación de BriefV2 estructurado con IA y Brief Score v2 automático[cite: 20]. T2-4 — Cross-Domain Reasoning Similitud coseno >= 0.60 entre N.E.X.O. y TEC Bii genera hipótesis con Gemini Flash (máx 5 FIFO)[cite: 20]. T2-5 — Team Cognition EmpleadoV2 con SkillProfile, cargaActual, momentum y CargaBar en /tec-bii/equipo[cite: 20]. T2-6 — N.O.R.A. Reflection Narrativa con patrones, recomendaciones y estado general por Gemini Flash (cooldown 6h)[cite: 20]. Q-1-1 — PageGuard Componente reutilizable de guardia de sesión montado en layouts TEC Bii y ATENA[cite: 20]. Q-1-2/3 — TecBiiContext Contexto global montado en layout /tec-bii con patrón useAuth()[cite: 20]. Q-2 — Extension Tools v2 5 herramientas registradas para interacción conversacional en el chat de SOFIAA[cite: 20]. Q-2 — SofiaaExtension v2 Manifest v2 + promptModule con política crítica anti-alucinación[cite: 20]. Q-3 — Monday Webhook v2 Rutas corregidas a users/{uid}/tec_bii_* con publicación automática a N.E.X.O.[cite: 20]. Motor de inteligencia científica determinista para Lean Six Sigma y PMBOK (el motor calcula, SOFIAA interpreta, garantizando cero alucinaciones numéricas)[cite: 20]. DMAIC DMADV SPC AMEF/FMEA ANOVA DOE Monte Carlo PMBOK cite: 20 Centro de Mando Proyectos DMAIC ANOVA SPC AMEF Financiero cite: 20 A-0 — Fundación 12 tipos TypeScript, atenaPath() helper y seed data completo[cite: 20]. A-1 — Extensión + UI SofiaaExtension ATENA manifest v1.0.0, routePrefix /atena y Centro de Mando[cite: 20]. A-1 — Proyectos DMAIC /atena/proyectos con roadmap DMAIC animado, objetivo SMART y CTQ[cite: 20]. A-2 — Análisis ANOVA /atena/analisis con banner de significancia, 5 KPIs, GroupBar y tabla descriptiva[cite: 20]. A-2 — Control SPC /atena/spc con Carta de Control SVG pura (40 puntos), violaciones Western Electric y métricas Cp/Cpk/sigma[cite: 20]. A-3 — Riesgos AMEF /atena/amef con ordenamiento NPR descendente, alertas en rojo para NPR>200 y barras S/O/D[cite: 20]. A-3 — Financiero /atena/financiero con VAN, TIR, Payback, curva SVG de flujo de caja y Monte Carlo P10/P50/P90[cite: 20]. A-4 — Extension Tools 5 herramientas registradas para consultar proyectos, ejecutar análisis, consultar SPC, AMEF y financiero[cite: 20]. A-5 — Deploy Compilación limpia, actualización de reglas Firestore e integración en producción[cite: 20]. Reducción de Tiempo de Ciclo en Línea de Ensamble de Módulos Electrónicos — TEC Monterrey[cite: 20] DMAIC (fase ANALYZE)[cite: 20] F = 8.43, p = 0.0012 (significativo)[cite: 20] X-barra = 244.2s, Cp = 0.52, Cpk = 0.34 (3 violaciones Western Electric)[cite: 20] 8 modos de falla, 2 críticos NPR>200 (Desalineación SMD NPR=270, Temperatura horno NPR=240)[cite: 20] VAN = $3.24M MXN, TIR = 34%, Payback = 5.3 meses, Monte Carlo P50 = 5.3m[cite: 20] Growth Intelligence Engine / CMO Cognitivo que opera estrictamente por OBJETIVOS de negocio y no por campañas aisladas[cite: 20]. Brand DNA Goal Engine Creative Memory Creative Lab Director Autónomo cite: 20 consultar_objetivos consultar_brand_dna registrar_objetivo consultar_creative_memory generar_variantes_lab generar_brief_director cite: 20 prometeo_brand_dna prometeo_goals prometeo_goal_states prometeo_creative_memory prometeo_creative_labs prometeo_director_briefs cite: 20 Groq llama-3.3-70b-versatile[cite: 20] Fire Palette (#f97316, fondo #09090f)[cite: 20] SOFIAA opera por OBJETIVOS. Prohibido generar campañas sin un objetivo de negocio validado[cite: 20]. P-0 — Fundación 8 tipos TypeScript, SofiaaExtension manifest v2.0, layout /prometeo con tema Fire Palette, 8 rutas base y Centro de Mando[cite: 20]. P-1 — Brand DNA Formulario de marca (12 arquetipos, tono, promesas, tabús) y publicación de entidades al grafo N.E.X.O. con embeddings[cite: 20]. P-2 — Go",
+  "documento_original": "gemini-code-1784915478229.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

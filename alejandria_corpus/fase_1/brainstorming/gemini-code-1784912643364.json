@@ -1,0 +1,36 @@
+{
+  "id": "brainstorming_sofiaa_fase_2_alpha_hardening_20260724",
+  "tipo": "brainstorming",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA — Fase 2 — Alpha Hardening",
+  "resumen": "Convertir el prototipo funcional en una plataforma sólida, inteligente, medible y segura, lista para despliegue público en Vercel sin perder elegancia, velocidad ni control.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO"
+  ],
+  "sprint_referencia": "Sprint de",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Qué propone SOFIAA — Fase 2 — Alpha Hardening?",
+    "¿Cómo se relaciona con los módulos de SOFIAA?",
+    "¿Cómo se implementó NEXO en esta fase?"
+  ],
+  "tags": [
+    "brainstorming",
+    "sofiaa",
+    "nexo",
+    "alpha",
+    "hardening",
+    "groq",
+    "react",
+    "embedding"
+  ],
+  "texto_embedding": "Fase 2 — Alpha Hardening Plan reestructurado · calidad primero · riesgo diferido Calidad > velocidad 8 sprints ordenados por riesgo Ítems riesgosos → Fase 3 Una mejora funcional por PR. Una capa por sprint. Nada de sobrecargar el núcleo. Si algo rompe el núcleo durante un sprint, se detiene, se documenta y se resuelve antes de continuar. Abrahan Cruz Urrutia (Benjacob) Junio 2026 Convertir el prototipo funcional en una plataforma sólida, inteligente, medible y segura, lista para despliegue público en Vercel sin perder elegancia, velocidad ni control. más rápido Response Cache + modelos actualizados más seguro Guardrails + validación doble más inteligente Goal Engine + Memory Timeline más medible Telemetría + Panel Cognitivo Fusionar 2.3 + 2.11 No tiene sentido medir sin poder ver los datos durante semanas Un sprint: Telemetría + Dashboard juntos Renombrar 2.4 'Semantic Cache' sin embeddings es misleading — es keyword cache Honestidad técnica. Versión real en Fase 3 Activar 2.5 + 2.7 goal.engine.ts, intent.engine.ts, orb.states.ts ya existen en /src/core Sprint de activación, no de creación Diferir Generative UI Alta complejidad de seguridad. Fácil de empezar, difícil de cerrar bien Fase 3 con diseño de schema previo Diferir Knowledge Graph Alto riesgo de scope creep sin límites de nodo definidos Fase 3 con acotación explícita Diferir Micro-agentes Agregan latencia perceptible antes de que el núcleo esté endurecido Fase 3 cuando el sistema sea estable Fase 1 Antes de congelar la arquitectura, se cierran los ítems pendientes de Fase 1. Sin esto, el architecture freeze incluiría código incompleto. Sprint 0 Pendiente F1 — Completar Sprint 4B: Páginas del OS Cierra el trabajo pendiente de Fase 1 antes de entrar al hardening. Construye las rutas de contenido del OS. Ruta /servicios — SOFIAA LAB, PASCALL, BERRYWORKS Ruta /portafolio — showcase del trabajo de Abrahan Ruta /contacto — acceso directo a redes y formulario Navegación interna integrada con la UI liquid glass Las tres rutas están activas y navegables La arquitectura está lista para congelarse Sin tocar código core Sprint 2.1 Bajo riesgo Architecture Freeze & documentación Sprint de documentación pura. Cero código nuevo. Se congela el estado actual del sistema y se define qué módulos son intocables. ARCHITECTURE_FREEZE.md — mapa de módulos core vs extensibles CODE_STANDARDS.md — convenciones de nombres, estados y archivos CHANGELOG_ALPHA.md — historial técnico desde el inicio Ningún módulo core se modifica sin pasar por revisión documentada Cualquier colaborador puede entender la arquitectura en < 15 minutos Sprint 2.2 Alta prioridad Guardrails & seguridad activa Capa de validación previa al endpoint /api/chat. Detecta prompt injection, solicitudes de secretos internos, fuga de contexto y patrones de abuso. Validación doble: cliente (UI) + servidor (API route). guardrails.engine.ts — lógica principal de detección security.rules.ts — catálogo de patrones prohibidos safety.response.map.ts — respuestas seguras por tipo de amenaza El sistema rechaza o neutraliza intentos de extracción de secretos La experiencia del usuario no se interrumpe en casos legítimos Los logs de seguridad se registran sin exponer datos sensibles Datos + visibilidad juntos Sprint 2.3 Fusionado Telemetría + Panel Cognitivo (fusionados) Telemetría y visualización van en el mismo sprint. Los datos invisibles no sirven. Se miden TTI (tiempo hasta respuesta), IFC (fricción de interacción), CVR (conversión), CKS (conocimiento compartido) e IAI (índice de anticipación). Se integran gráficas al panel admin secreto existente. useSofiaaTelemetry.ts — hook React para captura de eventos telemetry.events.ts — catálogo estandarizado de eventos metrics.schema.ts — estructura de datos para IFC, TTI, CVR, CKS, IAI cognitive.dashboard.tsx — gráficas integradas al panel admin Cada sesión produce datos estructurados y legibles El panel admin muestra métricas de la sesión en tiempo real Los datos se guardan en localStorage con estructura versionada Sprint 2.4 Renombrado Response Cache con normalización de intención Cache honesto: normaliza variantes de la misma pregunta por keywords y contexto de sesión. Almacena pares pregunta-respuesta validados con TTL y reglas de invalidación. La versión semántica real (con embeddings vectoriales) queda para Fase 3. Renombrado de 'Semantic Cache'. Sin embeddings, el cache es por normalización de texto, no por similitud vectorial. La versión semántica real va en Fase 3. response-cache.ts — motor de cache con normalización cache.policy.ts — TTL, invalidación y reglas de expiración cache.adapter.ts — interfaz unificada (localStorage / IndexedDB) Preguntas repetidas o similares responden sin consumir modelo El cache no devuelve respuestas obsoletas o incorrectas La experiencia es indistinguible de una respuesta en vivo Sprint 2.5 Activar, no crear Goal Engine — activar skeletons existentes Los archivos goal.engine.ts e intent.engine.ts ya existen en /src/core como skeletons. Este sprint los activa y conecta al flujo principal de conversación. SOFIAA deja de responder solo 'qué dijo' y empieza a responder 'qué quiere lograr'. goal.engine.ts — activar y conectar (ya existe en /src/core) intent.map.ts — mapeo de frases a objetivos goal.routes.ts — rutas de acompañamiento por objetivo SOFIAA detecta y clasifica el objetivo del usuario en cada mensaje Las 6 rutas (Informarse, Comparar, Aprender, Decidir, Contactar, Contratar) están activas El objetivo detectado influye en la forma y profundidad de la respuesta Sprint 2.6 Medio riesgo Memory Timeline Sistema de continuidad real entre sesiones. Guarda historial semántico resumido y diferencia tres capas de memoria: operativa (sesión actual), contextual (últimas 5 sesiones), histórica (hechos permanentes del usuario). El usuario siente continuidad, no un chat que reinicia. memory.timeline.ts — motor de línea temporal memory.summary.ts — resumen semántico por sesión timeline.ui.tsx — componente visual de línea t",
+  "documento_original": "gemini-code-1784912643364.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

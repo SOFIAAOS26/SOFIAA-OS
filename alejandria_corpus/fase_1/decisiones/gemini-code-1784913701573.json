@@ -1,0 +1,40 @@
+{
+  "id": "decisionarquitectura_arquitectura_sofiaa_ixos_intelligent_experience_operating_20260724",
+  "tipo": "decision_arquitectura",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "Arquitectura SOFIAA — IX-OS Intelligent Experience Operating System",
+  "resumen": "Arquitectura SOFIAA — IX-OS Intelligent Experience Operating System IX-OS · SOFIAA LAB Monterrey, México 2026 Usuario / Cliente Browser / Mobile Safari · Chrome · PWA Texto · Voz SpeechRecognition API URL activa pathname = activación Next.js 16 · React 19 · Tailwind v4 page.tsx Chat principal Core always Extension Pages /tec-bi · /jp-memorial · /marketing On-demand condicional Public Pages /servicios · /contacto · /por-que-sofiaa Static always Onboarding 3 slides · localStorage First-run lazy TypeScript · Client-side Guardrails Engine Validación doble Siempre Goal Engine Detección de objetivos",
+  "modulos_afectados": [
+    "SOFIAA",
+    "HERMES",
+    "ATENA",
+    "TEC_BII"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Por qué se tomó la decisión sobre Arquitectura SOFIAA — IX-OS Intelligent ?",
+    "¿Qué alternativas se descartaron?",
+    "¿Cómo afectó esta decisión a la arquitectura del sistema?",
+    "¿Cómo se implementó HERMES en esta fase?",
+    "¿Cómo se implementó ATENA en esta fase?"
+  ],
+  "tags": [
+    "decision-arquitectura",
+    "sofiaa",
+    "hermes",
+    "atena",
+    "tec-bii",
+    "arquitectura",
+    "ix-os",
+    "intelligent"
+  ],
+  "texto_embedding": "Arquitectura SOFIAA — IX-OS Intelligent Experience Operating System IX-OS · SOFIAA LAB Monterrey, México 2026 Usuario / Cliente Browser / Mobile Safari · Chrome · PWA Texto · Voz SpeechRecognition API URL activa pathname = activación Next.js 16 · React 19 · Tailwind v4 page.tsx Chat principal Core always Extension Pages /tec-bi · /jp-memorial · /marketing On-demand condicional Public Pages /servicios · /contacto · /por-que-sofiaa Static always Onboarding 3 slides · localStorage First-run lazy TypeScript · Client-side Guardrails Engine Validación doble Siempre Goal Engine Detección de objetivos Siempre Response Cache Normalización + hit detection Siempre Memory Timeline Long-term · Contextual Siempre UI Intent Detector Generative UI client-side Siempre Telemetry Eventos · Sesiones Siempre Next.js Server · route.ts Prompt Resolver URL → módulos activos Core Prompt Assembler Ensambla solo lo necesario Core Auth Gate freepotamo · Firebase RBAC Siempre Server Guardrails Double-protection layer Siempre prompt.modules.ts · prompt.resolver.ts base Identidad + carácter 228 always nav_core Rutas públicas 99 always nav_external Links + freepotamo 93 always generative_ui UI tokens format 122 always abrahan Bio + proyectos 145 lazy tec_bi Solo en /tec-bi/* 69 condicional jp_memorial Solo en /jp-memorial/* 47 condicional marketing Solo en /marketing-sofia/* 73 condicional APIs de terceros Groq API LLaMA 3.3 70B · Streaming Core LLM Firebase Auth · Firestore · Storage DB Monday.com API TEC BI bidireccional TEC BI 1 Usuario envía mensaje El texto pasa por interceptores locales: onboarding trigger, dark mode, login, 'espada del augurio', 'modo sherlock'. Si coincide → respuesta local inmediata sin API. 2 Guardrails client-side analyzeMessage() + analyzeConversation() en milisegundos. Si detecta amenaza → safety response instantánea, sin latencia de red. Telemetría registra el evento. 3 Goal Engine + Cache detectGoal() clasifica la intención (consulta, navegación, producción, etc.). getCachedResponse() busca hit normalizado. Si hay cache → respuesta en <50ms, sin Groq. 4 POST /api/chat con contexto mínimo Se envía: messages, activePath (pathname), extensionData (TEC BI summary si aplica), longTermMemory, contextualMemory, detectedGoal. Los campos ui son strippeados. 5 Server: resolveModules() activePath determina qué extensión está activa. El mensaje se analiza solo para detectar preguntas sobre Abrahan (lazy load). Resultado: lista mínima de ModuleKey[]. 6 assemblePrompt() → Groq API Solo los módulos activos se concatenan. Chat general: 542 tokens. Con extensión: ~611 tokens. El modelo recibe el contexto mínimo exacto — nada más. 7 Streaming SSE → cliente LLaMA 3.3 70B responde en stream. El cliente renderiza chunk a chunk. La respuesta puede contener [NAVIGATE:/ruta] o [UI:tipo:json] — tokens especiales que activan comportamientos. 8 parseUIBlocks() + detectUIBlock() Si el modelo generó tokens UI → se parsean y renderizan como GenerativeUI. Si no → el intent detector client-side puede inferir y sugerir un bloque. Navegación en pendingNav. Original (sin optimizar) 4395 100% Etapa 1 — Rewrite kernel 1038 24% Chat general (/) 542 12% Chat general + Pregunta sobre Abrahan 687 16% TEC BI activo (/tec-bi/*) 611 14% JP Memorial activo (/jp-memorial/*) 589 13% Marketing activo (/marketing-sofia/*) 615 14% −88% Infinita capacidad de escalado sin engordar el kernel SOFIAA Extension Ecosystem — arquitectura modular de extensiones acoplables. TEC BI 🏛️ Producción /tec-bi /tec-bi/proyectos /tec-bi/briefs /tec-bi/empleados /tec-bi/proveedores /tec-bi/roi 69 Monday.com sync JP Memorial 💙 Operativa /jp-memorial /jp-memorial/servicios /jp-memorial/catalogo /jp-memorial/atencion 47 Jardines Juan Pablo Marketing Pro 📱 Producción /marketing-sofia /marketing-sofia/clientes /marketing-sofia/metricas /marketing-sofia/calendario /marketing-sofia/finanzas 73 SMM multi-agencia Nueva Extensión ⚡ Próximamente /tu-organizacion /tu-organizacion/módulo-1 /tu-organizacion/módulo-2 Cualquier industria · Se añade sin tocar el kernel Un usuario de TEC BI nunca carga JP Memorial. Un usuario de Marketing nunca carga TEC BI. El kernel base siempre corre en 542 tokens, independiente del número de extensiones instaladas.",
+  "documento_original": "gemini-code-1784913701573.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

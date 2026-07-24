@@ -1,0 +1,42 @@
+{
+  "id": "especificacionmodulo_prometeo_20260701",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-01",
+  "fase_corpus": "fase_1",
+  "titulo": "PROMETEO",
+  "resumen": "PROMETEO Growth Intelligence Engine v2.0 — CMO Cognitivo SOFIAA OS Documento Técnico Especializado Julio 2026 Confidencial — Documento interno 5 6 8 Infinitos La campaña es la consecuencia de una decisión estratégica, no el punto de partida. PROMETEO opera por OBJETIVOS. Cada acción de marketing es la derivada de un árbol de decisión que valida presupuesto, inventario, capacidad y canal antes de generar cualquier creativo[cite: 21]. Sexto módulo de SOFIAA OS y el primero diseñado para la inteligencia de crecimiento comercial. Actúa como un CMO Cognitivo — un motor de razonamiento estratégico q",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "PROMETEO",
+    "ATENA",
+    "TEC_BII",
+    "ALEJANDRIA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona PROMETEO?",
+    "¿Cuál es la arquitectura de SOFIAA y NEXO?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó PROMETEO en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "nexo",
+    "prometeo",
+    "atena",
+    "tec-bii",
+    "alejandria",
+    "typescript"
+  ],
+  "texto_embedding": "PROMETEO Growth Intelligence Engine v2.0 — CMO Cognitivo SOFIAA OS Documento Técnico Especializado Julio 2026 Confidencial — Documento interno 5 6 8 Infinitos La campaña es la consecuencia de una decisión estratégica, no el punto de partida. PROMETEO opera por OBJETIVOS. Cada acción de marketing es la derivada de un árbol de decisión que valida presupuesto, inventario, capacidad y canal antes de generar cualquier creativo[cite: 21]. Sexto módulo de SOFIAA OS y el primero diseñado para la inteligencia de crecimiento comercial. Actúa como un CMO Cognitivo — un motor de razonamiento estratégico que toma decisiones de growth con la lógica de un director de marketing senior pero con la velocidad y consistencia de la IA[cite: 21]. A diferencia de sistemas tradicionales que generan campañas desde templates, parte siempre de un objetivo de negocio cuantificado (ventas, leads, plazo, presupuesto) y valida su árbol de decisión antes de generar estrategias y creativos[cite: 21]. TEC Bii Institucional Cognitivo Groq Hipótesis cruzadas ATENA Científico Determinista Groq Cero alucinaciones PROMETEO Growth / CMO Objetivos-first Groq Estrategia antes que campaña N.E.X.O. Conocimiento Semántico-temporal Groq Memoria persistente Mkt Sofia Operativo SMM CRUD + KPIs — Dashboard en tiempo real Extensión nativa de SOFIAA OS ejecutada sobre la infraestructura cognitiva de la plataforma: el grafo N.E.X.O., el LLM Orchestrator, el Capability Gateway, el Agent Runtime y la memoria persistente[cite: 21]. TypeScript 5 · Next.js 14 App Router · React Server Components[cite: 21] Groq API — llama-3.3-70b-versatile con JSON mode estricto (<800ms latencia)[cite: 21] Firestore (NoSQL, tiempo real) bajo smm_workspaces/{workspaceId}/prometeo_*[cite: 21] Firebase Auth con Bearer token y RBAC por workspace[cite: 21] SofiaaExtension v2.0 (contrato SEE)[cite: 21] N.E.X.O. — Brand DNA publicado como NexoNode con embedding gemini-embedding-001 (3,072 dims)[cite: 21] Fire Palette (FIRE=#f97316, CRIMSON=#ef4444, BG=#09090f, CARD=#14141f, BORDER=#1e1e2e)[cite: 21] /prometeo /prometeo/brand-dna /prometeo/objetivos /prometeo/creative-memory /prometeo/creative-lab /prometeo/director prometeo_brand_dna Brand DNA Arquetipo, tono, promesas, tabús, nivelTécnico, plataformas[cite: 21] prometeo_goals Goal Engine BrandGoal: tipo, valorObjetivo, unidad, fechaLimite, presupuesto, estado, kpiActual[cite: 21] prometeo_goal_states Goal Engine GoalState: notas de progreso, decisiones del árbol, estrategia generada[cite: 21] prometeo_creative_memory Creative Memory ROAS, CTR, CPA, conversiones, hookType, canal, formato, performanceScore 0-100[cite: 21] prometeo_creative_labs Creative Lab Sesiones de generación: parámetros, variantes generadas, seleccionadas, guardadas[cite: 21] prometeo_director_briefs Director Brief diario: recomendaciones por urgencia, oportunidades, KPIs snapshot, roasPromedio[cite: 21] /api/prometeo/creative-lab/generate POST Genera 6 variantes creativas con Groq. Lee Creative Memory para scoring predictivo[cite: 21]. /api/prometeo/director/brief POST Genera DirectorBrief: analiza objetivos activos + memoria creativa + detecta fatiga[cite: 21]. Brand DNA — Identidad de Marca como Dato Estructurado Convierte la identidad de marca en un objeto de datos estructurado y vivo[cite: 21]. arquetipo (12 arquetipos de Jung)[cite: 21] tono (definición de voz de marca)[cite: 21] nivelTecnico (escala 1-5 de complejidad)[cite: 21] promesas (propuestas de valor obligatorias)[cite: 21] tabus (conceptos/palabras prohibidas)[cite: 21] coloresCore (paleta cromática)[cite: 21] plataformas (canales prioritarios)[cite: 21] Se publica automáticamente en N.E.X.O. como NexoNode con embedding semántico para consulta previa a la generación de copies[cite: 21]. Goal Engine — Árbol de Decisión Estratégico Garantiza la existencia de un objetivo válido, recursos adecuados y canal correcto antes de crear campañas[cite: 21]. Nodo 1 — TIPO DE OBJETIVO: Ventas directas, leads calificados, reconocimiento o retención[cite: 21]. Nodo 2 — PRESUPUESTO: Evaluación de inversión en pauta o ruteo a orgánico[cite: 21]. Nodo 3 — INVENTARIO / CAPACIDAD: Verificación de disponibilidad operativa/producto[cite: 21]. Nodo 4 — CANAL: Selección por menor CPA histórico desde Creative Memory[cite: 21]. Nodo 5 — ESTRATEGIA: Generación de la estrategia de campaña validada[cite: 21]. Guardado en Firestore (BrandGoal + GoalState) con seguimiento de progreso en tiempo real[cite: 21]. Creative Memory — Base de Datos de Performance Creativo Base de datos histórica de performance por hook, formato y canal con cálculo de Performance Score[cite: 21]. Hasta 40 puntos máx. (ROAS ≥ 4x = 40pts, ≥ 3x = 28pts, ≥ 2x = 16pts)[cite: 21] Hasta 30 puntos máx. (CTR ≥ 5% = 30pts, ≥ 3% = 20pts, ≥ 1% = 10pts)[cite: 21] Hasta 20 puntos máx. (escala logarítmica sobre meta)[cite: 21] 10 puntos fijos (flag manual del equipo)[cite: 21] hookType canal formato fechaCampana inversionMXN roasLogrado ctrPct cpa conversiones observaciones cite: 21 Creative Lab — Generador de Variantes con IA y Scoring Predictivo Genera combinaciones de hooks × CTAs × ofertas con Groq y las puntúa según el historial de Creative Memory[cite: 21]. Entrada de parámetros (objetivo, canal, formato, industria)[cite: 21]. Consulta histórica en Creative Memory[cite: 21]. Cálculo de score predictivo (calcPredictiveScores 0-100)[cite: 21]. Generación con Groq de 6 variantes estructuradas con justificación[cite: 21]. Despliegue visual de scores, barras estimadas y guardado en prometeo_creative_labs[cite: 21]. CIFRA_IMPACTANTE PREGUNTA_DIRECTA HISTORIA_BREVE BENEFICIO_CLARO URGENCIA SOCIAL_PROOF RETO COMPARACION SECRETO_REVELADO MIEDO ASPIRACION ESCASEZ cite: 21 Director Autónomo — Brief Matutino con Detección de Fatiga e Inteligencia de Acción Capa ejecutiva que analiza objetivos activos, memoria reciente y métricas para emitir un brief de acción diario[cite: 21]. Identificación de fatiga: Objetivos con <50% de avance y <7 días al cierre[cite: 2",
+  "documento_original": "gemini-code-1784915541654.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

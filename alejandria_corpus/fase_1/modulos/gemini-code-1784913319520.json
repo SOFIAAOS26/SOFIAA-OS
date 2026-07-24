@@ -1,0 +1,57 @@
+{
+  "id": "especificacion_modulo_sofiaa_arquitectura_20260724",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA - Resumen Ejecutivo de Plataforma 2026",
+  "resumen": "SOFIAA es una plataforma modular de inteligencia artificial diseñada para transformar la manera en que las organizaciones operan, toman decisiones y se relacionan con sus equipos y clientes. La plataforma cuenta con una arquitectura de extensiones modulares que permite construir, desplegar y operar espacios de trabajo especializados sin modificar el motor de inteligencia central. La plataforma utiliza tecnologías como Next.js, Firebase, Groq y Vercel para proporcionar una infraestructura extensible y escalable.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "PROMETEO",
+    "NORA",
+    "HERMES",
+    "ATENA",
+    "TEC BII",
+    "ALEJANDRÍA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": "1.0 Junio 2026",
+  "decisiones": [
+    "Utilizar Next.js como framework de frontend",
+    "Utilizar Firebase como base de datos en tiempo real",
+    "Utilizar Groq como motor de inteligencia artificial",
+    "Utilizar Vercel como plataforma de despliegue"
+  ],
+  "conceptos_clave": [
+    "Inteligencia artificial",
+    "Arquitectura de extensiones modulares",
+    "Infraestructura extensible",
+    "Escalabilidad"
+  ],
+  "hitos": [
+    "Desarrollo de la plataforma SOFIAA",
+    "Implementación de la arquitectura de extensiones modulares",
+    "Integración con tecnologías como Next.js, Firebase y Groq"
+  ],
+  "preguntas_que_responde": [
+    "¿Qué es SOFIAA?",
+    "¿Cuál es la arquitectura de la plataforma SOFIAA?",
+    "¿Qué tecnologías utiliza la plataforma SOFIAA?",
+    "¿Cuál es el propósito de la plataforma SOFIAA?"
+  ],
+  "tags": [
+    "Inteligencia artificial",
+    "Arquitectura de software",
+    "Desarrollo de plataforma",
+    "Escalabilidad",
+    "Next.js",
+    "Firebase",
+    "Groq",
+    "Vercel"
+  ],
+  "texto_embedding": "SOFIAA es una plataforma modular de inteligencia artificial diseñada para transformar la manera en que las organizaciones operan, toman decisiones y se relacionan con sus equipos y clientes. La plataforma cuenta con una arquitectura de extensiones modulares que permite construir, desplegar y operar espacios de trabajo especializados sin modificar el motor de inteligencia central. La plataforma utiliza tecnologías como Next.js, Firebase, Groq y Vercel para proporcionar una infraestructura extensible y escalable. La plataforma tiene como objetivo proporcionar una solución integral para las organizaciones, permitiéndoles mejorar su eficiencia y productividad.",
+  "documento_original": "SOFIAA - Resumen Ejecutivo de Plataforma 2026",
+  "procesado_por": "groq",
+  "fecha_procesamiento": "2026-07-24"
+}

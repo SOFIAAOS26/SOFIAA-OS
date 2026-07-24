@@ -1,0 +1,40 @@
+{
+  "id": "especificacionmodulo_resumen_de_actualizaciones_sofiaa_sprint_d_20260628",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-06-28",
+  "fase_corpus": "fase_1",
+  "titulo": "Resumen de actualizaciones SOFIAA — Sprint D (SOFIAA 1.2)",
+  "resumen": "Resumen de actualizaciones SOFIAA — Sprint D (SOFIAA 1.2) 28 de junio 2026 1.2 Sprint D · Hardening 17 ~2,400 0 2 LLM Orchestrator (Tolerancia a Fallos Multiproveedor) Groq Gemini (failover automático ante rate limit 429) Mensajes cortos y consultas directas Análisis complejos y razonamiento denso Header x-sofiaa-provider en cada respuesta para auditoría Six Sigma. Goal State Machine (Flujos Guiados Resilientes) Gestión de flujos multi-paso con persistencia en sessionStorage (30 min) crear_brief agendar_cita crear_propuesta contratar Mantiene el estado activo ante desconexiones o refrescos, gu",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "ATENA",
+    "TEC_BII"
+  ],
+  "sprint_referencia": "Sprint D",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona Resumen de actualizaciones SOFIAA — Spri?",
+    "¿Cuál es la arquitectura de SOFIAA y NEXO?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó ATENA en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "nexo",
+    "atena",
+    "tec-bii",
+    "resumen",
+    "actualizaciones",
+    "(sofiaa"
+  ],
+  "texto_embedding": "Resumen de actualizaciones SOFIAA — Sprint D (SOFIAA 1.2) 28 de junio 2026 1.2 Sprint D · Hardening 17 ~2,400 0 2 LLM Orchestrator (Tolerancia a Fallos Multiproveedor) Groq Gemini (failover automático ante rate limit 429) Mensajes cortos y consultas directas Análisis complejos y razonamiento denso Header x-sofiaa-provider en cada respuesta para auditoría Six Sigma. Goal State Machine (Flujos Guiados Resilientes) Gestión de flujos multi-paso con persistencia en sessionStorage (30 min) crear_brief agendar_cita crear_propuesta contratar Mantiene el estado activo ante desconexiones o refrescos, guiando al usuario paso a paso sin reiniciar el proceso. Intent-Driven UI (Generative UI Purificada) El LLM declara intenciones semánticas ([INTENT:tipo:data]) desacopladas de componentes React rígidos. El IntentEngine client-side gestiona el renderizado. botones de acción rápida tabla comparativa tarjeta de info confirmación con acciones barra de progreso de objetivo tarjeta de extensión éxito lista de datos Cognitive Policy Engine (Seguridad Transaccional) 8 políticas declarativas inyectadas en el system prompt según el contexto. tono SOFIAA privacidad precisión de navegación TEC BI formal JP Memorial empático Marketing Sofia accionable una pregunta por turno sin saltar pasos Evaluador Post-stream genera score 0-1 y despacha violaciones al EventBus sin añadir latencia al usuario. Experience Graph (Memoria Semántica de Vanguardia) Reemplaza la memoria lineal con un Grafo de Conocimiento estructurado (topics, extensiones, goals) con pesos y leyes de decaimiento temporal. localStorage con debounce de 1.5s y sincronización opcional a Firestore para usuarios autenticados. Inyecta un bloque de contexto sintético y ponderado (ej. 'Áreas de mayor interés: Presupuesto (×8)'), maximizando la precisión y reduciendo drásticamente el consumo de tokens. $820,000 MXN a $950,000 MXN $45,000 USD a $53,000 USD $0 MXN (manteniendo arquitectura LEAN) Demostración de Goal State Machine manteniendo flujos vivos por 30 min sin confundir al usuario. Simulación visual interactiva en sofiaa-os.vercel.app usando [INTENT:tabla:data] al solicitar comparativas. Simulación interna de caída de proveedor para demostrar la conmutación a Gemini en milisegundos.",
+  "documento_original": "gemini-code-1784913813131.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

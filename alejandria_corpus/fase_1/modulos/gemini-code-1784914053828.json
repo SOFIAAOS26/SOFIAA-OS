@@ -1,0 +1,40 @@
+{
+  "id": "especificacionmodulo_marco_doctoral_de_investigacion_2026_20260601",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-06-01",
+  "fase_corpus": "fase_1",
+  "titulo": "MARCO DOCTORAL DE INVESTIGACION · 2026",
+  "resumen": "MARCO DOCTORAL DE INVESTIGACION · 2026 SOFIAA — AI Experience Middleware Repensando cómo las organizaciones aprenden, deciden y actúan a través de inteligencia artificial contextual Junio 2026 Presentación Ejecutiva Confidencial Las organizaciones se ahogan en datos y mueren de sed de sabiduría. 1 Los Datos Existen Las empresas generan terabytes de datos operativos cada día, atrapados en sistemas aislados e inaccesibles para quienes los necesitan. 2 Los Modelos Existen Los grandes modelos de lenguaje razonan a velocidad sobrehumana, pero operan sobre conocimiento estático, desconectados de la",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "HERMES",
+    "TEC_BII"
+  ],
+  "sprint_referencia": "Sprint D",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona MARCO DOCTORAL DE INVESTIGACION · 2026?",
+    "¿Cuál es la arquitectura de SOFIAA y NEXO?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó HERMES en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "nexo",
+    "hermes",
+    "tec-bii",
+    "marco",
+    "doctoral",
+    "investigacion"
+  ],
+  "texto_embedding": "MARCO DOCTORAL DE INVESTIGACION · 2026 SOFIAA — AI Experience Middleware Repensando cómo las organizaciones aprenden, deciden y actúan a través de inteligencia artificial contextual Junio 2026 Presentación Ejecutiva Confidencial Las organizaciones se ahogan en datos y mueren de sed de sabiduría. 1 Los Datos Existen Las empresas generan terabytes de datos operativos cada día, atrapados en sistemas aislados e inaccesibles para quienes los necesitan. 2 Los Modelos Existen Los grandes modelos de lenguaje razonan a velocidad sobrehumana, pero operan sobre conocimiento estático, desconectados de la realidad en vivo. 3 La Brecha No existe una capa inteligente que conecte datos empresariales en tiempo real, contexto por rol y lenguaje humano natural... hasta ahora. ¿Cómo puede un sistema de IA adaptar su conocimiento, comportamiento, interfaz y acceso a datos en tiempo real —según quién es el usuario, qué necesita y dónde está en la organización? Un middleware cognitivo en capas —combinando motores de política, grafos de experiencia, máquinas de estado de objetivos y runtimes de capacidades— puede transformar cualquier LLM en una inteligencia organizacional consciente del rol. LLM (Razonamiento base) Contexto (Rol + Ruta + Historia) Política (Restricciones cognitivas) Datos (Capability Runtime en vivo) SOFIAA Middleware Cognitivo La evolución de SOFIAA a lo largo de seis sprints de investigación S0 Catálogo Interactivo Vitrina estática con navegación básica y respuestas predefinidas. S1-2 Personalidad JARVIS IA en streaming con guardrails, memoria de sesión y telemetría. S3 Ecosistema de Extensión (SEE) 3 extensiones empresariales, RBAC, Firebase Auth + Middleware de borde. Sprint D Motores Cognitivos Objetivo · Intención · Política Cognitiva · Grafo de Experiencia. Sprint E Capability Runtime Inyección de datos en vivo vía Function Calling con control de rol. Cinco axiomas que rigen cada decisión de diseño en SOFIAA 01 El Dato no es Conocimiento El dato crudo se convierte en conocimiento solo cuando pasa por rol, contexto e intención. SOFIAA nunca expone datos crudos al LLM — solo resúmenes estructurados. 02 El LLM es Razonador, no Almacén El modelo de lenguaje es un motor de razonamiento, no una base de datos. Los datos fluyen mediante canales verificados — nunca incrustados en prompts estáticos. 03 La Experiencia debe Decaer Las señales de interés del usuario tienen peso temporal. Lo que importó el mes pasado importa menos hoy. El Grafo de Experiencia aplica un decaimiento del 5% diario. 04 El Acceso es un Derecho Gobernado Cada capacidad, extensión y fuente de datos está protegida por RBAC en la capa Gateway. El LLM nunca decide quién puede ver qué — la política lo decide. 05 Cada Turno Mejora el Sistema Cada conversación actualiza el Grafo de Experiencia, informa al CPE y refina el perfil del usuario. El sistema se vuelve más inteligente con cada interacción. Hacer que la inteligencia organizacional sea universalmente accesible — para que cada persona en una empresa pueda hacer cualquier pregunta, en lenguaje natural, y recibir una respuesta precisa, ajustada a su rol y en tiempo real — sin necesitar saber dónde viven los datos. Un mundo donde la inteligencia artificial no reemplaza el juicio humano — lo amplifica. SOFIAA es la capa que conecta personas, datos, modelos y políticas en una sola experiencia coherente — el primer AI Experience Middleware construido para empresas reales. No estamos construyendo un chatbot. Estamos construyendo la capa cognitiva de la empresa moderna. Seis capas integradas — cada una composable de forma independiente, poderosas en conjunto 01 Capa de Interfaz de Usuario Intent-Driven UI Componentes Adaptativos Progreso de Objetivos 02 Motor de Política Cognitiva (CPE) 8 Políticas de Comportamiento Evaluación Post-Stream CPE Score 0-1 03 LLM Orchestrator Groq > Gemini Fallback Enrutamiento Multi-proveedor Streaming SSE 04 Máquina de Estado de Objetivos Objetivos Multi-paso sessionStorage Detección Automática 05 Grafo de Experiencia Nodos con Peso Decaimiento Temporal localStorage + Firestore 06 Capability Runtime Firestore en vivo Gateway RBAC Resúmenes Estructurados Instrumentos diseñados para medir calidad de inteligencia — no solo rendimiento 0 - 1 Peso de Nodo en Grafo Mide afinidad de tópico o extensión. +0.12 por interacción, decaimiento temporal 5%/día, poda al llegar a <0.06 con <2 visitas. 9.8 / 10 CPE Policy Score Puntuación compuesta para calidad de respuesta del LLM. Errores penalizados 2x, rastreado en 8 dimensiones de política conductual. 60% reducción Eficiencia de Tokens Ahorro de tokens vs. inyección completa de colección Firestore. Los resúmenes estructurados reemplazan el JSON crudo en el contexto. 3 proveedores Enrutamiento del Orquestador Groq LLaMA 3.3 70B como primario, Gemini como fallback, Mock para pruebas. Conmutación automática basada en latencia. $655,000 MXN TEC BI JP Memorial Marketing Sofia Cada nueva capacidad agrega valor sin reconstruir el core. I Inyección de Datos Bajo Demanda A diferencia de RAG, SOFIAA obtiene datos en vivo de Firestore solo cuando la Function Call del LLM lo declara. Efímero, controlado por rol y eficiente en tokens. vs. RAG: recuperación siempre activa II Grafo de Experiencia Temporal Un grafo ponderado de preferencias y afinidades de tópicos que decae con el tiempo — modelando el olvido y reenfoque humano. Ningún framework LLM existente implementa decaimiento temporal en el contexto del usuario. Novedad: sin arte previo III Políticas Cognitivas Declarativas 8 políticas de comportamiento evaluadas post-stream, puntuando las respuestas del LLM en escala 0-1 con pesos de error (2x) y advertencia. Permite comportamiento de IA auditable a escala empresarial. vs. Constitutional AI: en tiempo de ejecución, no entrenamiento IV Capability Runtime Agnóstico Una interfaz DataProvider abstrae Firestore, Monday.com, REST y SAP detrás de un único contrato execute(). El LLM nunca conoce la fuente — solo recibe resultados",
+  "documento_original": "gemini-code-1784914053828.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

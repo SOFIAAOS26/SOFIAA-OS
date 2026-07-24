@@ -1,0 +1,37 @@
+{
+  "id": "decisionarquitectura_rumbo_a_sofia_114_20260724",
+  "tipo": "decision_arquitectura",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "RUMBO A SOFIA 1.1.4",
+  "resumen": "RUMBO A SOFIA 1.1.4 LEAN (ligero, directo, potente, estable, desacoplado, agnóstico y súper seguro) Minimalismo pragmático de arquitecturas modernas de IA (estilo OpenAI / Google Infrastructure), evitando arquitecturas empresariales pesadas (estilo Java/Enterprise). Hacer que el Core sea aburridamente indestructible y las Extensiones infinitamente potentes. El Core se vuelve completamente ciego y solo entiende un contrato formal en TypeScript. conversation rag bi voice actions ${number}.${number}.${number} string string ExtensionVersion string CapabilityType[] ExtensionManifest string (bloque",
+  "modulos_afectados": [
+    "SOFIAA",
+    "HERMES"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Por qué se tomó la decisión sobre RUMBO A SOFIA 1.1.4?",
+    "¿Qué alternativas se descartaron?",
+    "¿Cómo afectó esta decisión a la arquitectura del sistema?",
+    "¿Cómo se implementó HERMES en esta fase?"
+  ],
+  "tags": [
+    "decision-arquitectura",
+    "sofiaa",
+    "hermes",
+    "rumbo",
+    "sofia",
+    "1.1.4",
+    "typescript",
+    "firebase"
+  ],
+  "texto_embedding": "RUMBO A SOFIA 1.1.4 LEAN (ligero, directo, potente, estable, desacoplado, agnóstico y súper seguro) Minimalismo pragmático de arquitecturas modernas de IA (estilo OpenAI / Google Infrastructure), evitando arquitecturas empresariales pesadas (estilo Java/Enterprise). Hacer que el Core sea aburridamente indestructible y las Extensiones infinitamente potentes. El Core se vuelve completamente ciego y solo entiende un contrato formal en TypeScript. conversation rag bi voice actions ${number}.${number}.${number} string string ExtensionVersion string CapabilityType[] ExtensionManifest string (bloque de 60-100 tokens específico) string[] (reglas de negocio duras) string[] (integración RBAC Firebase) number number string string object (Esquema Zod / JSON Schema para Function Calling) (toolName: string, args: any, context: any) => Promise<any> (context: any) => Promise<void> (goal: string, context: any) => Promise<void> (payload: string, context: any) => Promise<void> sofiaa.manifest.json tec-bi-ext TEC Business Intelligence 1.2.0 conversation bi actions director admin Structured Log Correlation (sin APM pesado) Cada request en POST /api/chat genera traceId único y x-correlation-id. Si falla en Groq, alucina o Guardrails bloquea, escribe un documento plano en /logs de Firestore. [Timestamp] | [TraceID] | [ExtensionID] | [Step: Guardrails_Capa2] | [Status: FAILED] Síncrona en Next.js middleware.ts (Vercel Edge Network) Request Usuario Middleware: Valida Auth RBAC de la Extensión Kernel: Ensambla Módulo Base (542t) + Módulo Extensión Groq Stream Engine Vercel waitUntil(): Dispara ganchos asíncronos (Monday, Logs, Memoria) Vercel Edge / React Server waitUntil() Entrega stream SSE al usuario inmediatamente sin latencia. Al finalizar el stream, emite eventos asíncronos en segundo plano (GoalDetected, ActionExecuted) para Firestore o Monday.com. Limpieza Legacy y Formalización del SDK (Estabilidad y Desacoplamiento) Acción 1 Eliminar system.prompt.ts legacy. El prompt se construye única y dinámicamente vía la interfaz SofiaaExtension. Acción 2 Crear ExtensionRegistry. Al navegar por la URL (activePath), el Kernel consulta el registro, carga el manifiesto de la extensión y monta el contexto en memoria. El Escudo Operacional (Gobernanza, Seguridad y Carga) Acción 1 Prueba de estrés real en Firestore bajo carga simultánea. Implementar debouncing y caché local en el cliente. Acción 2 Migrar Goal Engine y tokens especiales ([NAVIGATE], [UI]) de texto plano a Structured Outputs (Function Calling nativo de Groq/LLaMA 3.3). Autonomía y Versionado (Madurez de Plataforma) Acción 1 Versionado Semántico permitiendo coexistencia de extensiones en distintas rutas (ej. /api/v1/extensions/tec-bi y /api/v2/extensions/tec-bi). Acción 2 Agentes Autónomos conectando el handler de herramientas directamente con webhooks externos (Monday.com, ERP SAP/Banner, reportes PDF). Haz que el Core sea aburrido y predecible; deja que las extensiones sean interesantes y salvajes. Permite escalar a nuevas áreas o clientes (Finanzas, RH, Admisiones) creando solo un json de configuración y un módulo de prompt de 80 tokens, convirtiendo el sistema en una plataforma de propiedad intelectual comercial.",
+  "documento_original": "gemini-code-1784913639110.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

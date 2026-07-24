@@ -1,0 +1,55 @@
+{
+  "id": "especificacion_modulo_sofiaa_arquitectura_20260724",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-06-01",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA: Intelligent Experience Operating System (IX-OS)",
+  "resumen": "SOFIAA es un sistema operativo de facilitación inteligente para interacción y acompañamiento que busca reducir la complejidad de las experiencias digitales mediante interacciones conversacionales contextuales con la menor carga cognitiva posible. Está diseñado para ser un Host Inteligente que recibe, comprende, orienta y acompaña proactivamente, y se enfoca en mitigar la fricción epistemológica y operativa entre personas, conocimiento institucional y organizaciones complejas.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "PROMETEO",
+    "NORA",
+    "HERMES",
+    "ATENA",
+    "TEC BII",
+    "ALEJANDRÍA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [
+    "Utilizar Next.js como framework para el desarrollo de la aplicación",
+    "Implementar un backend cognitivo para determinar la mutación de la interfaz",
+    "Utilizar una base semántica desacoplada para almacenar y recuperar conocimiento"
+  ],
+  "conceptos_clave": [
+    "Inteligencia Artificial",
+    "Experiencia del Usuario",
+    "Interfaz de Usuario",
+    "Conocimiento Institucional",
+    "Organizaciones Complejas"
+  ],
+  "hitos": [
+    "Desarrollo de la arquitectura del sistema",
+    "Implementación del backend cognitivo",
+    "Diseño de la interfaz de usuario"
+  ],
+  "preguntas_que_responde": [
+    "¿Cuál es el propósito de SOFIAA?",
+    "¿Cómo se diferencia SOFIAA de otros sistemas de interacción?",
+    "¿Cuáles son los principios de ingeniería que guían el desarrollo de SOFIAA?"
+  ],
+  "tags": [
+    "Inteligencia Artificial",
+    "Experiencia del Usuario",
+    "Interfaz de Usuario",
+    "Conocimiento Institucional",
+    "Organizaciones Complejas",
+    "Next.js",
+    "Backend Cognitivo"
+  ],
+  "texto_embedding": "SOFIAA es un sistema operativo de facilitación inteligente para interacción y acompañamiento que busca reducir la complejidad de las experiencias digitales mediante interacciones conversacionales contextuales con la menor carga cognitiva posible. Está diseñado para ser un Host Inteligente que recibe, comprende, orienta y acompaña proactivamente, y se enfoca en mitigar la fricción epistemológica y operativa entre personas, conocimiento institucional y organizaciones complejas. La arquitectura del sistema se basa en un backend cognitivo que determina la mutación de la interfaz, y utiliza una base semántica desacoplada para almacenar y recuperar conocimiento. El sistema se enfoca en la experiencia del usuario y busca proporcionar una interfaz de usuario intuitiva y fácil de usar.",
+  "documento_original": "SOFIAA: Intelligent Experience Operating System (IX-OS)",
+  "procesado_por": "groq",
+  "fecha_procesamiento": "2026-07-24"
+}

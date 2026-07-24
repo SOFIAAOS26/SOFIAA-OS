@@ -1,0 +1,40 @@
+{
+  "id": "decisionarquitectura_rumbo_a_tier_4_plan_de_20260709",
+  "tipo": "decision_arquitectura",
+  "fecha": "2026-07-09",
+  "fase_corpus": "fase_1",
+  "titulo": "RUMBO A TIER 4: Plan de Ejecución TEC Bii",
+  "resumen": "Rediseño completo de la extensión TEC BI hacia TEC Bii (con doble 'ii'). Transición de un CRUD desconectado (carrito de supermercado) a una extensión cognitiva inteligente (chasis de F1) conectada nativamente al Experience Graph de N.E.X.O., orquestada por SOFIAA Core y monitoreada por N.O.R.A.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "NORA",
+    "TEC_BII"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Por qué se tomó la decisión sobre RUMBO A TIER 4: Plan de Ejecución TEC Bi?",
+    "¿Qué alternativas se descartaron?",
+    "¿Cómo afectó esta decisión a la arquitectura del sistema?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó NORA en esta fase?"
+  ],
+  "tags": [
+    "decision-arquitectura",
+    "sofiaa",
+    "nexo",
+    "nora",
+    "tec-bii",
+    "rumbo",
+    "ejecucion",
+    "firestore"
+  ],
+  "texto_embedding": "RUMBO A TIER 4: Plan de Ejecución TEC Bii 9 de Julio 2026 RUMBO A TIER 4 Abrahan Benjacob Cruz Urrutia Plan de Ejecución e Ingeniería de Arquitectura Cognitiva Rediseño completo de la extensión TEC BI hacia TEC Bii (con doble 'ii'). Transición de un CRUD desconectado (carrito de supermercado) a una extensión cognitiva inteligente (chasis de F1) conectada nativamente al Experience Graph de N.E.X.O., orquestada por SOFIAA Core y monitoreada por N.O.R.A. El cuello de botella real no es la inteligencia del modelo, sino la integración cognitiva entre dominios[cite: 9]. Base de datos con UI (CRUD aislado)[cite: 9]. Datos en silos (TEC BI = datos, Marketing Sofia = datos, NEXO = datos)[cite: 9]. Extensión cognitiva inteligente[cite: 9]. Cada entidad creada o modificada genera un nodo en el Experience Graph con embedding, peso, tags y capacidad de cruzarse con NEXO y el resto del ecosistema[cite: 9]. Las extensiones v1/Beta no se eliminan ni modifican; se desconectan del Registry principal y quedan accesibles en sus rutas Beta (/tec-bi)[cite: 9]. TEC Bii se construye desde cero con la mística del Core ciego, desacoplada, agnóstica y con las mismas políticas de seguridad[cite: 9]. 1. Usuario interactúa con TEC Bii UI[cite: 9] 2. Escritura en Firestore (datos operacionales /users/{uid}/tec_bii/)[cite: 9] 3. Knowledge Publisher publica asíncronamente al Cognitive Context Bus (CCB)[cite: 9] 4. Generación de resumen (Gemini Flash), embedding (gemini-embedding-001) y cálculo de importancia[cite: 9] 5. Interconexión en Cognitive Graph (NEXO Nodes ←→ SOFIAA Context Engine)[cite: 9] 6. Producción de Respuestas Inteligentes, Alertas Proactivas y Cross-Domain Reasoning[cite: 9] CognitiveFootprint (campos: nexoNodeId, importance, riskScore, tags, aiSummary, linkedNexoNodes, lastCognitiveSync)[cite: 9] ProyectoV2 extiende CognitiveFootprint (agrega: urgencyScore, riskLevel ['bajo'|'medio'|'alto'|'crítico'], momentum, hypotheses)[cite: 9] Hypothesis (campos: id, text, confidence, sources, generatedAt, validated)[cite: 9] src/lib/cognitive-bus/publisher.ts[cite: 9] publishEntityToGraph(entity: TecBiiEntity)[cite: 9] tec-bii:{entity.type}:{entity.id}[cite: 9] trabajo[cite: 9] TEC_BII[cite: 9] T2-0 Foundation & Desconexión Beta 1 día[cite: 9] Registrar tec-bii en el Extension Registry[cite: 9] Nueva ruta /tec-bii con nuevo layout y tema visual diferenciado[cite: 9] Desconectar tec-bi del Registry (estado beta, accesible en /tec-bi)[cite: 9] Tipos base: ProyectoV2, BriefV2, EmpleadoV2 con CognitiveFootprint[cite: 9] Colección Firestore: users/{uid}/tec_bii/[cite: 9] T2-1 Cognitive Entity Layer 1-2 días[cite: 9] src/lib/tec-bii/cognitive-publisher.ts para publicar al grafo[cite: 9] Llamada asíncrona (waitUntil) en cada CREATE/UPDATE de TEC Bii[cite: 9] generateEntitySummary() vía Gemini Flash en lenguaje natural[cite: 9] computeImportance() heurístico basado en deadline, valor y estado[cite: 9] Nuevo Dashboard con métricas de importance y riskLevel[cite: 9] T2-2 Intelligence Dashboard 1-2 días[cite: 9] Panel cognitivo en /tec-bii con insights en lenguaje natural[cite: 9] Detección de proyectos en zona de riesgo y alertas sobre carga de trabajo de personal[cite: 9] Detección de briefs sin respuesta[cite: 9] Generación dinámica con Gemini Flash sobre snapshot actual al abrir panel[cite: 9] T2-3 Brief Intelligence 1 día[cite: 9] Generación completa de briefs desde la conversación en el chat[cite: 9] Brief Score v2 impulsado por análisis de IA[cite: 9] Sugerencia e integración automática de capturas NEXO relevantes (referencias visuales/conceptuales)[cite: 9] T2-4 Cross-Domain Reasoning 2 días[cite: 9] src/lib/cognitive-bus/cross-reference.ts[cite: 9] Escaneo de entidades TEC Bii ante nuevos nodos NEXO por similitud de embeddings[cite: 9] Generación automática de hipótesis cuando la similitud coseno ≥ 0.60[cite: 9] SOFIAA consulta proactivamente vinculaciones en el chat[cite: 9] T2-5 Team Cognition 1-2 días[cite: 9] EmpleadoV2 con perfil de habilidades auto-generado desde historial[cite: 9] ProveedorV2 con predicción de costo y calidad[cite: 9] Recomendaciones de asignación de personal según track record y afinidad[cite: 9] T2-6 N.O.R.A. Reflection 1 día[cite: 9] Proceso nocturno de análisis cruzado TEC Bii + NEXO[cite: 9] Reportes semanales automáticos en lenguaje natural sobre riesgos, tendencias de proveedores y conexiones detectadas[cite: 9] Navegación manual por tablas, filtros estáticos y edición CRUD tradicional[cite: 9]. Consultas conversacionales: '¿Qué proyectos necesitan atención esta semana?' → Lista ordenada por urgencia cognitiva[cite: 9]. Asignación inteligente: '¿A quién le asigno el brief de Rectoría?' → Recomendación basada en carga, historial y afinidad[cite: 9]. Vinculación automática: 'Capturé estas referencias en NEXO' → SOFIAA las vincula directo al proyecto[cite: 9]. Construcción interactiva: 'Genera el brief para la graduación' → Se construye en chat y se almacena en TEC Bii[cite: 9].",
+  "documento_original": "gemini-code-1784914899502.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

@@ -1,0 +1,40 @@
+{
+  "id": "especificacionmodulo_de_tec_bi_a_tec_bii_20260724",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "De TEC BI a TEC Bii",
+  "resumen": "Documentación técnica y funcional de TEC Bii v2, detallando su transición desde un CRM/CRUD tradicional (TEC BI v1) hacia un sistema predictivo, autónomo y adaptativo conectado nativamente al Experience Graph de N.E.X.O., a los modelos de razonamiento (Groq LLaMA 3.3) y a los procesos reflexivos de N.O.R.A.[cite: 12]",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "NORA",
+    "TEC_BII"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona De TEC BI a TEC Bii?",
+    "¿Cuál es la arquitectura de SOFIAA y NEXO?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó NORA en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "nexo",
+    "nora",
+    "tec-bii",
+    "firebase",
+    "groq",
+    "firestore"
+  ],
+  "texto_embedding": "De TEC BI a TEC Bii Evolución de la Extensión de Gestión de Producción Audiovisual Tecnológico de Monterrey SOFIAA OS / Cognitive Engine Análisis de Arquitectura y Capacidades Integradas Documentación técnica y funcional de TEC Bii v2, detallando su transición desde un CRM/CRUD tradicional (TEC BI v1) hacia un sistema predictivo, autónomo y adaptativo conectado nativamente al Experience Graph de N.E.X.O., a los modelos de razonamiento (Groq LLaMA 3.3) y a los procesos reflexivos de N.O.R.A.[cite: 12] Segunda generación de la extensión de gestión de producción audiovisual del TEC de Monterrey que observa, aprende y anticipa en lugar de actuar como un simple registro[cite: 12]. Ciudadano de primera clase dentro del Experience Graph[cite: 12]. Cada entidad (proyectos, empleados, proveedores, briefs, evaluaciones) genera automáticamente un nodo NEXO con resumen en lenguaje natural, etiquetas semánticas y score de importancia dinámica[cite: 12]. Proceso en segundo plano disparado al registrar una evaluación[cite: 12]. Calidad promedio del asignado[cite: 12] Tasa de cumplimiento a tiempo[cite: 12] Tendencia de desempeño (mejora o declive en últimas evaluaciones)[cite: 12] Actualización del perfil en Firestore[cite: 12] El riesgo detectado en el asignado se hereda y marca automáticamente en el proyecto activo sin intervención manual del usuario[cite: 12]. $0 / Cero llamadas a LLM[cite: 12] Calidad del asignado menor a 3.0[cite: 12] Cumplimiento menor al 60%[cite: 12] Tendencia negativa en 4 o más evaluaciones[cite: 12] Variación de costo de proveedores superior al 20%[cite: 12] Alertas tipificadas con prioridad alta, media o baja[cite: 12]. Groq LLaMA 3.3 70B Versatile[cite: 12] Contexto completo (proyectos, urgencias, conexiones al grafo, riesgos propagados)[cite: 12] Diagnóstico narrativo del estado del área e insights no detectables por reglas fijas[cite: 12]. Muestra en tiempo real el estado predictivo al abrir la página (quién está en riesgo, métricas y proyectos expuestos)[cite: 12]. Prepende las alertas rule-based antes de las del LLM para garantizar visibilidad inmediata de lo urgente[cite: 12]. Módulo NEXO ↔ TEC Bii que detecta conexiones semánticas entre capturas personales y entidades del área para generar hipótesis (ej. capturas de Sony vinculadas al Proyecto Sony activo)[cite: 12]. Narrativa cognitiva profunda sobre el estado del área con patrones detectados y recomendaciones de acción[cite: 12]. Vercel CRON cada 24 horas[cite: 12] Re-evaluación de importancia según estado, deadline y valor[cite: 12] Regeneración de resúmenes en nodos NEXO vinculados[cite: 12] Actualización de scores de urgencia y momentum[cite: 12] Detección proactiva de entidades que requieren atención antes de que el equipo lo note[cite: 12] Publicación cognitiva al grafo NEXO[cite: 12] Motor semántico con ranking híbrido para búsqueda de nodos[cite: 12] Cliente Groq para generación de resúmenes y análisis[cite: 12] Autenticación Firebase y RBAC[cite: 12] Las entidades TEC Bii son indistinguibles de una captura de Chrome o un PDF de la biblioteca NEXO desde la perspectiva del motor central[cite: 12]. CRM de producción tradicional / Almacén de datos[cite: 12] Formularios, tablas, exportación PDF y simulador ROI estático[cite: 12] Datos aislados sin aprendizaje, sin análisis automático, sin modelo de riesgo y sin memoria entre sesiones[cite: 12] Sistema operativo cognitivo / Modelo de riesgo continuo[cite: 12] Evaluaciones predictivas, modelo de riesgo heredado, grafo cognitivo interconectado y reflexiones diarias autónomas[cite: 12] Transición de almacenar datos a razonar activamente sobre ellos[cite: 12].",
+  "documento_original": "gemini-code-1784915110248.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

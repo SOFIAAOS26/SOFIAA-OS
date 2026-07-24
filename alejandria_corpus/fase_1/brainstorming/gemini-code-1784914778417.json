@@ -1,0 +1,39 @@
+{
+  "id": "brainstorming_propuesta_de_extension_inteligente_rumbo_a_20260709",
+  "tipo": "brainstorming",
+  "fecha": "2026-07-09",
+  "fase_corpus": "fase_1",
+  "titulo": "Propuesta de Extensión Inteligente — Rumbo a Tier 4",
+  "resumen": "Propuesta para transicionar de sistemas aislados a una arquitectura de cognición compartida e integración entre dominios (Cognitive Context Bus / Unified Cognitive Graph), evolucionando extensiones existentes (Opción C) e impulsando a SOFIAA hacia el Tier 4 de IA Proactiva y Predictiva.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "NORA",
+    "TEC_BII"
+  ],
+  "sprint_referencia": "Sprint 1",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Qué propone Propuesta de Extensión Inteligente — Rum?",
+    "¿Cómo se relaciona con los módulos de SOFIAA?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó NORA en esta fase?"
+  ],
+  "tags": [
+    "brainstorming",
+    "sofiaa",
+    "nexo",
+    "nora",
+    "tec-bii",
+    "propuesta",
+    "extension",
+    "inteligente"
+  ],
+  "texto_embedding": "Propuesta de Extensión Inteligente — Rumbo a Tier 4 9 de Julio 2026 Análisis Estratégico, Propuesta de Arquitectura e Integración de Dominios Propuesta para transicionar de sistemas aislados a una arquitectura de cognición compartida e integración entre dominios (Cognitive Context Bus / Unified Cognitive Graph), evolucionando extensiones existentes (Opción C) e impulsando a SOFIAA hacia el Tier 4 de IA Proactiva y Predictiva. Opción C — Hacer una extensión genuinamente inteligente 10/10 (Ganadora Absoluta) Cierra la brecha de aislamiento enriqueciendo verticalmente negocios reales, genera un caso de uso tangible/vendible y establece el blueprint de ingeniería para transformar CRUDs estáticos en extensiones inteligentes. Marketing Sofia (o modelos aplicados como agencias de viajes premium 'Yo Viajo Feliz') N.E.X.O. Captura → Experience Graph (Firestore) → Marketing Sofia Extension (búsqueda de intereses, generación de copys adaptados y UI Generativa con Action Cards) No construir más extensiones ni profundizar en el LLM, sino hacer que las extensiones existentes compartan cognición (resolver el cuello de botella de la integración). Inteligencia = 20% | Contexto = 80% Capacidad > Integración (la capacidad técnica ya existe; falta la unificación cognitiva). Cognitive Context Bus (CCB) Context Federation Layer (CFL) / Unified Cognitive Context (UCC) Capa intermedia entre las extensiones (TEC BI, Marketing Sofia, NEXO) y SOFIAA Core que normaliza eventos, entidades y publica conocimiento de negocio unificado. Unified Experience Graph / Unified Cognitive Graph personas clientes proyectos intereses objetivos Cross-Domain Reasoning (Razonamiento entre dominios) Inferencia de intenciones o escenarios no declarados explícitamente mediante la unión de datos dispersos en distintas extensiones (ej. Capturas de cámaras en NEXO + Proyecto corporativo en TEC BI = Inferencia de viaje fotográfico). Embeddings unificados Grafo compartido entre extensiones Refuerzo cruzado de nodos Context Injection inteligente Atención dinámica Hipótesis del usuario (versión simple) Motor Cognitivo Continuo (parcial) Simulación de escenarios (parcial) Aprendizaje automático real del modelo (No necesario) Conciencia artificial (No/Fuera de alcance) Sprint 1 Unified Graph Migrar TEC BI y Marketing Sofia a nodos del mismo grafo. Agregar entity_type y source. Sprint 2 Attention Engine Reemplazar Top-5 por ranking contextual usando embeddings y objetivos activos. Sprint 3 Hypothesis Layer Crear nodos tipo hypothesis y actualizar confianza automáticamente. Sprint 4 NORA Insights Generación de resúmenes semanales automáticos con detección de patrones y crecimiento de temas. 1 Unified Cognitive Graph ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐ 2 Attention Engine Prioridad Alta 3 Reflection Engine Prioridad Media-Alta 4 N.O.R.A. (Observación Cognitiva) Prioridad Media Modificar 'query_data' o 'getNexoContext' para admitir filtros por contexto de negocio (ej. context: 'marketing'). Activar 'Modo-Aware' selectivo para permitir la inyección de nodos etiquetados para negocio en el system prompt. Desplegar Action Cards con UI Generativa directamente en el Dashboard de las extensiones. IA Proactiva y Predictiva (Horizonte inmediato de N.O.R.A.). El Tier 3 adapta de forma reactiva en tiempo real; el Tier 4 rompe la reactividad operando de manera asíncrona y continua. Análisis constante de telemetría (pipeline_events) mediante vectores de comportamiento (BehaviorVectors) para identificar patrones y emitir Recomendaciones Proactivas (ej. briefings automáticos antes de reuniones). Evolución de un asistente conversacional tradicional a un Sistema Operativo Cognitivo / Colega Cognitivo.",
+  "documento_original": "gemini-code-1784914778417.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

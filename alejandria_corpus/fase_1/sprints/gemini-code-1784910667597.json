@@ -1,0 +1,90 @@
+{
+  "id": "sprint_sofiaa_reporte_avance_junio_2026",
+  "tipo": "sprint",
+  "fecha": "2026-06-30",
+  "fase_corpus": "fase_2",
+  "titulo": "SOFIAA — Reporte de Avance IX-OS (Junio 2026)",
+  "resumen": "Reporte de avance del 78% en el desarrollo del núcleo de SOFIAA (IX-OS). Detalla la finalización de los Sprints 0 al 3 y el Panel Admin (4C), con un 85% de avance en Voz (4A). Define el stack basado en Next.js 15, Tailwind v4, Groq API (openai/gpt-oss-120b para streaming y 20b para memoria) y Web Speech API. Documenta mecanismos de seguridad como navegación externa protegida por servidor ('freepotamo') y panel admin oculto ('espada del augurio').",
+  "modulos_afectados": [
+    "SOFIAA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": "1.0",
+  "decisiones": [
+    {
+      "decision": "Uso de modelo openai/gpt-oss-120b vía Groq API para el chat principal y openai/gpt-oss-20b para extracción de hechos en memoria a largo plazo",
+      "contexto": "Necesidad de respuestas en tiempo real con baja latencia para el streaming y un modelo más ligero e inercial para resumir la memoria al resetear la sesión.",
+      "alternativas_descartadas": [
+        "Modelos de mayor tamaño directos sin streaming — descartados por latencia en la experiencia conversacional"
+      ],
+      "justificacion": "Optimiza costos y tiempo de respuesta manteniendo una personalidad compleja en el núcleo y eficiencia en segundo plano para la extracción de datos.",
+      "consecuencias": "Estabilización de las respuestas e integración de flujos asíncronos para actualizar el localStorage."
+    },
+    {
+      "decision": "Validación de palabra de autorización ('freepotamo') para navegación protegida ejecutada exclusivamente en el servidor",
+      "contexto": "Evitar que el modelo de lenguaje exponga credenciales o palabras clave de seguridad en el prompt o contexto.",
+      "alternativas_descartadas": [
+        "Validación en el system prompt o cliente — descartada por riesgo de filtración/prompt injection"
+      ],
+      "justificacion": "Garantiza la seguridad en rutas sensibles al enmascarar la lógica fuera del alcance del LLM.",
+      "consecuencias": "La detección de autorización se realiza dentro de la API route sin exponer datos al cliente ni al modelo."
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "IX-OS (Intelligent Experience Operating System)",
+      "definicion": "Capa cognitiva de interfaz y acompañamiento que transforma la interacción del usuario con información y servicios mediante un enfoque proactivo y anticipatorio estilo JARVIS.",
+      "relacion_modulos": [
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "Sistema de Doble Memoria (Sesión + Largo Plazo)",
+      "definicion": "Persistencia local mediante localStorage que restaura la conversación activa y extrae hechos relevantes al resetear para guardarlos en una memoria editable vía panel admin.",
+      "relacion_modulos": [
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "Orbe Neural SVG",
+      "definicion": "Componente gráfico con 30 neuronas enlazadas (15 azules, 15 rosa/naranja) que reacciona a los estados idle, thinking y responding del asistente.",
+      "relacion_modulos": [
+        "SOFIAA"
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "Completados Sprints 0, 1, 2, 3 y 4C (Setup, Streaming, UI Liquid Glass, Memoria/Navegación y Panel Admin)",
+      "resultado": "exitoso",
+      "aprendizaje": "El núcleo funcional (~1,100 líneas de código) logró un 78% de avance total con una puntuación UI/UX de 95/100."
+    },
+    {
+      "hito": "Estabilización del módulo de voz input/output (Sprint 4A)",
+      "resultado": "parcial",
+      "aprendizaje": "Se migró exitosamente la integración con modelos Groq alcanzando un 85% de estabilidad; SOFIAA solo responde por voz si el usuario inicia el canal de micrófono."
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Qué es SOFIAA y cuál es el concepto de IX-OS?",
+    "¿Quiénes son los creadores iniciales de SOFIAA?",
+    "¿Cuál es el stack técnico utilizado en la primera versión de SOFIAA?",
+    "¿Cómo funciona la memoria de sesión y a largo plazo en SOFIAA?",
+    "¿Qué clave abre el panel de administración secreto y cómo funciona la navegación protegida?",
+    "¿Qué modelos de Groq se utilizan para la inferencia y extracción de memoria?"
+  ],
+  "tags": [
+    "reporte-avance",
+    "ix-os",
+    "stack-tecnico",
+    "sprints",
+    "memoria-localstorage",
+    "groq-api",
+    "orbe-neural",
+    "panel-admin"
+  ],
+  "texto_embedding": "SOFIAA (Sistema Operativo de Facilitación Inteligente para Interacción y Acompañamiento) es una capa cognitiva de IA (IX-OS) desarrollada en Monterrey por Abrahan Cruz Urrutia (Benjacob) y Jhosua Cruz Urrutia. Funciona como un asistente proactivo y host inteligente de SOFIAA LAB. En junio de 2026 presentó un 78% de avance general con 4 de 5 sprints completados y aproximadamente 1,100 líneas de código. El stack técnico utiliza Next.js 15 App Router, TypeScript, Tailwind CSS v4 con directiva @theme, y Groq API utilizando openai/gpt-oss-120b para la conversación en streaming y openai/gpt-oss-20b para la extracción de memoria a largo plazo. La UI implementa un Orbe Neural SVG con 30 neuronas animadas con estados idle, thinking y responding, y una interfaz estilo Apple liquid glass. El sistema cuenta con memoria de sesión y largo plazo mediante localStorage. El input/output de voz utiliza Web Speech API nativa. Posee seguridad mediante verificación server-side para la palabra de autorización 'freepotamo' para navegación externa y la frase 'espada del augurio' para acceder a un panel admin secreto editable. Pendientes los sprints de páginas adicionales (4B) y deploy en Vercel (4D).",
+  "documento_original": "Reporte_Avance_SOFIAA_Junio_2026.docx",
+  "procesado_por": "gemini",
+  "fecha_procesamiento": "2026-07-24"
+}

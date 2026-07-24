@@ -1,0 +1,39 @@
+{
+  "id": "especificacionmodulo_sofiaa_tec_bi_evaluador_de_rendimiento_20260601",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-06-01",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA TEC BI - Evaluador de Rendimiento Audiovisual[cite: 3]",
+  "resumen": "SOFIAA TEC BI - Evaluador de Rendimiento Audiovisual[cite: 3] Tecnológico de Monterrey - Área de Producción Audiovisual[cite: 3] v1.0. Sprint Plan Definitivo[cite: 3] Junio 2026[cite: 3] Next.js[cite: 3] Firebase[cite: 3] Firestore[cite: 3] Recharts[cite: 3] Groq API[cite: 3] 7 sprints[cite: 3] 21-28 días[cite: 3] Firebase Firestore[cite: 3] Monday.com Prep[cite: 3] 3 usuarios[cite: 3] TEC BI se integra a SOFIAA OS como una extensión del SEE (SOFIAA Extension Ecosystem). La activación es automática por ruta: cualquier URL bajo /tec-bi/ activa visualmente la extensión sin estado adicional.[cite",
+  "modulos_afectados": [
+    "SOFIAA",
+    "HERMES",
+    "TEC_BII"
+  ],
+  "sprint_referencia": "Sprint Plan",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona SOFIAA TEC BI - Evaluador de Rendimiento?",
+    "¿Cuál es la arquitectura de SOFIAA y HERMES?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó HERMES en esta fase?",
+    "¿Cómo se implementó TEC_BII en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "hermes",
+    "tec-bii",
+    "evaluador",
+    "rendimiento",
+    "audiovisual[cite:",
+    "typescript"
+  ],
+  "texto_embedding": "SOFIAA TEC BI - Evaluador de Rendimiento Audiovisual[cite: 3] Tecnológico de Monterrey - Área de Producción Audiovisual[cite: 3] v1.0. Sprint Plan Definitivo[cite: 3] Junio 2026[cite: 3] Next.js[cite: 3] Firebase[cite: 3] Firestore[cite: 3] Recharts[cite: 3] Groq API[cite: 3] 7 sprints[cite: 3] 21-28 días[cite: 3] Firebase Firestore[cite: 3] Monday.com Prep[cite: 3] 3 usuarios[cite: 3] TEC BI se integra a SOFIAA OS como una extensión del SEE (SOFIAA Extension Ecosystem). La activación es automática por ruta: cualquier URL bajo /tec-bi/ activa visualmente la extensión sin estado adicional.[cite: 3] Invocar conversacionalmente[cite: 3] \"abre TEC BI\" / \"quiero ver reportes\"[cite: 3] SOFIAA emite [NAVIGATE:/tec-bi][cite: 3] Invocar por URL[cite: 3] Navegar a /tec-bi directamente[cite: 3] Extension activa automáticamente[cite: 3] Invocar por chip[cite: 3] Badge \"TEC BI\" en el header del app[cite: 3] Navega a /tec-bi[cite: 3] Desactivar conversacionalmente[cite: 3] \"volver a SOFIAA\" / \"salir de TEC BI\"[cite: 3] SOFIAA emite [NAVIGATE:/][cite: 3] Desactivar por botón[cite: 3] Botón x en el badge TEC BI del header[cite: 3] Navega a /[cite: 3] Fondo del app: gradiente lavanda-púrpura azul-cyan (#E8F4FF → #E8F9F8)[cite: 3] Header: \"SOFIAA\" + badge pequeño azul con texto \"TEC BI\" + botón x para salir[cite: 3] Panel border: rgba(79,124,255,0.6) en vez de blanco/lavanda[cite: 3] SOFIAA inyecta automáticamente el context block de TEC BI en su prompt kernel[cite: 3] Botón 'Analizar con SOFIAA' disponible en cada página del BI[cite: 3] Sprint 0[cite: 3] SEE Foundation + Firebase Setup[cite: 3] 2-3 días[cite: 3] Infraestructura de Extensiones (SEE): src/extensions/registry.ts, src/extensions/tec-bi/manifest.ts, src/extensions/tec-bi/schema.ts, src/lib/firebase.ts[cite: 3] API & Context Bridge: endpoint /api/tec-bi/summary/route.ts, inyección en system.prompt.ts, actualización de navegación[cite: 3] Visual TEC BI Mode: detección automática por pathname, fondo azul-cyan, badge TEC BI + botón x[cite: 3] Configuración Firebase: proyecto Firestore Database con reglas de producción y .env.local[cite: 3] Sprint 1[cite: 3] Gestión de Recursos - Empleados, Proveedores, Clientes[cite: 3] 3-4 días[cite: 3] Empleados (/tec-bi/empleados): CRUD completo, campos acumulados de solo lectura, vista de perfil individual[cite: 3] Proveedores (/tec-bi/proveedores): CRUD, historial, semáforo visual automático verde/rojo[cite: 3] Clientes Internos (/tec-bi/clientes): CRUD, historial de briefs y proyectos[cite: 3] Búsqueda, filtros y paginación en todos los CRUDs[cite: 3] Sprint 2[cite: 3] Sistema de Briefs + Proyectos[cite: 3] 4-5 días[cite: 3] Brief (/tec-bi/briefs/nuevo): formulario con entregables, requisitos, fechas y margen calculado, alertas por margen < 5 días[cite: 3] Proyectos (/tec-bi/proyectos): vinculación a brief aprobado, asignación interno/externo, tracking tipo kanban, links a entregables[cite: 3] Sprint 3[cite: 3] Sistema de Evaluaciones[cite: 3] 3-4 días[cite: 3] Formulario Dinámico (/tec-bi/evaluaciones/nueva): adaptativo para evaluación Interna o Externa[cite: 3] Evaluación Interna: cálculo automático de costo por horas normales y extra[cite: 3] Evaluación Externa: costo cotizado vs final, métricas de comunicación y calidad-precio[cite: 3] Métricas Compartidas (1-5): Calidad General, Creatividad, Ejecución Técnica, Alineación[cite: 3] Métricas Operativas: valor estimado, unidades producidas, cumplimiento de tiempos, revisiones[cite: 3] Sprint 4[cite: 3] Análisis de Costos + Simulador ROI[cite: 3] 4-5 días[cite: 3] Panel de Costos (/tec-bi/analisis): gráficas de barras y pastel, tabla auditoría de proveedores con semáforo[cite: 3] Simulador ROI (/tec-bi/roi): ratios clave, slider interactivo, algoritmo de recomendación textual, gráficas de barras y líneas[cite: 3] Sprint 5[cite: 3] Dashboard Resumen + SOFIAA Intelligence Layer[cite: 3] 3-4 días[cite: 3] Dashboard Principal (/tec-bi): KPI cards, bitácora de entregas, alertas activas[cite: 3] SOFIAA Intelligence - Context Bridge: consulta /api/tec-bi/summary, respuestas narrativas con datos reales, frases gatillo[cite: 3] Sprint 6[cite: 3] Monday.com Adapter + Polish + Control de Acceso[cite: 3] 2-3 días[cite: 3] Abstraction Layer: Interface IProjectDataSource, FirebaseDataSource y MondayDataSource skeleton[cite: 3] Control de Acceso (3 Roles): admin (Abrahan), director, vp[cite: 3] Exportación y Polish: exportar reporte PDF, design system unificado liquid glass, diseño responsivo[cite: 3] 0 SEE Foundation + Firebase[cite: 3] Next.js, Firestore, TypeScript[cite: 3] 2-3[cite: 3] 1 Empleados, Proveedores, Clientes[cite: 3] Firestore, CRUD, Tailwind[cite: 3] 3-4[cite: 3] 2 Briefs + Proyectos[cite: 3] Formularios dinámicos, Firestore[cite: 3] 4-5[cite: 3] 3 Sistema de Evaluaciones[cite: 3] Formulario adaptativo, Firestore[cite: 3] 3-4[cite: 3] 4 Análisis Costos + ROI Simulator[cite: 3] Recharts, Algoritmo ROI[cite: 3] 4-5[cite: 3] 5 Dashboard + SOFIAA Intelligence[cite: 3] Groq API, /api/tec-bi Context Bridge[cite: 3] 3-4[cite: 3] 6 Monday Adapter + Roles + Polish[cite: 3] IDataSource, PDF Export, RBAC[cite: 3] 2-3[cite: 3] 21-28 días[cite: 3] Crear cuenta en console.firebase.google.com botón 'Agregar proyecto'[cite: 3] Nombre sugerido: sofiaa-tec-bi. Desactivar Google Analytics (opcional)[cite: 3] En el menú lateral: Firestore Database → Crear base de datos → Modo producción[cite: 3] En Configuración del proyecto → Tu app → Web: Copiar firebaseConfig[cite: 3] Pegar la configuración en .env.local vía nano en terminal[cite: 3] Agregar .env.local a .gitignore[cite: 3] Las reglas de Firestore se configurarán en Sprint 6 con los 3 roles de acceso[cite: 3] empleados[cite: 3] nombre, puesto, departamento, tarifa_hora, salario_mensual, activo[cite: 3] proveedores[cite: 3] nombre, tipo_servicio, email, telefono, activo[cite: 3] clientes_internos[cite: 3] departamento, campus_o_nacional, nombre_responsable[cite: 3] briefs[cite: 3] cliente_id, tipo_proyecto, entregables[], ",
+  "documento_original": "gemini-code-1784912772008.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

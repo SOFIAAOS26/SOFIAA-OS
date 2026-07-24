@@ -1,0 +1,40 @@
+{
+  "id": "especificacionmodulo_nexo_20260701",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-01",
+  "fase_corpus": "fase_1",
+  "titulo": "N.E.X.O.",
+  "resumen": "N.E.X.O. Nexus Extension de Conocimiento y Operaciones Plan Logístico y de Sprints SOFIAA LAB Julio 2026 8 Sprints ~10 semanas 3 Fases (Captura · Proceso · UX) 0 Refactors (100% sobre stack existente) 1 Objetivo (SOFIAA te conoce de verdad) N.E.X.O. es la capa de ingesta de contexto real de SOFIAA. Convierte cualquier cosa que el usuario ve en internet — un restaurante en Instagram, un artículo, un producto, un video — en conocimiento estructurado que SOFIAA entiende, recuerda y usa proactivamente. No es un guardado de links. Es la diferencia entre tener 500 bookmarks que nunca vuelves a abrir",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "NORA",
+    "TEC_BII"
+  ],
+  "sprint_referencia": "Sprint N-0",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona N.E.X.O.?",
+    "¿Cuál es la arquitectura de SOFIAA y NEXO?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó NORA en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "nexo",
+    "nora",
+    "tec-bii",
+    "n.e.x.o.",
+    "typescript",
+    "firebase"
+  ],
+  "texto_embedding": "N.E.X.O. Nexus Extension de Conocimiento y Operaciones Plan Logístico y de Sprints SOFIAA LAB Julio 2026 8 Sprints ~10 semanas 3 Fases (Captura · Proceso · UX) 0 Refactors (100% sobre stack existente) 1 Objetivo (SOFIAA te conoce de verdad) N.E.X.O. es la capa de ingesta de contexto real de SOFIAA. Convierte cualquier cosa que el usuario ve en internet — un restaurante en Instagram, un artículo, un producto, un video — en conocimiento estructurado que SOFIAA entiende, recuerda y usa proactivamente. No es un guardado de links. Es la diferencia entre tener 500 bookmarks que nunca vuelves a abrir y tener un perfil semántico vivo que se afina solo con el tiempo gracias al algoritmo de decaimiento. CAPTURAR COMPRENDER ENRIQUECER DECAER RECORDAR ACTUAR Chrome Extension Manifest V3 — lee el DOM ya renderizado en el navegador del usuario. Sin scraping externo, sin riesgo de bloqueo ni violación de ToS. PWA Share Target — el usuario comparte desde Instagram, Maps o cualquier app móvil directamente a SOFIAA. Screenshot en el chat de SOFIAA → Gemini Vision — el método más robusto para contenido visual. Nueva herramienta en el Agent Runtime: extract_social_metadata(url, text, imageUrl?) Gemini Flash para clasificación de categoría y score de importancia 0-1. Costo ~$0.0003 por captura de texto. Gemini Vision solo cuando hay imagen adjunta. Costo ~$0.002 por imagen. ExperienceGraph existente extendido con: weight, lastReinforced, decayRate, tags, source. Función: peso × e^(−0.05 × días_sin_referencia). Un nodo pierde 65% en 21 días y es eliminado a los ~60 días. Vercel Cron Job diario a las 3 AM — aplica decay y elimina nodos con peso < 0.05. Refuerzo activo: cada vez que SOFIAA referencia un nodo en conversación, peso se resetea. N.E.X.O. NUNCA toca la capa de personalidad de SOFIAA. Solo enriquece la capa de conocimiento contextual por usuario. La privacidad está garantizada por diseño: cada grafo vive en users/{uid}/experience_graph/ — es estructuralmente imposible que el contexto de un usuario llegue a otro. Top-5 nodos de mayor peso inyectados al system prompt al inicio de cada conversación (~200 tokens). Modo-aware: en extensiones profesionales (TEC BI, Marketing Sofia) el contexto personal NO se inyecta. Captura Desktop Chrome Extension Manifest V3 · Content Script · Popup UI Captura Mobile PWA Share Target API · Service Worker Captura Visual Gemini 1.5 Flash Vision — ya integrado en Capability Runtime Procesamiento Agent Runtime ReAct existente · nueva tool: extract_social_metadata Clasificación Gemini Flash (~500 tokens/captura) · Groq Llama como fallback Base de datos Firestore users/{uid}/experience_graph/ — ya existe Decay Engine Vercel Cron Job diario · función exponencial λ=0.05 Context Inject getNexoContext(uid) → top-5 nodos → system prompt de SOFIAA Action Cards React / Tailwind · IntentDrivenUI existente · 5 plantillas nuevas Enriquecimiento Google Places API (restaurantes) · Perplexity Sonar (Phase 2) Arquitectura Base Sprints N-0 a N-2 Sprint N-0 Contratos y Fundación 1 semana Definir todos los tipos, esquemas y contratos de datos antes de escribir una línea de lógica. Tipos TypeScript: NexoCapture, NexoNode, NexoEvent, NexoIngestPayload Schema Firestore: users/{uid}/experience_graph/{nodeId} con campos weight, lastReinforced, decayRate, tags, source Endpoint esqueleto: POST /api/nexo/ingest — valida payload, retorna 200 Registrar nexo-extension en ExtensionRegistry de SOFIAA como SEE Manifest de extensión en sofiaa-os (misma estructura que marketing-sofia) Sprint cero — si los contratos cambian después, todo lo que sigue rompe. Dedicar el tiempo necesario aquí ahorra dos semanas adelante. Sprint N-1 Chrome Extension MVP 1 semana Extensión de Chrome funcional que autentica con Firebase y envía una captura de página real a SOFIAA. Manifest V3: permisos activeTab, storage, identity Content script: extrae URL, título, texto visible, imágenes principales del DOM Popup UI: botón 'Enviar a SOFIAA' + indicador de estado (conectado / sin sesión) Firebase Auth desde la extensión: usa el mismo UID que la sesión activa de SOFIAA POST real a /api/nexo/ingest con payload estructurado Test end-to-end: capturar página → evento visible en Firestore console La extensión lee el DOM ya renderizado en el navegador del usuario — sin scraping externo, sin proxies, sin riesgo de ToS. Sprint N-2 Pipeline de Ingesta 1 semana El endpoint procesa el payload completo: clasifica, puntúa importancia, extrae entidades y persiste en el ExperienceGraph. Handler completo en /api/nexo/ingest: recibe → valida → clasifica → persiste Clasificación vía Gemini Flash: categoría (food / work / travel / shopping / research), score 0-1 Extracción de entidades: lugar, persona, producto, precio, hashtags, URLs Nueva tool en Agent Runtime: extract_social_metadata(url, text, imageUrl?) Gemini Vision para imágenes/screenshots — solo cuando hay imagen adjunta Dual-write: localStorage (respuesta inmediata) + Firestore (async) Log en pipeline_events de N.O.R.A para trazabilidad completa Costo estimado por ingesta de texto: ~$0.0003 USD. Con imagen: ~$0.002 USD. Negligible hasta miles de capturas por día. Inteligencia y Memoria Sprints N-3 a N-5 Sprint N-3 Decay Engine 1 semana El algoritmo de decaimiento convierte el ExperienceGraph de un archivo muerto a una memoria viva que refleja los intereses reales del usuario. Función applyDecay(node): peso × e^(−0.05 × días_sin_referencia) Vercel Cron Job: GET /api/nexo/decay — corre diariamente a las 3:00 AM MX Pruning automático: elimina nodos con peso < 0.05 (desaparecen del grafo) reinforceNode(uid, nodeId): resetea lastReinforced al timestamp actual Trigger de refuerzo en route.ts cuando el LLM referencia un nodo en conversación Test: nodo sin referencia en 21 días pierde ≥ 60% — nodo referenciado resetea a 1.0 λ=0.05: 65% de pérdida a 21 días, eliminación a ~60 días. Ajustable por categoría — work puede decaer más lento que food. Sprint N-4 Context Injection — SOFIAA te Conoce 1 seman",
+  "documento_original": "gemini-code-1784914603383.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

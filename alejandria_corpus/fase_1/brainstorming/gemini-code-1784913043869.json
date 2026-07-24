@@ -1,0 +1,50 @@
+{
+  "id": "especificacion_modulo_sofiaa_tec_bi_20260724",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "Refinamiento Estratégico · Propuesta Base de Implementación (propuesta base para BI1.1)",
+  "resumen": "El documento presenta una propuesta de implementación para el refinamiento estratégico de SOFIAA TEC BI, con el objetivo de automatizar e integrar respuestas estratégicas directamente en las funcionalidades y la UI de SOFIAA TEC BI antes del deploy en Vercel. Se incluyen cinco módulos de optimización: Monetización Dinámica en el Simulador ROI, El Orbe Neural como Termómetro de Carga Cognitiva, Activación Real del Bucle Monday-Firestore, Reportes Automatizados en PDF Certificado para Auditoría y El Botón 'PageGuard & Compliance' en el Panel de Administración.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "PROMETEO",
+    "NORA",
+    "HERMES",
+    "ATENA",
+    "TEC BII"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [
+    "Implementar un componente React dinámico en el Simulador ROI",
+    "Activar el bucle Monday-Firestore",
+    "Incluir un botón de 'PageGuard & Compliance' en el Panel de Administración"
+  ],
+  "conceptos_clave": [
+    "Monetización Dinámica",
+    "Orbe Neural",
+    "Bucle Monday-Firestore",
+    "Reportes Automatizados",
+    "PageGuard & Compliance"
+  ],
+  "hitos": [
+    "Demostración en pantalla dividida de la creación de un proyecto en SOFIAA y su sincronización con Monday"
+  ],
+  "preguntas_que_responde": [
+    "¿Cómo se puede optimizar la monetización en el Simulador ROI?",
+    "¿Cómo se puede reducir la carga cognitiva del usuario en SOFIAA?",
+    "¿Cómo se puede demostrar la eficiencia del sistema en la creación de proyectos y su sincronización con Monday?"
+  ],
+  "tags": [
+    "SOFIAA",
+    "TEC BI",
+    "Monetización Dinámica",
+    "Orbe Neural",
+    "Bucle Monday-Firestore"
+  ],
+  "texto_embedding": "El documento presenta una propuesta de implementación para el refinamiento estratégico de SOFIAA TEC BI, con el objetivo de automatizar e integrar respuestas estratégicas directamente en las funcionalidades y la UI de SOFIAA TEC BI antes del deploy en Vercel. Se incluyen cinco módulos de optimización: Monetización Dinámica en el Simulador ROI, El Orbe Neural como Termómetro de Carga Cognitiva, Activación Real del Bucle Monday-Firestore, Reportes Automatizados en PDF Certificado para Auditoría y El Botón 'PageGuard & Compliance' en el Panel de Administración. El módulo de Monetización Dinámica en el Simulador ROI permite programar un componente React dinámico conectado a los sliders interactivos de costos, lo que permite calcular en tiempo real el ROI y el ahorro de costos. El módulo de El Orbe Neural como Termómetro de Carga Cognitiva permite convertir al Orbe Neural en el guardián de la eficiencia del usuario, expandiendo sus reacciones más allá de estados del sistema. El módulo de Activación Real del Bucle Monday-Firestore permite cambiar el flag MONDAY_ENABLED a true en .env.local para el día de la demo ante el comité ejecutivo, lo que permite demostrar la sincronización en tiempo real de la creación de proyectos en SOFIAA y su asignación en Monday. El módulo de Reportes Automatizados en PDF Certificado para Auditoría permite evolucionar la integración de jsPDF + autotable para que los reportes de análisis de costos y evaluaciones de calidad sean documentos institucionales formales. El módulo de El Botón 'PageGuard & Compliance' en el Panel de Administración permite incluir una pestaña explícita de Compliance e Infraestructura en el panel secreto accesible con la frase 'espada del augurio', lo que permite demostrar la arquitectura del sistema y el estatus de los Guardrails de Seguridad.",
+  "documento_original": "gemini-code-1784913043869.json",
+  "procesado_por": "groq",
+  "fecha_procesamiento": "2026-07-24"
+}

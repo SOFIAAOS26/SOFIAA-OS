@@ -1,0 +1,38 @@
+{
+  "id": "brainstorming_grafos_de_experiencia_temporal_y_runtimes_20260724",
+  "tipo": "brainstorming",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "Grafos de Experiencia Temporal y Runtimes de Capacidad Bajo Demanda: Optimizando la Eficiencia del Contexto y el Consumo de Tokens en Despliegues Empresariales de Modelos de Lenguaje de Gran Escala",
+  "resumen": "1 Infraestructura y Backend Cognitivo Temporal Experience Graphs and On-Demand Capability Runtimes: Optimizing Context Efficiency and Token Consumption in Enterprise Large Language Model Deployments Grafos de Experiencia Temporal y Runtimes de Capacidad Bajo Demanda: Optimizando la Eficiencia del Contexto y el Consumo de Tokens en Despliegues Empresariales de Modelos de Lenguaje de Gran Escala 285 The integration of Large Language Models (LLMs) into enterprise transactional frameworks has historically been bottlenecked by the economic inefficiency of data-saturated prompt contexts and data exf",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "HERMES"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Qué propone Grafos de Experiencia Temporal y Runtime?",
+    "¿Cómo se relaciona con los módulos de SOFIAA?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó HERMES en esta fase?"
+  ],
+  "tags": [
+    "brainstorming",
+    "sofiaa",
+    "nexo",
+    "hermes",
+    "grafos",
+    "experiencia",
+    "temporal",
+    "groq"
+  ],
+  "texto_embedding": "1 Infraestructura y Backend Cognitivo Temporal Experience Graphs and On-Demand Capability Runtimes: Optimizing Context Efficiency and Token Consumption in Enterprise Large Language Model Deployments Grafos de Experiencia Temporal y Runtimes de Capacidad Bajo Demanda: Optimizando la Eficiencia del Contexto y el Consumo de Tokens en Despliegues Empresariales de Modelos de Lenguaje de Gran Escala 285 The integration of Large Language Models (LLMs) into enterprise transactional frameworks has historically been bottlenecked by the economic inefficiency of data-saturated prompt contexts and data exfiltration risks[cite: 18]. Traditional RAG suffers from context window degradation, high token latency, and inadequate alignment with Enterprise RBAC semantics[cite: 18]. This paper introduces SOFIAA, an agnostic AI Experience Middleware designed to decouple the cognitive reasoning core from static data stores[cite: 18]. We present two primary architectural contributions: a Temporal Experience Graph mapping user domain interactions using a daily exponential decay function (lambda = 0.05), and an On-Demand Capability Runtime dynamically fetching ephemeral data fragments via verified serverless gateways after synchronous RBAC permission checks[cite: 18]. Experimental telemetry across live workspaces demonstrates a stable 60% reduction in token consumption compared to raw JSON injection, mitigating hallucination boundaries to near-zero while strictly enforcing data compliance[cite: 18]. High Intrinsic Cognitive Load in traditional hierarchical navigation frameworks (menus, directories) leading to systemic workflow abandonment and fatigue[cite: 18]. Traditional RAG pipelines suffer from context saturation, 'lost in the middle' phenomena, inflated token billing, and severe prompt injection vulnerabilities[cite: 18]. Modular AI Experience Middleware that acts as an intelligent, role-aware orchestration boundary between human intent and enterprise systems[cite: 18]. Temporal Experience Graph (TEG) Interactive interaction-tracking memory model using a daily exponential decay function (lambda = 0.05) to mathematically simulate cognitive focus and model human forgetting curves[cite: 18]. On-Demand Capability Runtime Serverless, agnostically bounded execution layer with real-time RBAC validation prior to ephemeral data context hydration and post-turn purging[cite: 18]. Conventional RAG uses active, static vector retrieval, which causes payload bloat and attention degradation ('lost in the middle' effect) when handling unstructured, real-time enterprise databases[cite: 18]. Existing Experience Graphs (ExpGraph/EXG) focus exclusively on optimizing an agent's programmatic code execution, lacking mechanisms for human operator topical decay and multi-tenant cognitive focus tracking[cite: 18]. Standard agent tools rely on prompt-level 'constitutional' constraints susceptible to prompt injection, or closed monoliths like ChatGPT Enterprise[cite: 18]. SOFIAA introduces an independent, perimetral, zero-trust Security Gateway performing real-time Edge RBAC validation prior to data fetching[cite: 18]. User Interface (UI) -> Conversational Input Security Gateway (Active Guardrails & RBAC) -> Verified Token LLM Orchestrator (Groq / Gemini Multi-API Fallback Routing) On-Demand Capability Runtime (DataProvider Contract Interface) Enterprise Data Silos (Firestore, Monday.com, SAP ERP) G = (V, E, W), where V represents operational entities (workspaces V_w, domains V_d, goals V_g), E represents semantic associations, and W: V -> [0, 1] measures active cognitive affinity[cite: 18]. W_i(t) = W_i(t_0) * (1 - lambda)^(delta_t) + sum_{j=1}^{k} (gamma * I_j) 0.05 Tasa constante de decaimiento exponencial diario (5% diario)[cite: 18]. 0.12 Coeficiente de refuerzo por cada interacción o referencia activa[cite: 18]. If W_i(t) < 0.06 => V = V \\ {v_i} (excisión del nodo del contexto activo)[cite: 18]. interface DataProvider { execute(intent: string, payload: Record<string, any>): Promise<RawPayload>; } [Consulta Usuario] -> [LLM Emite Tool Call] -> [Runtime Intercepta] -> [Validación RBAC en Vivo] -> [Consulta Efímera] -> [Purga de Nodo] Out-of-context Edge Gateway intercepting programmatic tool calls[cite: 18]. ValidateAccess(User_Auth, Node_Target, Role_Required) -> {Allow, Deny} If unauthorized, execution is rejected at server pre-fetch level, returning a sanitized or muted error to the model without querying physical databases[cite: 18]. Translates raw, multi-tenant JSON payloads or relational tables into compressed markdown snapshots prior to prompt integration[cite: 18]. TE = 1 - (Gamma_compressed / Gamma_raw_json) TE >= 0.60 (60% de reducción sostenida en consumo de tokens de entrada)[cite: 18]. Randomized Controlled Trial (RCT), Between-subjects, N = 100 corporate and university operators[cite: 18]. n = 50 (Hierarchical enterprise web application: menus, forms, manual aggregation)[cite: 18]. n = 50 (SOFIAA AI Experience Middleware: conversational canvas, capability runtime, liquid UI)[cite: 18]. IGI Intelligent Guidance Index (Índice de Guía Inteligente) IGI = Phi_guided / Phi_total Proporción de acciones resueltas mediante mediación conversacional guiada vs entradas totales. IGI en [0.81, 1.00] denota mediación SOFIAA completa[cite: 18]. CFI / IFC Cognitive Friction Index (Índice de Fricción Cognitiva) CFI = (T_task + alpha * N_clicks + beta * E_errors + gamma * A_abandons) / G_completed alpha = 1.5, beta = 10.0, gamma = 50.0. Valores menores indican mayor eficiencia cognitiva[cite: 18]. TTI Time To Insight TTI = t_comprehension - t_initiation Segundos hasta la comprensión de un dato crítico[cite: 18]. CVR Cognitive Value Ratio (Relación de Valor Cognitivo) CVR = U_subjective / E_cognitive Utilidad subjetiva percibida (Likert 1-10) dividida entre la carga mental agregada (NASA-TLX)[cite: 18]. mu_IFC,SOFIAA = mu_IFC,Web AND mu_TTI,SOFIAA = mu_TTI,Web mu_IFC,SOFIAA < mu_IFC,Web AND mu_TTI,SOFIAA < mu_TTI,Web Two-tailed Independent ",
+  "documento_original": "gemini-code-1784914256545.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

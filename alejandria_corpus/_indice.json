@@ -1,0 +1,1471 @@
+{
+  "generado": "2026-07-24T18:18:35.869Z",
+  "total": 59,
+  "documentos": [
+    {
+      "id": "brainstorming_sofiaa_fase_2_alpha_hardening_20260724",
+      "archivo": "fase_1/brainstorming/gemini-code-1784912643364.json",
+      "tipo": "brainstorming",
+      "titulo": "SOFIAA — Fase 2 — Alpha Hardening",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO"
+      ],
+      "sprint_referencia": "Sprint de",
+      "tags": [
+        "brainstorming",
+        "sofiaa",
+        "nexo",
+        "alpha",
+        "hardening",
+        "groq",
+        "react",
+        "embedding"
+      ]
+    },
+    {
+      "id": "brainstorming_refinamiento_estrategico_propuesta_base_de_implementacion_20260724",
+      "archivo": "fase_1/brainstorming/gemini-code-1784912923917.json",
+      "tipo": "brainstorming",
+      "titulo": "Refinamiento Estratégico · Propuesta Base de Implementación",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "HERMES",
+        "ATENA",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint 9",
+      "tags": [
+        "brainstorming",
+        "sofiaa",
+        "hermes",
+        "atena",
+        "tec-bii",
+        "refinamiento",
+        "estrategico",
+        "propuesta"
+      ]
+    },
+    {
+      "id": "brainstorming_sofiaa_cuestionamientos_a_resolver_y_respuestas_20260724",
+      "archivo": "fase_1/brainstorming/gemini-code-1784913003167.json",
+      "tipo": "brainstorming",
+      "titulo": "SOFIAA · Cuestionamientos a Resolver y Respuestas Estratégicas",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "HERMES",
+        "ATENA",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint 12",
+      "tags": [
+        "brainstorming",
+        "sofiaa",
+        "nexo",
+        "hermes",
+        "atena",
+        "tec-bii",
+        "cuestionamientos",
+        "resolver"
+      ]
+    },
+    {
+      "id": "especificacion_modulo_sofiaa_tec_bi_20260724",
+      "archivo": "fase_1/brainstorming/gemini-code-1784913043869.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "Refinamiento Estratégico · Propuesta Base de Implementación (propuesta base para BI1.1)",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "PROMETEO",
+        "NORA",
+        "HERMES",
+        "ATENA",
+        "TEC BII"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "SOFIAA",
+        "TEC BI",
+        "Monetización Dinámica",
+        "Orbe Neural",
+        "Bucle Monday-Firestore"
+      ]
+    },
+    {
+      "id": "brainstorming_grafos_de_experiencia_temporal_y_runtimes_20260724",
+      "archivo": "fase_1/brainstorming/gemini-code-1784914256545.json",
+      "tipo": "brainstorming",
+      "titulo": "Grafos de Experiencia Temporal y Runtimes de Capacidad Bajo Demanda: Optimizando la Eficiencia del Contexto y el Consumo de Tokens en Despliegues Empresariales de Modelos de Lenguaje de Gran Escala",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "HERMES"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "brainstorming",
+        "sofiaa",
+        "nexo",
+        "hermes",
+        "grafos",
+        "experiencia",
+        "temporal",
+        "groq"
+      ]
+    },
+    {
+      "id": "brainstorming_grafos_de_experiencia_temporal_y_runtimes_20260724",
+      "archivo": "fase_1/brainstorming/gemini-code-1784914260163.json",
+      "tipo": "brainstorming",
+      "titulo": "Grafos de Experiencia Temporal y Runtimes de Capacidad Bajo Demanda: Optimizando la Eficiencia del Contexto y el Consumo de Tokens en Despliegues Empresariales de Modelos de Lenguaje de Gran Escala",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "HERMES"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "brainstorming",
+        "sofiaa",
+        "nexo",
+        "hermes",
+        "grafos",
+        "experiencia",
+        "temporal",
+        "groq"
+      ]
+    },
+    {
+      "id": "brainstorming_avances_futuros_y_propuesta_de_arquitectura_20260724",
+      "archivo": "fase_1/brainstorming/gemini-code-1784914665282.json",
+      "tipo": "brainstorming",
+      "titulo": "Avances Futuros y Propuesta de Arquitectura Cognitiva (SOFIAA 2.0)",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "NORA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "brainstorming",
+        "sofiaa",
+        "nexo",
+        "nora",
+        "avances",
+        "futuros",
+        "propuesta",
+        "firestore"
+      ]
+    },
+    {
+      "id": "brainstorming_el_proyecto_hope_20260724",
+      "archivo": "fase_1/brainstorming/gemini-code-1784914978003.json",
+      "tipo": "brainstorming",
+      "titulo": "El Proyecto H.O.P.E.",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "NORA"
+      ],
+      "sprint_referencia": "Sprint M-3",
+      "tags": [
+        "brainstorming",
+        "sofiaa",
+        "nexo",
+        "nora",
+        "proyecto",
+        "h.o.p.e.",
+        "firestore",
+        "react"
+      ]
+    },
+    {
+      "id": "brainstorming_project_genesis_y_la_evolucion_futura_20260724",
+      "archivo": "fase_1/brainstorming/gemini-code-1784915343434.json",
+      "tipo": "brainstorming",
+      "titulo": "Project Genesis y la Evolución Futura de SOFIAA OS",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "NORA",
+        "ATENA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "brainstorming",
+        "sofiaa",
+        "nexo",
+        "nora",
+        "atena",
+        "project",
+        "genesis",
+        "evolucion"
+      ]
+    },
+    {
+      "id": "decision_sofiaa_presentacion_piloto_20260724",
+      "archivo": "fase_1/decisiones/gemini-code-1784912960775.json",
+      "tipo": "decision_arquitectura",
+      "titulo": "Reestructuración de la Narrativa del Pitch · El Orden de Poder",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "TEC BII"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "SOFIAA",
+        "TEC BI",
+        "Lean Six Sigma",
+        "Gestión de Proyectos",
+        "Ciencia de Datos"
+      ]
+    },
+    {
+      "id": "decisionarquitectura_rumbo_a_sofia_114_20260724",
+      "archivo": "fase_1/decisiones/gemini-code-1784913639110.json",
+      "tipo": "decision_arquitectura",
+      "titulo": "RUMBO A SOFIA 1.1.4",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "HERMES"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "decision-arquitectura",
+        "sofiaa",
+        "hermes",
+        "rumbo",
+        "sofia",
+        "1.1.4",
+        "typescript",
+        "firebase"
+      ]
+    },
+    {
+      "id": "decisionarquitectura_arquitectura_sofiaa_ixos_intelligent_experience_operating_20260724",
+      "archivo": "fase_1/decisiones/gemini-code-1784913701573.json",
+      "tipo": "decision_arquitectura",
+      "titulo": "Arquitectura SOFIAA — IX-OS Intelligent Experience Operating System",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "HERMES",
+        "ATENA",
+        "TEC_BII"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "decision-arquitectura",
+        "sofiaa",
+        "hermes",
+        "atena",
+        "tec-bii",
+        "arquitectura",
+        "ix-os",
+        "intelligent"
+      ]
+    },
+    {
+      "id": "decisionarquitectura_sofiaa_114_plan_maestro_de_sprints_20260724",
+      "archivo": "fase_1/decisiones/gemini-code-1784913762073.json",
+      "tipo": "decision_arquitectura",
+      "titulo": "SOFIAA 1.1.4 — Plan Maestro de Sprints",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "HERMES",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint A",
+      "tags": [
+        "decision-arquitectura",
+        "sofiaa",
+        "hermes",
+        "tec-bii",
+        "1.1.4",
+        "maestro",
+        "sprints",
+        "typescript"
+      ]
+    },
+    {
+      "id": "decisionarquitectura_auditoria_de_referencias_y_evaluacion_critica_20260724",
+      "archivo": "fase_1/decisiones/gemini-code-1784914310078.json",
+      "tipo": "decision_arquitectura",
+      "titulo": "Auditoría de Referencias y Evaluación Crítica SOFIAA",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "ATENA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "decision-arquitectura",
+        "sofiaa",
+        "nexo",
+        "atena",
+        "auditoria",
+        "referencias",
+        "evaluacion",
+        "embedding"
+      ]
+    },
+    {
+      "id": "decisionarquitectura_prometeo_rumbo_a_hermes_20260724",
+      "archivo": "fase_1/decisiones/gemini-code-1784915574127.json",
+      "tipo": "decision_arquitectura",
+      "titulo": "Prometeo rumbo a HERMES",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "PROMETEO",
+        "NORA",
+        "HERMES",
+        "ATENA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "decision-arquitectura",
+        "sofiaa",
+        "nexo",
+        "prometeo",
+        "nora",
+        "hermes",
+        "atena",
+        "rumbo"
+      ]
+    },
+    {
+      "id": "especificacion_fase2_sofiaa_alpha_hardening_20260724",
+      "archivo": "fase_1/modulos/gemini-code-1784910754730.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "SOFIAA — Plan de Arquitectura Fase 2: Alpha Hardening",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "NORA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "fase-2",
+        "alpha-hardening",
+        "guardrails",
+        "telemetria",
+        "goal-engine",
+        "semantic-cache",
+        "generative-ui",
+        "knowledge-graph",
+        "micro-agentes",
+        "pre-deploy"
+      ]
+    },
+    {
+      "id": "especificacion_modulo_sofiaa_arquitectura_20260724",
+      "archivo": "fase_1/modulos/gemini-code-1784913319520.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "SOFIAA - Resumen Ejecutivo de Plataforma 2026",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "PROMETEO",
+        "NORA",
+        "HERMES",
+        "ATENA",
+        "TEC BII",
+        "ALEJANDRÍA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "Inteligencia artificial",
+        "Arquitectura de software",
+        "Desarrollo de plataforma",
+        "Escalabilidad",
+        "Next.js",
+        "Firebase",
+        "Groq",
+        "Vercel"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_diferencias_de_sofiaa_contra_otras_ia_20260724",
+      "archivo": "fase_1/modulos/gemini-code-1784913385407.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "Diferencias de SOFIAA contra otras IA",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "HERMES",
+        "ATENA",
+        "TEC_BII",
+        "ALEJANDRIA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "hermes",
+        "atena",
+        "tec-bii",
+        "alejandria",
+        "diferencias",
+        "contra"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_sofiaa_una_infraestructura_no_un_chatbot_20260724",
+      "archivo": "fase_1/modulos/gemini-code-1784913481934.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "SOFIAA: Una Infraestructura. No un Chatbot.",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "HERMES",
+        "ATENA",
+        "TEC_BII",
+        "ALEJANDRIA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "hermes",
+        "atena",
+        "tec-bii",
+        "alejandria",
+        "sofiaa:",
+        "infraestructura."
+      ]
+    },
+    {
+      "id": "especificacionmodulo_sofiaa_sofiaa_114_20260724",
+      "archivo": "fase_1/modulos/gemini-code-1784913587041.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "SOFIAA — SOFIAA 1.1.4",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "1.1.4",
+        "firestore",
+        "api"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_de_tec_bi_a_tec_bii_20260724",
+      "archivo": "fase_1/modulos/gemini-code-1784915110248.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "De TEC BI a TEC Bii",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "NORA",
+        "TEC_BII"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "nexo",
+        "nora",
+        "tec-bii",
+        "firebase",
+        "groq",
+        "firestore"
+      ]
+    },
+    {
+      "id": "sprint_propuesta_de_sprint_e_capability_runtime_20260724",
+      "archivo": "fase_1/sprints/gemini-code-1784913929325.json",
+      "tipo": "sprint",
+      "titulo": "Propuesta de Sprint E — Capability Runtime & AI Experience Middleware",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "HERMES"
+      ],
+      "sprint_referencia": "Sprint E",
+      "tags": [
+        "sprint",
+        "sofiaa",
+        "hermes",
+        "propuesta",
+        "capability",
+        "runtime",
+        "firestore",
+        "cron"
+      ]
+    },
+    {
+      "id": "sprint_propuesta_de_sprint_e_capability_runtime_20260724",
+      "archivo": "fase_1/sprints/gemini-code-1784914097510.json",
+      "tipo": "sprint",
+      "titulo": "Propuesta de Sprint E — Capability Runtime & AI Experience Middleware",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "HERMES",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint E",
+      "tags": [
+        "sprint",
+        "sofiaa",
+        "hermes",
+        "tec-bii",
+        "propuesta",
+        "capability",
+        "runtime",
+        "firestore"
+      ]
+    },
+    {
+      "id": "sprint_actualizaciones_sprint_f_sofiaa_ai_experience_20260724",
+      "archivo": "fase_1/sprints/gemini-code-1784914336960.json",
+      "tipo": "sprint",
+      "titulo": "Actualizaciones Sprint F — SOFIAA AI Experience Middleware",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "NORA"
+      ],
+      "sprint_referencia": "Sprint F",
+      "tags": [
+        "sprint",
+        "sofiaa",
+        "nexo",
+        "nora",
+        "actualizaciones",
+        "experience",
+        "middleware",
+        "groq"
+      ]
+    },
+    {
+      "id": "sprint_sprint_m_motor_cognitivo_continuo_20260724",
+      "archivo": "fase_1/sprints/gemini-code-1784914701401.json",
+      "tipo": "sprint",
+      "titulo": "Sprint M — Motor Cognitivo Continuo",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO"
+      ],
+      "sprint_referencia": "Sprint M",
+      "tags": [
+        "sprint",
+        "sofiaa",
+        "nexo",
+        "motor",
+        "cognitivo",
+        "continuo",
+        "firebase",
+        "firestore"
+      ]
+    },
+    {
+      "id": "sprint_sprints_atena_20260724",
+      "archivo": "fase_1/sprints/gemini-code-1784915249917.json",
+      "tipo": "sprint",
+      "titulo": "Sprints A.T.E.N.A.",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "ATENA"
+      ],
+      "sprint_referencia": "Sprint A-0",
+      "tags": [
+        "sprint",
+        "sofiaa",
+        "atena",
+        "sprints",
+        "a.t.e.n.a.",
+        "typescript",
+        "groq",
+        "firestore"
+      ]
+    },
+    {
+      "id": "especificacion_modulo_alejandria_guia_procesamiento_20260724",
+      "archivo": "fase_1/sprints/gemini-code-1784915847606.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "ALEJANDRÍA — Guía de Procesamiento de Documentos",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "ALEJANDRIA",
+        "NEXO",
+        "SOFIAA",
+        "NORA",
+        "PROMETEO",
+        "ATENA",
+        "HERMES",
+        "TEC_BII",
+        "LIVE_SDK"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "alejandria",
+        "guia-procesamiento",
+        "schema-json",
+        "knowledge-graph",
+        "ingestion-firestore",
+        "corpus-sofiaa",
+        "embeddings-densos",
+        "arquitectura-memoria"
+      ]
+    },
+    {
+      "id": "reporte_integral_hermes_action_execution_layer_20260723",
+      "archivo": "fase_1/modulos/gemini-code-1784916233280.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "HERMES: Action Execution Layer — Reporte Técnico Integral Nivel Doctoral",
+      "fecha": "2026-07-23",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "HERMES",
+        "SOFIAA",
+        "NEXO",
+        "PROMETEO",
+        "ATENA",
+        "TEC_BII",
+        "NORA"
+      ],
+      "sprint_referencia": "H-8",
+      "tags": [
+        "hermes",
+        "action-execution-layer",
+        "human-in-the-loop",
+        "executor",
+        "state-machine",
+        "prometeo-bridge",
+        "atena-bridge",
+        "connectors",
+        "firestore-queue"
+      ]
+    },
+    {
+      "id": "especificacion_modulo_prometeo_growth_intelligence_20260721",
+      "archivo": "fase_1/modulos/gemini-code-1784915381521.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "MKT SOFIAA 2.0 / PROMETEO",
+      "fecha": "2026-07-21",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "PROMETEO",
+        "TEC BII",
+        "ATENA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "Growth Intelligence Engine",
+        "Marketing Autónomo",
+        "Creative Graph",
+        "Brand DNA",
+        "Machine Learning"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_prometeo_20260721",
+      "archivo": "fase_1/modulos/gemini-code-1784915425427.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "PROMETEO",
+      "fecha": "2026-07-21",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "PROMETEO",
+        "ATENA",
+        "TEC_BII"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "nexo",
+        "prometeo",
+        "atena",
+        "tec-bii",
+        "groq",
+        "firestore"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_sofiaa_os_reporte_ejecutivo_de_arquitectura_20260721",
+      "archivo": "fase_1/modulos/gemini-code-1784915478229.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "SOFIAA OS — Reporte Ejecutivo de Arquitectura y Capacidades",
+      "fecha": "2026-07-21",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "PROMETEO",
+        "NORA",
+        "HERMES",
+        "ATENA",
+        "TEC_BII",
+        "ALEJANDRIA"
+      ],
+      "sprint_referencia": "Sprint inmediato",
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "nexo",
+        "prometeo",
+        "nora",
+        "hermes",
+        "atena",
+        "tec-bii"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_sofiaa_os_reporte_ejecutivo_de_arquitectura_20260712",
+      "archivo": "fase_1/modulos/gemini-code-1784915299605.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "SOFIAA OS — Reporte Ejecutivo de Arquitectura y Capacidades",
+      "fecha": "2026-07-12",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "NORA",
+        "HERMES",
+        "ATENA",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint inmediato",
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "nexo",
+        "nora",
+        "hermes",
+        "atena",
+        "tec-bii",
+        "ejecutivo"
+      ]
+    },
+    {
+      "id": "sprint_sesion_tec_bii_v2_sprints_p1_20260711",
+      "archivo": "fase_1/sprints/gemini-code-1784915151708.json",
+      "tipo": "sprint",
+      "titulo": "Sesión — TEC Bii v2: Sprints P-1, Q-1, Q-2, Q-3",
+      "fecha": "2026-07-11",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "HERMES",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint P-1",
+      "tags": [
+        "sprint",
+        "sofiaa",
+        "nexo",
+        "hermes",
+        "tec-bii",
+        "sesion",
+        "sprints",
+        "firestore"
+      ]
+    },
+    {
+      "id": "sprint_sesion_tec_bii_v2_sprints_p1_20260711",
+      "archivo": "fase_1/sprints/gemini-code-1784915221255.json",
+      "tipo": "sprint",
+      "titulo": "Sesión — TEC Bii v2: Sprints P-1, Q-1, Q-2, Q-3",
+      "fecha": "2026-07-11",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "HERMES",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint P-1",
+      "tags": [
+        "sprint",
+        "sofiaa",
+        "nexo",
+        "hermes",
+        "tec-bii",
+        "sesion",
+        "sprints",
+        "firestore"
+      ]
+    },
+    {
+      "id": "brainstorming_propuesta_de_extension_inteligente_rumbo_a_20260709",
+      "archivo": "fase_1/brainstorming/gemini-code-1784914778417.json",
+      "tipo": "brainstorming",
+      "titulo": "Propuesta de Extensión Inteligente — Rumbo a Tier 4",
+      "fecha": "2026-07-09",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "NORA",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint 1",
+      "tags": [
+        "brainstorming",
+        "sofiaa",
+        "nexo",
+        "nora",
+        "tec-bii",
+        "propuesta",
+        "extension",
+        "inteligente"
+      ]
+    },
+    {
+      "id": "decisionarquitectura_rumbo_a_tier_4_plan_de_20260709",
+      "archivo": "fase_1/decisiones/gemini-code-1784914899502.json",
+      "tipo": "decision_arquitectura",
+      "titulo": "RUMBO A TIER 4: Plan de Ejecución TEC Bii",
+      "fecha": "2026-07-09",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "NORA",
+        "TEC_BII"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "decision-arquitectura",
+        "sofiaa",
+        "nexo",
+        "nora",
+        "tec-bii",
+        "rumbo",
+        "ejecucion",
+        "firestore"
+      ]
+    },
+    {
+      "id": "decisionarquitectura_reporte_de_avances_20260707",
+      "archivo": "fase_1/decisiones/gemini-code-1784914638833.json",
+      "tipo": "decision_arquitectura",
+      "titulo": "Reporte de Avances",
+      "fecha": "2026-07-07",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "NORA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "decision-arquitectura",
+        "sofiaa",
+        "nexo",
+        "nora",
+        "avances",
+        "firebase",
+        "groq",
+        "firestore"
+      ]
+    },
+    {
+      "id": "decisionarquitectura_nora_nucleo_operativo_de_reaccion_autonoma_20260703",
+      "archivo": "fase_1/decisiones/gemini-code-1784914380821.json",
+      "tipo": "decision_arquitectura",
+      "titulo": "N.O.R.A. — Núcleo Operativo de Reacción Autónoma (Núcleo Empático)",
+      "fecha": "2026-07-03",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NORA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "decision-arquitectura",
+        "sofiaa",
+        "nora",
+        "n.o.r.a.",
+        "nucleo",
+        "operativo",
+        "api"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_nora_20260703",
+      "archivo": "fase_1/modulos/gemini-code-1784914738734.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "N.O.R.A.",
+      "fecha": "2026-07-03",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NORA",
+        "ATENA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "nora",
+        "atena",
+        "n.o.r.a.",
+        "groq",
+        "api"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_sofiaa_ai_experience_middleware_version_20_20260701",
+      "archivo": "fase_1/modulos/gemini-code-1784914464048.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "SOFIAA — AI Experience Middleware (Versión 2.0)",
+      "fecha": "2026-07-01",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "NORA",
+        "HERMES",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint G",
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "nexo",
+        "nora",
+        "hermes",
+        "tec-bii",
+        "experience",
+        "middleware"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_sofiaa_ai_experience_middleware_version_20_20260701",
+      "archivo": "fase_1/modulos/gemini-code-1784914513163.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "SOFIAA — AI Experience Middleware (Versión 2.0)",
+      "fecha": "2026-07-01",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "NORA",
+        "HERMES",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint G",
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "nexo",
+        "nora",
+        "hermes",
+        "tec-bii",
+        "experience",
+        "middleware"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_nexo_20260701",
+      "archivo": "fase_1/modulos/gemini-code-1784914603383.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "N.E.X.O.",
+      "fecha": "2026-07-01",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "NORA",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint N-0",
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "nexo",
+        "nora",
+        "tec-bii",
+        "n.e.x.o.",
+        "typescript",
+        "firebase"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_reporte_ejecutivo_memory_stack_20260701",
+      "archivo": "fase_1/modulos/gemini-code-1784914815239.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "Reporte Ejecutivo - Memory Stack",
+      "fecha": "2026-07-01",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint M-2",
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "nexo",
+        "tec-bii",
+        "ejecutivo",
+        "memory",
+        "stack",
+        "firestore"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_sofiaa_os_reporte_ejecutivo_de_arquitectura_20260701",
+      "archivo": "fase_1/modulos/gemini-code-1784915071204.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "SOFIAA OS — Reporte Ejecutivo de Arquitectura y Capacidades",
+      "fecha": "2026-07-01",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "NORA",
+        "HERMES",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint M-3",
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "nexo",
+        "nora",
+        "hermes",
+        "tec-bii",
+        "ejecutivo",
+        "arquitectura"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_prometeo_20260701",
+      "archivo": "fase_1/modulos/gemini-code-1784915541654.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "PROMETEO",
+      "fecha": "2026-07-01",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "PROMETEO",
+        "ATENA",
+        "TEC_BII",
+        "ALEJANDRIA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "nexo",
+        "prometeo",
+        "atena",
+        "tec-bii",
+        "alejandria",
+        "typescript"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_hermes_20260701",
+      "archivo": "fase_1/modulos/gemini-code-1784915615678.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "HERMES",
+      "fecha": "2026-07-01",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "PROMETEO",
+        "HERMES",
+        "ATENA",
+        "TEC_BII"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "nexo",
+        "prometeo",
+        "hermes",
+        "atena",
+        "tec-bii",
+        "firestore"
+      ]
+    },
+    {
+      "id": "sprint_sofiaa_reporte_avance_junio_2026",
+      "archivo": "fase_1/sprints/gemini-code-1784910667597.json",
+      "tipo": "sprint",
+      "titulo": "SOFIAA — Reporte de Avance IX-OS (Junio 2026)",
+      "fecha": "2026-06-30",
+      "fase_corpus": "fase_2",
+      "modulos_afectados": [
+        "SOFIAA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "reporte-avance",
+        "ix-os",
+        "stack-tecnico",
+        "sprints",
+        "memoria-localstorage",
+        "groq-api",
+        "orbe-neural",
+        "panel-admin"
+      ]
+    },
+    {
+      "id": "sprint_sofiaa_resumen_actualizaciones_20260728",
+      "archivo": "fase_1/modulos/gemini-code-1784913801329.json",
+      "tipo": "sprint",
+      "titulo": "Resumen de actualizaciones SOFIAA — Sprint D (SOFIAA 1.2)",
+      "fecha": "2026-06-28",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "PROMETEO",
+        "NORA",
+        "HERMES",
+        "ATENA",
+        "TEC BII",
+        "ALEJANDRÍA"
+      ],
+      "sprint_referencia": "Sprint D",
+      "tags": [
+        "SOFIAA",
+        "Orquestación de LLM",
+        "Máquina de estado de objetivos",
+        "Interfaz de usuario basada en intenciones",
+        "Motor de políticas cognitivas"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_resumen_de_actualizaciones_sofiaa_sprint_d_20260628",
+      "archivo": "fase_1/modulos/gemini-code-1784913813131.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "Resumen de actualizaciones SOFIAA — Sprint D (SOFIAA 1.2)",
+      "fecha": "2026-06-28",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "ATENA",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint D",
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "nexo",
+        "atena",
+        "tec-bii",
+        "resumen",
+        "actualizaciones",
+        "(sofiaa"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_resumen_de_actualizaciones_sofiaa_dia_28_20260628",
+      "archivo": "fase_1/modulos/gemini-code-1784913967350.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "Resumen de Actualizaciones SOFIAA — Día 28 Actualización 3 (Capability Runtime Enterprise)",
+      "fecha": "2026-06-28",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "ATENA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "atena",
+        "resumen",
+        "actualizaciones",
+        "actualizacion",
+        "firebase",
+        "groq"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_sofiaa_al_26_de_junio_2026_20260626",
+      "archivo": "fase_1/modulos/gemini-code-1784913545055.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "SOFIAA al 26 de Junio 2026",
+      "fecha": "2026-06-26",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "HERMES",
+        "TEC_BII"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "hermes",
+        "tec-bii",
+        "junio",
+        "firebase",
+        "groq",
+        "firestore"
+      ]
+    },
+    {
+      "id": "especificacion_modulo_sofiaa_arquitectura_tecnologica_20260724",
+      "archivo": "fase_1/brainstorming/SOFIAA-Executive-Brief-2026.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "SOFIAA - Sistema de Optimización e Inteligencia Artificial para la Gestión Integral de Producción Audiovisual",
+      "fecha": "2026-06-01",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "PROMETEO",
+        "NORA",
+        "HERMES",
+        "ATENA",
+        "TEC BII"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "Inteligencia artificial",
+        "Gestión integral de producción audiovisual",
+        "Arquitectura tecnológica",
+        "Business Intelligence",
+        "Next.js",
+        "Firebase",
+        "Groq"
+      ]
+    },
+    {
+      "id": "brainstorming_sofiaa_sistema_operativo_de_facilitacion_inteligente_20260601",
+      "archivo": "fase_1/brainstorming/gemini-code-1784912701834.json",
+      "tipo": "brainstorming",
+      "titulo": "SOFIAA - Sistema Operativo de Facilitacion Inteligente para Interaccion y Acompanamiento",
+      "fecha": "2026-06-01",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA"
+      ],
+      "sprint_referencia": "Sprint 2.8",
+      "tags": [
+        "brainstorming",
+        "sofiaa",
+        "operativo",
+        "facilitacion",
+        "inteligente",
+        "typescript",
+        "groq",
+        "react"
+      ]
+    },
+    {
+      "id": "decisionarquitectura_sistema_de_optimizacion_e_inteligencia_artificial_20260601",
+      "archivo": "fase_1/decisiones/gemini-code-1784913214086.json",
+      "tipo": "decision_arquitectura",
+      "titulo": "Sistema de Optimización e Inteligencia Artificial para la Gestión Integral de Producción Audiovisual",
+      "fecha": "2026-06-01",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "HERMES",
+        "ATENA",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint 8",
+      "tags": [
+        "decision-arquitectura",
+        "sofiaa",
+        "hermes",
+        "atena",
+        "tec-bii",
+        "optimizacion",
+        "inteligencia",
+        "artificial"
+      ]
+    },
+    {
+      "id": "documento_fundacional_sofiaa_arquitectura_20260724",
+      "archivo": "fase_1/decisiones/gemini-code-1784914167296.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "SOFIAA: Sistema Operativo de Experiencias Inteligentes (SOEI / IX-OS)",
+      "fecha": "2026-06-01",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "PROMETEO",
+        "NORA",
+        "HERMES",
+        "ATENA",
+        "TEC BII",
+        "ALEJANDRÍA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "Sistema Operativo de Experiencias Inteligentes",
+        "Inteligencia Artificial",
+        "Acompañamiento Inteligente",
+        "Arquitectura de Software",
+        "Firebase",
+        "Next.js"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_sofiaa_tec_bi_evaluador_de_rendimiento_20260601",
+      "archivo": "fase_1/modulos/gemini-code-1784912772008.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "SOFIAA TEC BI - Evaluador de Rendimiento Audiovisual[cite: 3]",
+      "fecha": "2026-06-01",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "HERMES",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint Plan",
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "hermes",
+        "tec-bii",
+        "evaluador",
+        "rendimiento",
+        "audiovisual[cite:",
+        "typescript"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_marco_doctoral_de_investigacion_2026_20260601",
+      "archivo": "fase_1/modulos/gemini-code-1784914053828.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "MARCO DOCTORAL DE INVESTIGACION · 2026",
+      "fecha": "2026-06-01",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "HERMES",
+        "TEC_BII"
+      ],
+      "sprint_referencia": "Sprint D",
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "nexo",
+        "hermes",
+        "tec-bii",
+        "marco",
+        "doctoral",
+        "investigacion"
+      ]
+    },
+    {
+      "id": "especificacion_modulo_sofiaa_arquitectura_20260724",
+      "archivo": "fase_1/modulos/gemini-code-1784915714178.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "SOFIAA: Intelligent Experience Operating System (IX-OS)",
+      "fecha": "2026-06-01",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "NEXO",
+        "PROMETEO",
+        "NORA",
+        "HERMES",
+        "ATENA",
+        "TEC BII",
+        "ALEJANDRÍA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "Inteligencia Artificial",
+        "Experiencia del Usuario",
+        "Interfaz de Usuario",
+        "Conocimiento Institucional",
+        "Organizaciones Complejas",
+        "Next.js",
+        "Backend Cognitivo"
+      ]
+    },
+    {
+      "id": "especificacionmodulo_sofiaa_sistema_operativo_de_experiencias_inteligentes_20260601",
+      "archivo": "fase_1/modulos/gemini-code-1784915773113.json",
+      "tipo": "especificacion_modulo",
+      "titulo": "SOFIAA: Sistema Operativo de Experiencias Inteligentes (SOEI)",
+      "fecha": "2026-06-01",
+      "fase_corpus": "fase_1",
+      "modulos_afectados": [
+        "SOFIAA",
+        "ATENA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "especificacion-modulo",
+        "sofiaa",
+        "atena",
+        "sofiaa:",
+        "operativo",
+        "experiencias",
+        "typescript",
+        "react"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "decisionarquitectura_nora_nucleo_operativo_de_reaccion_autonoma_20260703",
+  "tipo": "decision_arquitectura",
+  "fecha": "2026-07-03",
+  "fase_corpus": "fase_1",
+  "titulo": "N.O.R.A. — Núcleo Operativo de Reacción Autónoma (Núcleo Empático)",
+  "resumen": "Complacencia corporativa insoportable (hiper-educados, sumisos, siempre positivos) que ignora el ritmo y estado real del usuario[cite: 21]. Espejo cognitivo y conductual capaz de modular su asertividad y energía sin caer en sumisión artificial ni fricción innecesaria[cite: 21]. 1. Métricas de Latencia (responseTimeMs): tiempo transcurrido entre la respuesta de SOFIAA y la recepción del nuevo mensa",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NORA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Por qué se tomó la decisión sobre N.O.R.A. — Núcleo Operativo de Reacción ?",
+    "¿Qué alternativas se descartaron?",
+    "¿Cómo afectó esta decisión a la arquitectura del sistema?",
+    "¿Cómo se implementó NORA en esta fase?"
+  ],
+  "tags": [
+    "decision-arquitectura",
+    "sofiaa",
+    "nora",
+    "n.o.r.a.",
+    "nucleo",
+    "operativo",
+    "api"
+  ],
+  "texto_embedding": "N.O.R.A. — Núcleo Operativo de Reacción Autónoma (Núcleo Empático) nucleo_empatico.ts 3 de julio de 2026 Behavioral Adaptation & Emotional Modeling (HCI Advanced Layer) Complacencia corporativa insoportable (hiper-educados, sumisos, siempre positivos) que ignora el ritmo y estado real del usuario[cite: 21]. Espejo cognitivo y conductual capaz de modular su asertividad y energía sin caer en sumisión artificial ni fricción innecesaria[cite: 21]. 1. Métricas de Latencia (responseTimeMs): tiempo transcurrido entre la respuesta de SOFIAA y la recepción del nuevo mensaje del usuario[cite: 21]. 2. Análisis de Léxico y Polaridad: exclamaciones, lenguaje pasivo-agresivo, marcas de prisa o tecnicismos[cite: 21]. 3. Modelo VAD (Valence-Arousal-Dominance): estándar científico para mapear matemáticamente la emoción de SOFIAA[cite: 21]. Ruta de borde (Edge route) a coste de cómputo ~0, sin llamadas a APIs externas de análisis de sentimiento[cite: 21]. PRAGMATIC_ANXIOUS EXHAUSTIVE_DETAIL HOSTILE_DEFENSIVE ENTHUSIASTIC_CREATIVE PASSIVE_NEUTRAL Range [-1.0 a 1.0] (Triste/Hostil vs. Feliz/Amigable)[cite: 21] Range [-1.0 a 1.0] (Pasivo/Calmado vs. Activo/Alerta)[cite: 21] Range [-1.0 a 1.0] (Sumiso/Complaciente vs. Asertivo/Directo)[cite: 21] -0.4 0.2 0.8 Queda estrictamente prohibido disculparse de manera sumisa. Adopta una personalidad clínica, altamente técnica, fría y asertiva. Responde únicamente con hechos fríos y datos empíricos[cite: 21]. 0.1 0.9 0.6 Elimina cualquier saludo o frase de cortesía. Responde directamente en el primer renglón con viñetas cortas y oraciones de máximo 10 palabras[cite: 21]. 0.4 -0.5 -0.2 Desarrolla respuestas con estructura académica detallada, lenguaje técnico formal y justificación del 'por qué'[cite: 21]. 0.9 0.8 0 Empareja el nivel de entusiasmo, usa tono dinámico, proactivo, e-emojis coherentes e ideas creativas[cite: 21]. 0.3 0 0.2 Mantén el estándar dorado: profesional, clara, orientada a objetivos y cálida sin rodeos[cite: 21]. Modelo VAD aplicado con base científica real a UX adaptativa[cite: 21]. Creación de una 'Behavioral Interface Layer' que altera el comportamiento del sistema, no solo las palabras[cite: 21]. Ejecución en el Edge sin latencia ni llamadas a APIs de sentimiento pagadas[cite: 21]. Sobre-determinismo psicológico Asume que el usuario tiene un estado rígido cuando las respuestas pueden variar erráticamente dentro de la misma conversación[cite: 21]. Salida HOSTILE_DEFENSIVE demasiado agresiva La postura 'fría y clínica' en producción puede interpretarse como un castigo al usuario y degradar la confianza[cite: 21]. Se sugiere reemplazar por 'asertivo neutro + límites claros'[cite: 21]. Latencia como señal psicológica débil La latencia (<2500ms) depende de problemas de red, lag del dispositivo o multitarea del usuario, no solo de ansiedad[cite: 21]. Riesgo de Prompt Injection interno / Drift Modificar el system prompt dinámicamente con strings libres sin un esquema controlado puede causar deriva de comportamiento o inconsistencia en el LLM[cite: 21]. Behavioral Adaptation Layer (cambio de 'psicología discreta' a 'modelo vectorial de comportamiento')[cite: 21] 1. Emotion State (Interno, no visible): VAD suave[cite: 21]. 2. UX Strategy (Reglas de comportamiento visible): UXMode[cite: 21]. 3. Prompt Policy (Controlado y limitado): PromptModifiers delimitados[cite: 21]. Range [0-1][cite: 21] Range [0-1][cite: 21] Range [0-1][cite: 21] Range [0-1][cite: 21] direct structured exploratory neutral supportive neutral direct[cite: 21] low[cite: 21] moderate[cite: 21] calm boundary[cite: 21]",
+  "documento_original": "gemini-code-1784914380821.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

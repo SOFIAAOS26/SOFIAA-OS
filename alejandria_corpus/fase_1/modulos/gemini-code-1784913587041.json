@@ -1,0 +1,32 @@
+{
+  "id": "especificacionmodulo_sofiaa_sofiaa_114_20260724",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA — SOFIAA 1.1.4",
+  "resumen": "SOFIAA 1.1.4 9.2/10 Para una semana de desarrollo Existe una dirección arquitectónica coherente, lo cual es mucho más importante que tener cien features. No es un wrapper de un LLM Es más cercano a un runtime de orquestación que a un chatbot tradicional (OpenAI chat completions). Separación del Core y las Extensions Mueve responsabilidades a módulos en lugar de saturar un prompt gigantesco, convirtiendo el conocimiento en componentes. Prompt Kernel modular Evolución técnica estructurada en Kernel, Policies, Memory, Tools, Extensions y Context Providers. Aguanta 10x La arquitectura parece prepa",
+  "modulos_afectados": [
+    "SOFIAA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona SOFIAA — SOFIAA 1.1.4?",
+    "¿Cuál es la arquitectura de SOFIAA?",
+    "¿Qué capacidades tiene este módulo?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "1.1.4",
+    "firestore",
+    "api"
+  ],
+  "texto_embedding": "SOFIAA 1.1.4 9.2/10 Para una semana de desarrollo Existe una dirección arquitectónica coherente, lo cual es mucho más importante que tener cien features. No es un wrapper de un LLM Es más cercano a un runtime de orquestación que a un chatbot tradicional (OpenAI chat completions). Separación del Core y las Extensions Mueve responsabilidades a módulos en lugar de saturar un prompt gigantesco, convirtiendo el conocimiento en componentes. Prompt Kernel modular Evolución técnica estructurada en Kernel, Policies, Memory, Tools, Extensions y Context Providers. Aguanta 10x La arquitectura parece preparada para evolucionar sin refactorizaciones profundas, pero requiere validación bajo carga. Conversaciones simultáneas (ej. 500) Comportamiento de Firestore bajo carga Costo por sesión Escalabilidad de memoria y consultas Manejo de conocimiento extenso en extensiones (ej. 500 MB) Está listo para plataforma Está encaminado, no listo. Faltan componentes arquitectónicos fundamentales para producción y gobernanza. Observabilidad Trazas Correlación Logs estructurados IDs de conversación Métricas Tiempos por etapa Versionado de extensiones Gestión de versiones (v1.0 -> v1.1 -> v2.0) Mecanismos de rollback Pruebas de compatibilidad Contrato entre Core y Extensions Contrato formal estructurado (interface SofiaaExtension) Campos requeridos: manifest, goals, permissions, ui, knowledge, tools, policies, hooks Lifecycle Ciclo de vida definido: Install -> Initialize -> Load Knowledge -> Register Tools -> Activate -> Suspend -> Unload Capability Registry Registro explícito de capacidades necesarias/omitidas por extensión (Voice, Conversation, Vision, RAG, Calendar, Email, CRM, BI) Event Bus Desacoplamiento mediante eventos (GoalDetected, KnowledgeRequested, MemoryUpdated, ActionExecuted, ConversationFinished) SOFIAA Platform Specification v1.0 Runtime Architecture Extension API Plugin Lifecycle Event Model Capability Registry Security Model Memory Model Tool Invocation Protocol Extension Manifest Specification Versioning Policy ¿Esto fortalece el Core de SOFIAA o pertenece a una Extension? Haz que el Core sea aburrido y que las extensiones sean interesantes. Visión del producto 9.8/10 Muy diferenciada y con identidad propia. Arquitectura del Core 9.2/10 Bien encaminada, con responsabilidades claras. Diseño de extensiones 9.6/10 Es el componente con mayor potencial estratégico. Ingeniería de software 8.8/10 Muy buena para la etapa; aún faltan contratos, pruebas y observabilidad. Escalabilidad potencial 8.5/10 Prometedora, pero todavía no validada con carga real. Preparación para producción 7.8/10 Faltan endurecimiento operacional, monitoreo, CI/CD robusto y pruebas automatizadas. Potencial de convertirse en plataforma 9.7/10 Es la dirección correcta si mantienes la disciplina arquitectónica.",
+  "documento_original": "gemini-code-1784913587041.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

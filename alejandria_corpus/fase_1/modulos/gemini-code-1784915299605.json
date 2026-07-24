@@ -1,0 +1,42 @@
+{
+  "id": "especificacionmodulo_sofiaa_os_reporte_ejecutivo_de_arquitectura_20260712",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-12",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA OS — Reporte Ejecutivo de Arquitectura y Capacidades",
+  "resumen": "SOFIAA OS — Reporte Ejecutivo de Arquitectura y Capacidades 3.0 12 de Julio 2026 Memory Stack + TEC Bii + ATENA Confidencial — Documento interno Estado completo de SOFIAA OS al 12 de julio de 2026. Incorpora los sprints del Memory Stack (M-2 a M-7), la extensión cognitiva TEC Bii (T2-0 a T2-6), el ciclo de hardening Q-1 a Q-3, y el debut de ATENA — el motor de inteligencia científica determinista para Lean Six Sigma y PMBOK[cite: 16]. Tier 3 → Tier 4[cite: 16] 10+[cite: 16] 5 ATENA (Determinista)[cite: 16] M-2 — Attention Engine Refuerza el peso de nodos N.E.X.O. +0.03 por uso. Post-stream vía",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "NORA",
+    "HERMES",
+    "ATENA",
+    "TEC_BII"
+  ],
+  "sprint_referencia": "Sprint inmediato",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona SOFIAA OS — Reporte Ejecutivo de Arquite?",
+    "¿Cuál es la arquitectura de SOFIAA y NEXO?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó NORA en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "nexo",
+    "nora",
+    "hermes",
+    "atena",
+    "tec-bii",
+    "ejecutivo"
+  ],
+  "texto_embedding": "SOFIAA OS — Reporte Ejecutivo de Arquitectura y Capacidades 3.0 12 de Julio 2026 Memory Stack + TEC Bii + ATENA Confidencial — Documento interno Estado completo de SOFIAA OS al 12 de julio de 2026. Incorpora los sprints del Memory Stack (M-2 a M-7), la extensión cognitiva TEC Bii (T2-0 a T2-6), el ciclo de hardening Q-1 a Q-3, y el debut de ATENA — el motor de inteligencia científica determinista para Lean Six Sigma y PMBOK[cite: 16]. Tier 3 → Tier 4[cite: 16] 10+[cite: 16] 5 ATENA (Determinista)[cite: 16] M-2 — Attention Engine Refuerza el peso de nodos N.E.X.O. +0.03 por uso. Post-stream vía waitUntil(). Badge reinforceCount en /nexo/mi-grafo[cite: 16]. M-3 — Cognitive Variables Detecta patrones en mensajes y acumula perfil cognitivo (preferredDepth, formalityScore, topicAffinity). $0 costo. Inyectado en cada systemPrompt[cite: 16]. M-4 — Semantic Retrieval hybridScore = cosine × 0.65 + weight × 0.35. gemini-embedding-001 con 3,072 dimensiones. Reemplaza ranking plano[cite: 16]. M-5 — Proactive Surface Cuando hybridScore >= 0.65, SOFIAA menciona el nodo explícitamente. Máximo 2 nodos por respuesta para evitar saturación[cite: 16]. M-6 — Cognitive Dashboard /nexo/perfil con onSnapshot en tiempo real. El usuario ve cómo SOFIAA lo entiende y adapta[cite: 16]. M-7 — Refinement CRON Batch diario 11h UTC: republish entidades estancadas → N.O.R.A. → cross-domain. Log persistido en tec_bii_refine_logs/{runId}[cite: 16]. Segunda generación del módulo institucional del Tecnológico de Monterrey. Primera extensión que alimenta activamente el grafo N.E.X.O., produce hipótesis cruzadas y ejecuta reflexiones institucionales automáticas con N.O.R.A[cite: 16]. T2-0 — Fundación Cognitiva CognitiveFootprint en 6 entidades: nexoNodeId, aiSummary, linkedNexoNodes, hypotheses. Ruta /tec-bii con layout y PageGuard[cite: 16]. T2-1 — Cognitive Publisher Entidad → Gemini summary → embedding → NexoNode. Fire-and-forget, no bloquea al usuario[cite: 16]. T2-2 — Insights Cognitivos Gemini Flash analiza el estado operacional completo. POST /api/tec-bii/insights. Panel /tec-bii/inteligencia con KPIs en tiempo real[cite: 16]. T2-3 — Brief Intelligence Gemini genera BriefV2 estructurado desde texto libre. Brief Score v2 automático. Modo IA + modo manual[cite: 16]. T2-4 — Cross-Domain Reasoning cosine >= 0.60 entre N.E.X.O. y TEC Bii → hipótesis con Gemini Flash. Máx 5 hipótesis FIFO por entidad[cite: 16]. T2-5 — Team Cognition EmpleadoV2 con SkillProfile, cargaActual, momentum. /tec-bii/equipo con CargaBar visual y filtros[cite: 16]. T2-6 — N.O.R.A. Reflection Gemini Flash genera narrativa + patrones + recomendación + estadoGeneral. Cooldown 6h. Historial últimas 5 reflexiones[cite: 16]. Ciclo de hardening ejecutado después de T2-6. Migró TEC Bii a arquitectura v2 completa: extensión tools nativos para el chat de SOFIAA, contexto global de sesión y corrección de paths Firestore con publicación a N.E.X.O[cite: 16]. Q-1-1 — PageGuard Componente reutilizable de guardia de sesión. return null (no wrapper). Redirige a / sin sesión activa. Montado en layouts TEC Bii y ATENA[cite: 16]. Q-1-2/3 — TecBiiContext Context global con uid, role, loading. Montado en layout /tec-bii. Elimina getDocs() duplicados en 9 páginas. Patrón useAuth()[cite: 16]. Q-2 — Extension Tools v2 5 herramientas registradas: consultar_empleados, consultar_proyectos, consultar_evaluaciones, consultar_briefs, analizar_rendimiento[cite: 16]. Q-2 — SofiaaExtension v2 Manifest v2 + promptModule con política CRÍTICO anti-alucinación. Registrado en core/extension.registry.ts. Fix del bug LLM → request_capability[cite: 16]. Q-3 — Monday Webhook v2 Paths corregidos de colecciones planas a users/{uid}/tec_bii_* (v2). Publicación a N.E.X.O. en cada sync entrante de Monday.com[cite: 16]. Motor de inteligencia científica determinista para Lean Six Sigma y PMBOK. Principio fundamental: el motor calcula, SOFIAA interpreta. Cero alucinaciones numéricas[cite: 16]. DMAIC DMADV SPC AMEF/FMEA ANOVA DOE Monte Carlo PMBOK Centro de Mando Proyectos DMAIC ANOVA SPC AMEF Financiero consultar_proyecto ejecutar_analisis consultar_spc ver_amef consultar_financiero atena_proyectos atena_analisis atena_spc atena_amef atena_financiero Proyecto TEC Monterrey — Ensamble Módulos Electrónicos — DMAIC fase ANALYZE NUNCA usar request_capability. Solo extensión tools v2. A-0 — Fundación 12 tipos TypeScript (ProjectCharter, AnovaResult, SPCData, FMEAItem, FinancialProjection...), atenaPath() helper, seed data completo TEC Monterrey, script npm run atena:seed[cite: 16]. A-1 — Extensión + UI SofiaaExtension ATENA con manifest v1.0.0, routePrefix /atena, 5 políticas anti-alucinación. Registrado en extension.registry.ts. Layout con PageGuard. Centro de Mando dinámico desde Firestore[cite: 16]. A-1 — Proyectos DMAIC /atena/proyectos: lista de proyectos con panel de detalle. Roadmap DMAIC animado (verde=done, azul pulsante=actual). Objetivo SMART, CTQ con progress bars LSL/USL, Stakeholder matrix[cite: 16]. A-2 — Análisis ANOVA /atena/analisis: banner verde/rojo de significancia, 5 KPIs (F=8.43, p=0.0012, confianza 95%, GL), GroupBar por línea con medias, tabla descriptiva completa[cite: 16]. A-2 — Control SPC /atena/spc: Carta de Control SVG pura con 40 puntos, líneas +/-1s/2s/3s, 3 puntos en rojo con Western Electric Rule 1, KPIs Cp=0.52/Cpk=0.34/sigma=2.1, tabla de violaciones[cite: 16]. A-3 — Riesgos AMEF /atena/amef: tabla ordenada NPR desc, filas rojas para NPR>200, barras S/O/D visuales (escala 1-10), filtro 'Solo críticos', badge semántico por rango NPR[cite: 16]. A-3 — Financiero /atena/financiero: KPIs VAN=$3.24M/TIR=34%/Payback=5.3m, curva SVG flujo de caja con punto de equilibrio, Monte Carlo P10/P50/P90 con barras animadas[cite: 16]. A-4 — Extension Tools 5 tools: consultar_proyecto (charter completo), ejecutar_analisis (ANOVA+p-value), consultar_spc (Cp/Cpk/violaciones), ver_amef (NPR ordenado), consultar_financiero (VAN/TIR/MonteCarlo)[cite: 16]. A-5 — Deploy tsc clean. Commit 6384bc",
+  "documento_original": "gemini-code-1784915299605.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

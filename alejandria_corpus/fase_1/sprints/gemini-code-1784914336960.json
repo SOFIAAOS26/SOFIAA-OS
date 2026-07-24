@@ -1,0 +1,39 @@
+{
+  "id": "sprint_actualizaciones_sprint_f_sofiaa_ai_experience_20260724",
+  "tipo": "sprint",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "Actualizaciones Sprint F — SOFIAA AI Experience Middleware",
+  "resumen": "Actualizaciones Sprint F — SOFIAA AI Experience Middleware 1.3+ / Sprint F Smart Routing, Semantic Caching & Telemetry F-1 Smart Task Classifier + Policy Router El orquestador LLM ahora clasifica cada mensaje en 5 tipos de tarea en lugar de elegir solo entre 'rápido' o 'razonamiento'[cite: 20]. query extraction analysis generation automation Soportado por señales semánticas en español e inglés y un perfil de pesos diferenciado (latencia, costo, capacidad)[cite: 20]. Groq es seleccionado para queries rápidas, mientras que Gemini se utiliza para análisis y generación con enrutamiento dinámico po",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "NORA"
+  ],
+  "sprint_referencia": "Sprint F",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Qué se implementó en el sprint Sprint F?",
+    "¿Cuáles fueron los cambios técnicos en esta etapa?",
+    "¿Qué archivos y funcionalidades se crearon?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó NORA en esta fase?"
+  ],
+  "tags": [
+    "sprint",
+    "sofiaa",
+    "nexo",
+    "nora",
+    "actualizaciones",
+    "experience",
+    "middleware",
+    "groq"
+  ],
+  "texto_embedding": "Actualizaciones Sprint F — SOFIAA AI Experience Middleware 1.3+ / Sprint F Smart Routing, Semantic Caching & Telemetry F-1 Smart Task Classifier + Policy Router El orquestador LLM ahora clasifica cada mensaje en 5 tipos de tarea en lugar de elegir solo entre 'rápido' o 'razonamiento'[cite: 20]. query extraction analysis generation automation Soportado por señales semánticas en español e inglés y un perfil de pesos diferenciado (latencia, costo, capacidad)[cite: 20]. Groq es seleccionado para queries rápidas, mientras que Gemini se utiliza para análisis y generación con enrutamiento dinámico por request[cite: 20]. F-2 Semantic Cache con Gemini Embeddings Evolución del cache hacia generación vectorial con el modelo Gemini text-embedding-004 (768 dimensiones)[cite: 20]. Ejecutado vía un endpoint server-side para proteger la API key[cite: 20]. Identifica preguntas semánticamente equivalentes y responde desde cache sin invocar al modelo[cite: 20]. 0.92 F-3 Pipeline Observer Nuevo panel en el área de administración para registrar y auditar cada request[cite: 20]. Tipo de tarea detectado por el clasificador[cite: 20] Proveedor que emitió la respuesta[cite: 20] Origen del hit (cache exacto, cache semántico o directo al LLM)[cite: 20] Tiempo de respuesta y latencia[cite: 20] Hit rate global[cite: 20] Distribución de TaskTypes[cite: 20] Desglose por capa de cache[cite: 20] Log interactivo de los últimos 15 requests[cite: 20] Fix Corrección de Tarjetas UI Aleatorias Las tarjetas en el chat aparecían aleatoriamente debido a que el detector evaluaba únicamente el mensaje del usuario[cite: 20]. Inclusión de un guard que verifica que la respuesta emitida por SOFIAA también mencione el tema antes de renderizar la tarjeta[cite: 20]. Inclusión de un guard que bloquea la activación de tarjetas en contextos de código o programación[cite: 20].",
+  "documento_original": "gemini-code-1784914336960.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

@@ -1,0 +1,37 @@
+{
+  "id": "sprint_propuesta_de_sprint_e_capability_runtime_20260724",
+  "tipo": "sprint",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "Propuesta de Sprint E — Capability Runtime & AI Experience Middleware",
+  "resumen": "La idea de Data Injection On-Demand es excelente, pero la implementación debe evolucionar de un 'Data Injector' acoplado a Firestore hacia un 'Capability Runtime' que abstraiga la infraestructura de datos.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "HERMES"
+  ],
+  "sprint_referencia": "Sprint E",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Qué se implementó en el sprint Sprint E?",
+    "¿Cuáles fueron los cambios técnicos en esta etapa?",
+    "¿Qué archivos y funcionalidades se crearon?",
+    "¿Cómo se implementó HERMES en esta fase?"
+  ],
+  "tags": [
+    "sprint",
+    "sofiaa",
+    "hermes",
+    "propuesta",
+    "capability",
+    "runtime",
+    "firestore",
+    "cron"
+  ],
+  "texto_embedding": "Propuesta de Sprint E — Capability Runtime & AI Experience Middleware 8.8/10 (Ajustable a 9.8/10) La idea de Data Injection On-Demand es excelente, pero la implementación debe evolucionar de un 'Data Injector' acoplado a Firestore hacia un 'Capability Runtime' que abstraiga la infraestructura de datos. Data Injection On-Demand Inyección de contexto bajo demanda para reducir consumo de tokens, costos, latencia y alucinaciones. Separación de Conocimiento Estático y Datos Vivos El conocimiento del dominio (estático) y las métricas operacionales (datos vivos) no deben convivir en el mismo mecanismo. Integración de RBAC El servidor y el middleware (no la IA) validan el acceso y roles antes de consultar datos. Contexto Efímero Purga del bloque temporal de datos inmediatamente después del turno de respuesta para mantener el prompt limpio. Acoplamiento del Intent Engine a Firestore Intent -> QUERY_EXTENSION_DATA -> Firestore Intent -> Capability Resolver -> Tool -> Data Provider (Firestore, SAP, Monday, Power BI, Oracle, etc.) La IA no debe saber la fuente física de datos, solo debe declarar que necesita una capacidad (Capability). Inyección de JSONs Gigantes en el Prompt Inyectar tablas y JSONs estructurados completos. La Tool devuelve resúmenes, métricas clave, insights y metadatos procesados. El LLM solo necesita métricas concretas y variaciones, no registros extensos. Uso de Realtime Listeners (onSnapshot) Disparar listeners síncronos continuos. Consultas puntuales (get()) bajo demanda con refresco vía micro-botón (Stale-While-Revalidate). Mucho más económico, simple, mantenible y sin consumo permanente de recursos. Anotación de Contexto Específica ([EXTENSION DATA]) Usar etiquetas amarradas a extensiones. Etiquetado genérico: Capability Result. Abstrae el origen de la infraestructura para el Core. Capability Runtime (AI Experience Middleware) E1 Capability Runtime Motor de orquestación de capacidades. E2 Capability Registry Registro dinámico de capacidades del sistema. E3 Enterprise Tool SDK SDK estandarizado para construcción de herramientas. E4 Data Providers Adaptadores agnósticos (Firestore, Monday, Power BI, REST, SQL). E5 Secure Capability Gateway Gobernanza con RBAC, auditoría y rate limiting. E6 Structured Responses Respuestas basadas en esquemas estrictos (Schemas) en lugar de JSON libre. SOFIAA evoluciona de Chatbot/OS a un 'AI Experience Middleware' que conecta usuarios, interfaces, modelos, herramientas, datos y permisos. Inyección Dinámica + Seguridad RBAC de Datos Vivos añade un valor neto al activo de +$150,000 MXN.",
+  "documento_original": "gemini-code-1784913929325.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

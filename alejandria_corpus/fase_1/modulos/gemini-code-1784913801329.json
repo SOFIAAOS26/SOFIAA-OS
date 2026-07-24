@@ -1,0 +1,55 @@
+{
+  "id": "sprint_sofiaa_resumen_actualizaciones_20260728",
+  "tipo": "sprint",
+  "fecha": "2026-06-28",
+  "fase_corpus": "fase_1",
+  "titulo": "Resumen de actualizaciones SOFIAA — Sprint D (SOFIAA 1.2)",
+  "resumen": "Se presentan las actualizaciones del Sprint D de SOFIAA, que incluyen mejoras en la orquestación de LLM, la máquina de estado de objetivos, la interfaz de usuario basada en intenciones y el motor de políticas cognitivas. Estas actualizaciones buscan mejorar la experiencia del usuario y la eficiencia del sistema.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "PROMETEO",
+    "NORA",
+    "HERMES",
+    "ATENA",
+    "TEC BII",
+    "ALEJANDRÍA"
+  ],
+  "sprint_referencia": "Sprint D",
+  "version_sofiaa": "1.2",
+  "decisiones": [
+    "Implementar orquestación de LLM con tolerancia a fallos multiproveedor",
+    "Desarrollar máquina de estado de objetivos con persistencia en sessionStorage",
+    "Crear interfaz de usuario basada en intenciones con variantes core",
+    "Implementar motor de políticas cognitivas con evaluador silencioso"
+  ],
+  "conceptos_clave": [
+    "Orquestación de LLM",
+    "Máquina de estado de objetivos",
+    "Interfaz de usuario basada en intenciones",
+    "Motor de políticas cognitivas"
+  ],
+  "hitos": [
+    "Implementación de orquestación de LLM",
+    "Desarrollo de máquina de estado de objetivos",
+    "Creación de interfaz de usuario basada en intenciones",
+    "Implementación de motor de políticas cognitivas"
+  ],
+  "preguntas_que_responde": [
+    "¿Cuáles son las actualizaciones del Sprint D de SOFIAA?",
+    "¿Cómo se mejoró la orquestación de LLM en SOFIAA?",
+    "¿Qué es la máquina de estado de objetivos en SOFIAA?",
+    "¿Cómo se creó la interfaz de usuario basada en intenciones en SOFIAA?"
+  ],
+  "tags": [
+    "SOFIAA",
+    "Orquestación de LLM",
+    "Máquina de estado de objetivos",
+    "Interfaz de usuario basada en intenciones",
+    "Motor de políticas cognitivas"
+  ],
+  "texto_embedding": "El Sprint D de SOFIAA incluye mejoras en la orquestación de LLM, la máquina de estado de objetivos, la interfaz de usuario basada en intenciones y el motor de políticas cognitivas. La orquestación de LLM se mejoró con la implementación de un sistema de tolerancia a fallos multiproveedor. La máquina de estado de objetivos se desarrolló con persistencia en sessionStorage para mantener el estado activo ante desconexiones o refrescos. La interfaz de usuario basada en intenciones se creó con variantes core para mejorar la experiencia del usuario. El motor de políticas cognitivas se implementó con un evaluador silencioso para evaluar las políticas declarativas.",
+  "documento_original": "Resumen de actualizaciones SOFIAA — Sprint D (SOFIAA 1.2)",
+  "procesado_por": "groq",
+  "fecha_procesamiento": "2026-07-24"
+}

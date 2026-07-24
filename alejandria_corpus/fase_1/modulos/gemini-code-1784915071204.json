@@ -1,0 +1,41 @@
+{
+  "id": "especificacionmodulo_sofiaa_os_reporte_ejecutivo_de_arquitectura_20260701",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-01",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA OS — Reporte Ejecutivo de Arquitectura y Capacidades",
+  "resumen": "SOFIAA OS — Reporte Ejecutivo de Arquitectura y Capacidades 2.0 Julio 2026 Memory Stack + RUMBO A TIER 4 Confidencial — Documento interno Actualización completa del estado de SOFIAA OS a julio de 2026, cubriendo la finalización del Memory Stack (M-2 a M-7) y el despliegue de la extensión cognitiva TEC Bii (T2-0 a T2-6) como base estratégica para alcanzar el Tier 4. Tier 3 (IA Adaptativa → RUMBO A TIER 4) 7 Sprints (M-2 a M-7) 4 TIER 4 (Razonamiento Causal y Planificación Autónoma) Attention Engine — Motor de Refuerzo Refuerzo asíncrono de +0.03 al peso de nodos N.E.X.O. seleccionados por conve",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "NORA",
+    "HERMES",
+    "TEC_BII"
+  ],
+  "sprint_referencia": "Sprint M-3",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona SOFIAA OS — Reporte Ejecutivo de Arquite?",
+    "¿Cuál es la arquitectura de SOFIAA y NEXO?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó NORA en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "nexo",
+    "nora",
+    "hermes",
+    "tec-bii",
+    "ejecutivo",
+    "arquitectura"
+  ],
+  "texto_embedding": "SOFIAA OS — Reporte Ejecutivo de Arquitectura y Capacidades 2.0 Julio 2026 Memory Stack + RUMBO A TIER 4 Confidencial — Documento interno Actualización completa del estado de SOFIAA OS a julio de 2026, cubriendo la finalización del Memory Stack (M-2 a M-7) y el despliegue de la extensión cognitiva TEC Bii (T2-0 a T2-6) como base estratégica para alcanzar el Tier 4. Tier 3 (IA Adaptativa → RUMBO A TIER 4) 7 Sprints (M-2 a M-7) 4 TIER 4 (Razonamiento Causal y Planificación Autónoma) Attention Engine — Motor de Refuerzo Refuerzo asíncrono de +0.03 al peso de nodos N.E.X.O. seleccionados por conversación vía waitUntil() en Event Bus. Aumento orgánico de relevancia en nodos más utilizados sin latencia adicional para el usuario. ACTIVO en producción (Badge visual reinforceCount en /nexo/mi-grafo). Cognitive Variables — Perfil Cognitivo por Usuario Detección rule-based de patrones lingüísticos para acumular un perfil persistente (preferredDepth, formalityScore, topicAffinity). $0 (completamente rule-based, sin tokens de LLM adicionales). ACTIVO (Inyectado en systemPrompt como bloque PERFIL COGNITIVO DEL USUARIO). Semantic Retrieval — Recuperación Vectorial Híbrida Ranking semántico vectorial híbrido: hybridScore = cosine(query, nodo) × 0.65 + weight × 0.35. gemini-embedding-001 (3,072 dimensiones por vector). ACTIVO (Operativo en getSemanticNexoContext()). Proactive Surface — Superficie Proactiva Mención explícita en la respuesta de SOFIAA cuando un nodo alcanza un hybridScore ≥ 0.65 (máximo 2 nodos proactivos por respuesta). ACTIVO (Integración de frases naturales como 'Esto me recuerda algo que guardaste...'). Cognitive Dashboard — /nexo/perfil Visualización en tiempo real del perfil cognitivo acumulado del usuario vía suscripción onSnapshot. ACTIVO (Acceso por keyword 'nexoperfil' en el chat). M-7 Gemini Refinement CRON — Motor Batch TEC Bii ACTIVO y en producción (Completado en Julio 2026). 0 11 * * * (11h UTC / 5am CST) — Ejecutado tras el decay (9h) y reflect (10h). discoverTecBiiUsers() → republishStaleEntities() → runNoraReflection() → runCrossDomainAnalysis() GET vía CRON_SECRET, POST con Bearer token. Tiempo máximo de ejecución 300 segundos (5 min) en Node.js. Logs guardados en tec_bii_refine_logs/{runId}, visibles en el Centro de Mando TEC Bii. Segunda generación del módulo de gestión institucional del Tec de Monterrey, diseñada como una extensión cognitiva nativa vinculada al Experience Graph de N.E.X.O. T2-0 Fundación Cognitiva Interfaz CognitiveFootprint, 6 esquemas de entidades (ProyectoV2, BriefV2, EmpleadoV2, ProveedorV2, ClienteInternoV2, EvaluacionV2) y ruta /tec-bii con PageGuard. T2-1 Cognitive Publisher Publicación asíncrona fire-and-forget de entidades creadas/actualizadas al grafo N.E.X.O. (Gemini Flash summary → gemini-embedding-001 → NexoNode con source: 'tec_bii' y decayRate 0.03). T2-2 Insights Cognitivos Centro de mando en /tec-bii/inteligencia con resúmenes ejecutivos, riesgos y oportunidades generados dinámicamente por Gemini Flash (cooldown 2h). T2-3 Brief Intelligence Generación de BriefV2 estructurado a partir de texto libre con IA en /tec-bii/briefs y evaluación con Brief Score v2. T2-4 Cross-Domain Reasoning Generación automática de hipótesis en la entidad TEC Bii cuando la similitud coseno entre un nodo N.E.X.O. y la entidad es ≥ 0.60. T2-5 Team Cognition Gestión de EmpleadoV2 en /tec-bii/equipo con SkillProfile, KPIs de saturación (CargaBar), filtros y color distintivo #06B6D4. T2-6 N.O.R.A. Reflection Reflexiones narrativas institucionales periódicas con Gemini Flash (6 tipos de patrón: carga, urgencia, talento, oportunidad, riesgo, tendencia) con cooldown de 6 horas. Conexión con NEXO No Sí — nativa Parcial No Embeddings por entidad No Sí (gemini-embedding-001) No No Grafo cognitivo propio No Sí (source: tec_bii) No No Generación con Gemini Parcial (ROI, briefs) Sí — todos los módulos No Sí (narrativa emocional) Hipótesis cruzadas No Sí (threshold 0.60) No No Reflexión IA (N.O.R.A.) No Sí — 6 tipos de patrón No No CRON de refinamiento No Sí (11h UTC diario) No No Sincronización externa Monday.com (webhook) No (nativo Firestore) No No Perfil cognitivo usuario No CognitiveFootprint / entidad No No Perfiles de acceso (RBAC) Sí Sí (PageGuard) Sí No Dashboard en tiempo real Sí Sí — Centro de Mando Sí Limitado Generación de documentos PDF export, Brief Canvas Brief Score v2 + gen IA Calendario, finanzas No Tier de inteligencia Tier 1 — CRUD extendido Tier 3 → Tier 4 Tier 1 Tier 2 (emocional) Middleware Cognitivo (Tier 3 → Tier 4). Capa de inteligencia que orquesta usuarios, extensiones (SEE Architecture), modelos de lenguaje (LLM Orchestrator: Groq/Gemini), Capability Gateway, Agent Runtime (ReAct) y guardrails. Networked Experience & Knowledge Observatory. Grafo de conocimiento personal con embeddings de 3,072 dims (gemini-embedding-001), ingesta vía Chrome MV3 y PWA Share Target, decaimiento exponencial (9h UTC), ranking semántico híbrido, superficie proactiva y panel Mi Grafo. Neural Observation & Reflection Architecture. Opera con doble rol: Observer Panel admin ('Fiat Lux') para telemetría general y Reflection Engine para análisis operacionales y generación de reflexiones narrativas con Gemini Flash. Variables Cognitivas del Usuario (Sprint M-3). Representación interna persistente (preferredDepth, formalityScore, topicAffinity) en users/{uid}/cognitive_profile/v1, inyectada al system prompt y visible en /nexo/perfil. Extensión Cognitiva Institucional (Tier 3 → Tier 4). Modulo avanzado de 6 entidades con CognitiveFootprint, publicaciones asíncronas al grafo, razonamiento cruzado, reflexiones institucionales y refinamiento automático diario M-7. Primera Extensión Institucional (Tier 1). Sistema CRUD tradicional con simulador ROI, Brief Canvas y sincronización con Monday.com, desacoplado del grafo cognitivo. Workspace SMM (Tier 1). Gestión de clientes, calendario editorial y finanzas de equipos de redes sociales conectado únicamente al canal conversacional. I",
+  "documento_original": "gemini-code-1784915071204.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

@@ -1,0 +1,37 @@
+{
+  "id": "sprint_sprints_atena_20260724",
+  "tipo": "sprint",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "Sprints A.T.E.N.A.",
+  "resumen": "Estrategia de implementación de 6 sprints para integrar A.T.E.N.A. como una extensión nativa (SEE Architecture) en SOFIAA OS, garantizando cero riesgo y cero afectación al código existente.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "ATENA"
+  ],
+  "sprint_referencia": "Sprint A-0",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Qué se implementó en el sprint Sprints A.T.E.N.A.?",
+    "¿Cuáles fueron los cambios técnicos en esta etapa?",
+    "¿Qué archivos y funcionalidades se crearon?",
+    "¿Cómo se implementó ATENA en esta fase?"
+  ],
+  "tags": [
+    "sprint",
+    "sofiaa",
+    "atena",
+    "sprints",
+    "a.t.e.n.a.",
+    "typescript",
+    "groq",
+    "firestore"
+  ],
+  "texto_embedding": "Sprints A.T.E.N.A. Advanced Technology for Enterprise Nexus & Analytics Plan de Ejecución e Ingeniería de Software SOFIAA OS / SOFIAA LAB Estrategia de implementación de 6 sprints para integrar A.T.E.N.A. como una extensión nativa (SEE Architecture) en SOFIAA OS, garantizando cero riesgo y cero afectación al código existente. Extensión nativa desacoplada basada en la arquitectura SEE de SOFIAA OS. 0 risk / Cero riesgo al código existente. 6 Sprints (Sprint A-0 a Sprint A-5). Reducción de Tiempo de Ciclo en Línea de Ensamble de Módulos Electrónicos — TEC Monterrey 3 líneas de producción ANOVA significativo SPC (Carta de control ±3σ) fuera de control con alertas Andon 2 modos de falla críticos en matriz AMEF VAN real calculado con simulación estocástica Monte Carlo Sprint A-0 Fundación de datos Lo más importante primero Establecer la estructura de datos, esquemas TypeScript y el dataset inicial sin tocar la UI. A-0-1 Tipos y schema TypeScript completo Definición de contratos de datos, esquemas de proyectos DMAIC, métricas estadísticas y entidades de A.T.E.N.A. A-0-2 Dataset de simulación generado con Groq Generación de datos sintéticos con números e indicadores estadísticamente coherentes para las pruebas del sistema. A-0-3 Script seed para cargar a Firestore Script de sembrado para poblar la base de datos de Firestore con el dataset inicial generado. Sprint A-1 Extensión y navegación Crear la estructura base de la extensión e integrarla en el registro general de SOFIAA OS. A-1-1 SofiaaExtension de ATENA Creación del manifiesto y módulo principal de la extensión respetando el estándar SEE. A-1-2 Registro en extension.registry Registro directo en una sola línea dentro del registro global de extensiones de SOFIAA OS. A-1-3 Layout + Dashboard Centro de Mando Construcción de la interfaz base y panel principal para la visualización del área operativamente. A-1-4 Página /atena/proyectos con DMAIC y stakeholders Vista para la gestión de proyectos bajo metodología DMAIC y matriz de alineación de involucrados. Sprint A-2 Módulo estadístico Desplegar las consolas analíticas para cómputo de varianza y control estadístico de procesos. A-2-1 Página /atena/analisis — ANOVA con tabla y gráficos Interfaz analítica para cálculo de ANOVA con despliegue gráfico de varianzas e interpretación de p-value. A-2-2 Página /atena/spc — Carta de control ±3σ con alertas Andon Consola de Control Estadístico de Procesos (SPC) con límites a ±3σ e indicadores visuales de violación de reglas. Sprint A-3 Riesgos y financiero Implementar el centro de comando de fallas y la proyección estocástica de rendimiento económico. A-3-1 Página /atena/amef — Matriz AMEF con NPR críticos en rojo Matriz de Análisis de Modo y Efectos de Falla (AMEF/FMEA) destacando automáticamente valores de NPR elevados. A-3-2 Página /atena/financiero — VAN, TIR, Monte Carlo P10/P50/P90 Panel financiero con cálculo de Valor Actual Neto, Tasa Interna de Retorno y simulación Monte Carlo con percentiles. Sprint A-4 Integración SOFIAA chat Conectar la extensión con el orquestador conversacional para permitir consultas y acciones vía LLM. A-4-1 5 extension tools conectados a Firestore Integración de 5 herramientas de extensión para que SOFIAA consulte y manipule datos de A.T.E.N.A. en el chat. A-4-2 Prompt refinado para demo Refinamiento de directivas y modulación de prompts para garantizar la correcta ejecución de tareas durante la demostración. Sprint A-5 Build y deploy Verificación de compilación, empaquetado y despliegue a entorno de producción. A-5-1 tsc + build + push + Vercel Verificación de tipos TypeScript, compilación del proyecto Next.js, sincronización de repositorio y despliegue en Vercel.",
+  "documento_original": "gemini-code-1784915249917.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

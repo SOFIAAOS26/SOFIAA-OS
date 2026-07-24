@@ -1,0 +1,107 @@
+{
+  "id": "especificacion_fase2_sofiaa_alpha_hardening_20260724",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA — Plan de Arquitectura Fase 2: Alpha Hardening",
+  "resumen": "Especificación técnica de la Fase 2 para SOFIAA centrada en robustez, inteligencia estructural y pre-deploy hardening tras alcanzar el 78% del núcleo en localhost. Define una hoja de ruta de 12 capas que abarca congelación de arquitectura, guardrails de seguridad, telemetría, caché semántica, Goal Engine, Memory Timeline, Generative UI segura, Knowledge Graph v0, micro-agentes especializados (Research, Business, Creative) y observabilidad cognitiva previo al despliegue en Vercel.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "NORA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": "1.1",
+  "decisiones": [
+    {
+      "decision": "Priorizar la implementación en capas de sistema secuenciales sobre 'features sueltas' (Secuencia: Congelar → Blindar → Telemetría → Caché → Goal Engine → Timeline → GenUI → UI Visual → KG v0 → Micro-agentes → Panel → Hardening)",
+      "contexto": "El prototipo funcional ya opera en localhost pero requiere robustez, medición y seguridad antes del despliegue público en Vercel.",
+      "alternativas_descartadas": [
+        "Desplegar directamente a Vercel con la versión del Sprint 4",
+        "Agregar más funcionalidades visuales o agentes masivos sin capas de infraestructura"
+      ],
+      "justificacion": "Garantiza velocidad, elegancia, control y medibilidad sin sobrecargar el núcleo del sistema.",
+      "consecuencias": "Establece reglas de ingeniería estrictas: 'una mejora funcional por PR' y 'una capa por sprint'."
+    },
+    {
+      "decision": "Implementar Generative UI restringida por un catálogo de componentes seguros mediante salida JSON schema",
+      "contexto": "Necesidad de que el LLM devuelva componentes interactivos (cards, sliders, botones, comparativas) sin comprometer la seguridad.",
+      "alternativas_descartadas": [
+        "Permitir que el modelo genere código React libre en tiempo de ejecución — descartado por alto riesgo de seguridad y estabilidad"
+      ],
+      "justificacion": "Asegura la renderización dinámica manteniendo el control total de la aplicación en el cliente.",
+      "consecuencias": "Creación del registro de componentes `component.registry` y el renderizador de respuestas `response.renderer.ts`."
+    },
+    {
+      "decision": "Limitar la arquitectura de micro-agentes a solo 3 especialistas (Research, Business, Creative) coordinados por un router",
+      "contexto": "Evitar la complejidad inmanejable de sistemas multi-agente masivos.",
+      "alternativas_descartadas": [
+        "Crear un ecosistema de 10+ agentes especializados para cada tarea"
+      ],
+      "justificacion": "Mantiene el sistema manejable y enfocado en intenciones clave.",
+      "consecuencias": "Implementación de `agent.router.ts` con prompts cortos y delimitados por especialidad."
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "Goal Engine",
+      "definicion": "Motor que clasifica la intención del usuario y la traduce en un objetivo claro (Informarse, Comparar, Aprender, Decidir, Contactar, Contratar) para trazar rutas de acompañamiento.",
+      "relacion_modulos": [
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "Semantic Cache Local",
+      "definicion": "Capa de almacenamiento local (localStorage o IndexedDB) que reutiliza respuestas validadas por intención + contexto con TTL para reducir latencia y consumo de API.",
+      "relacion_modulos": [
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "Progressive Experience Disclosure",
+      "definicion": "Principio visual donde la UI revela componentes e información paulatinamente según el momento cognitivo del usuario y el estado del Orbe.",
+      "relacion_modulos": [
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "Knowledge Graph v0",
+      "definicion": "Red liviana que convierte entidades, documentos, usuarios, servicios y sesiones en nodos relacionados para permitir consultas por contexto relacional.",
+      "relacion_modulos": [
+        "SOFIAA",
+        "NEXO"
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "Definición y estructuración completa del plan de Alpha Hardening (Fase 2)",
+      "resultado": "exitoso",
+      "aprendizaje": "Unificar la propuesta de seguridad/telemetría (Gemini) con la visión de arquitectura de producto (Goal Engine, Memory Timeline, Knowledge Graph v0) establece una base sólida pre-deploy."
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Qué es la Fase 2 de SOFIAA y cuál es su objetivo general?",
+    "¿Cuál es el orden de ejecución correcto para el Alpha Hardening de SOFIAA?",
+    "¿Cómo funciona el Goal Engine en SOFIAA?",
+    "¿Qué estrategia se definió para la Generative UI y por qué no se permite React libre?",
+    "¿Cuáles son los 3 micro-agentes especializados definidos en la Fase 2?",
+    "¿Qué métricas se capturan en la telemetría automática de SOFIAA?"
+  ],
+  "tags": [
+    "fase-2",
+    "alpha-hardening",
+    "guardrails",
+    "telemetria",
+    "goal-engine",
+    "semantic-cache",
+    "generative-ui",
+    "knowledge-graph",
+    "micro-agentes",
+    "pre-deploy"
+  ],
+  "texto_embedding": "La Fase 2 de SOFIAA, denominada 'Alpha Hardening', tiene como objetivo convertir el prototipo funcional existente en una plataforma sólida, inteligente, medible y segura lista para despliegue en Vercel. Consta de 12 capas de implementación secuencial: 1) Congelación de arquitectura y deuda técnica (congelar base actual, crear ARCHITECTURE_FREEZE.md y estándares de código). 2) Guardrails de contexto y seguridad activa (guardrails.engine.ts para detectar prompt injection, fuga de contexto y solicitudes de secretos con validación doble cliente/servidor). 3) Telemetría automática viva (useSofiaaTelemetry.ts para medir latencias, clics, errores y conversiones en métricas IFC, TTI, CKS, CVR, IAI). 4) Semantic Cache local (semantic-cache.ts con TTL en localStorage/IndexedDB para responder intenciones recurrentes sin llamar a la API). 5) Goal Engine real (goal.engine.ts para clasificar intenciones en objetivos como Informarse, Comparar, Aprender, Decidir, Contactar, Contratar). 6) Memory Timeline (memory.timeline.ts para historial semántico y reanudación de sesiones). 7) Generative UI segura (ui.schema.ts que renderiza componentes interactivos validados como cards o sliders mediante JSON schema, prohibiendo React libre). 8) Visual Intelligence Layer (orb.controller.ts y Progressive Experience Disclosure que sincroniza la UI con los estados cognitivos del Orbe). 9) Knowledge Graph v0 (graph.model.ts para mapear nodos y relaciones entre usuario, servicios, intenciones y sesiones). 10) Micro-agentes limitados (agent.router.ts coordinando 3 especialistas: Research, Business y Creative). 11) Observabilidad y panel cognitivo (cognitive.dashboard.tsx para analizar métricas de fricción, latencia y abandono). 12) Pre-deploy hardening (checklists de producción, variables de entorno, rate limits y fallbacks en Vercel). Regla de ingeniería: una mejora funcional por PR, una capa por sprint.",
+  "documento_original": "Fase 02 SOFIAA.pdf",
+  "procesado_por": "gemini",
+  "fecha_procesamiento": "2026-07-24"
+}

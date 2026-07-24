@@ -1,0 +1,42 @@
+{
+  "id": "decisionarquitectura_prometeo_rumbo_a_hermes_20260724",
+  "tipo": "decision_arquitectura",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "Prometeo rumbo a HERMES",
+  "resumen": "Transición conceptual y técnica de SOFIAA OS desde un conjunto de extensiones modulares hacia un Enterprise Cognitive Operating System (ECOS). Redefinición de PROMETEO como 'Executive Engine' basado en Inteligencia Causal, integración experimental con ATENA (DOE), evolución hacia Living Brand DNA y la incorporación futura de HERMES como motor de ejecución operativa.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "PROMETEO",
+    "NORA",
+    "HERMES",
+    "ATENA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Por qué se tomó la decisión sobre Prometeo rumbo a HERMES?",
+    "¿Qué alternativas se descartaron?",
+    "¿Cómo afectó esta decisión a la arquitectura del sistema?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó PROMETEO en esta fase?"
+  ],
+  "tags": [
+    "decision-arquitectura",
+    "sofiaa",
+    "nexo",
+    "prometeo",
+    "nora",
+    "hermes",
+    "atena",
+    "rumbo"
+  ],
+  "texto_embedding": "Prometeo rumbo a HERMES Hacia un Enterprise Cognitive Operating System (ECOS) SOFIAA OS Manifiesto de Evolución Arquitectónica y Análisis Estratégico Transición conceptual y técnica de SOFIAA OS desde un conjunto de extensiones modulares hacia un Enterprise Cognitive Operating System (ECOS). Redefinición de PROMETEO como 'Executive Engine' basado en Inteligencia Causal, integración experimental con ATENA (DOE), evolución hacia Living Brand DNA y la incorporación futura de HERMES como motor de ejecución operativa. PROMETEO deja de ser una herramienta de marketing para convertirse en el primer Executive Engine del sistema, transitando de responder '¿Qué dicen los datos?' (ATENA) a prescribir '¿Qué debería hacer la empresa?'[cite: 22] Paso de la correlación de datos (BI tradicional) a la explicación de la causa raíz mediante grafos causales dirigidos (DAGs)[cite: 22]. Incremento de Frecuencia → Fatiga de Audiencia (Drop CTR) → Saturación de Inventario → Elevación de CPA → Margen Inviable → Recomendación: No invertir[cite: 22]. Transición de la gestión directa de campañas a la formulación, diseño y prueba de hipótesis de negocio antes de la toma de decisiones[cite: 22]. Evolución del Brand DNA estático a un objeto vivo que aprende, adapta su tono, descubre audiencias y mide memoria emocional (esperanza, escasez, confianza, urgencia) tras cada ciclo operativo[cite: 22]. Nuevo módulo propuesto para integrar variables macroeconómicas, tendencias de competidores, estacionalidad, clima y regulaciones en las decisiones estratégicas[cite: 22]. Priorización de la salud financiera y capacidad operativa global de la empresa por encima de métricas locales de campaña (ej. frenar pautas si la capacidad operativa o de inventario está al límite)[cite: 22]. Unión del Executive Engine con el Scientific Engine para actuar como un científico de marketing[cite: 22]. 1. PROMETEO formula la hipótesis de negocio (ej. 'Reducir el video de 30s a 15s elevará el CTR un 12%')[cite: 22]. 2. ATENA diseña el experimento factorial (DOE 2x3x2), define el tamaño de muestra y garantiza rigor estadístico[cite: 22]. 3. PROMETEO ejecuta la prueba y recopila datos[cite: 22]. 4. ATENA analiza la significancia estadística[cite: 22]. 5. PROMETEO toma la decisión ejecutiva y N.E.X.O. persiste el aprendizaje en el grafo[cite: 22]. SOFIAA es un Enterprise Cognitive Operating System (ECOS): una plataforma donde motores especializados razonan, calculan, deciden y ejecutan de forma coordinada sobre una memoria compartida y un grafo de conocimiento[cite: 22]. SOFIAA Core Orquesta, razona, conversa, recuerda y sintetiza en recomendaciones ejecutivas[cite: 22]. ATENA Calcula, demuestra, ejecuta análisis estadísticos (DOE, SPC, ANOVA) y valida cuantitativamente[cite: 22]. PROMETEO Decide la estrategia, plantea hipótesis, evalúa riesgos y optimiza el valor empresarial[cite: 22]. HERMES (Futuro Motor) Ejecuta de forma autónoma las acciones aprobadas (publica campañas, programa posts, actualiza Monday, notifica en Slack, modifica el CRM)[cite: 22]. N.E.X.O. Mantiene el grafo de conocimiento semántico y la memoria persistente compartida entre todos los motores[cite: 22]. Formalizar la capa de Inferencia Causal en PROMETEO mediante esquemas de grafos causales[cite: 22]. Diseñar el protocolo de orquestación PROMETEO ↔ ATENA para solicitudes automatizadas de Diseños de Experimentos (DOE)[cite: 22]. Especificar la arquitectura proactiva de N.O.R.A. como sensor de eventos en N.E.X.O. para activar a PROMETEO ante desviaciones o anomalías[cite: 22]. Sentar las bases del Runtime de HERMES (Action Engine) para la ejecución segura mediante APIs y conectores externos[cite: 22].",
+  "documento_original": "gemini-code-1784915574127.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

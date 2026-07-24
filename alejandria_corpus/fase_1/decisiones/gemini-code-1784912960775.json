@@ -1,0 +1,46 @@
+{
+  "id": "decision_sofiaa_presentacion_piloto_20260724",
+  "tipo": "decision_arquitectura",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "Reestructuración de la Narrativa del Pitch · El Orden de Poder",
+  "resumen": "Presentación ejecutiva para la Mesa Directiva de Rectoría del TEC, destacando el costo de la fragmentación en la gestión de producción audiovisual y proponiendo el proyecto piloto de SOFIAA TEC BI para reducir errores y mejorar la visibilidad financiera. Se solicita autorización para un proyecto piloto de 90 días con condiciones de integración operativa, patrocinio de continuidad y acuerdo de escalabilidad.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "TEC BII"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [
+    "Implementar un proyecto piloto de SOFIAA TEC BI para reducir errores y mejorar la visibilidad financiera en la gestión de producción audiovisual",
+    "Autorizar la integración operativa con Monday.com y sistemas institucionales",
+    "Transferir el repositorio de Git y la gobernanza de datos al equipo de TI institucional al finalizar el piloto"
+  ],
+  "conceptos_clave": [
+    "SOFIAA TEC BI",
+    "Lean Six Sigma",
+    "Gestión de Proyectos",
+    "Ciencia de Datos"
+  ],
+  "hitos": [
+    "Reducción del error del 35% al 1%",
+    "Mejora de la visibilidad financiera a un 9/10 interactivo"
+  ],
+  "preguntas_que_responde": [
+    "¿Cuál es el costo de la fragmentación en la gestión de producción audiovisual?",
+    "¿Cómo puede SOFIAA TEC BI reducir errores y mejorar la visibilidad financiera?",
+    "¿Cuáles son las condiciones para el proyecto piloto de SOFIAA TEC BI?"
+  ],
+  "tags": [
+    "SOFIAA",
+    "TEC BI",
+    "Lean Six Sigma",
+    "Gestión de Proyectos",
+    "Ciencia de Datos"
+  ],
+  "texto_embedding": "La gestión de producción audiovisual en el TEC enfrenta problemas de fragmentación, con un 35% de errores en los briefs. SOFIAA TEC BI es un sistema operativo de experiencias inteligentes diseñado para reducir errores y mejorar la visibilidad financiera. El proyecto piloto de 90 días busca demostrar la efectividad de SOFIAA TEC BI en la gestión de producción audiovisual. Se solicita autorización para la integración operativa con Monday.com y sistemas institucionales, así como la transferencia del repositorio de Git y la gobernanza de datos al equipo de TI institucional al finalizar el piloto.",
+  "documento_original": "Reestructuración de la Narrativa del Pitch · El Orden de Poder",
+  "procesado_por": "groq",
+  "fecha_procesamiento": "2026-07-24"
+}

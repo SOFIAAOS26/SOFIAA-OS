@@ -1,0 +1,41 @@
+{
+  "id": "especificacionmodulo_sofiaa_ai_experience_middleware_version_20_20260701",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-01",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA — AI Experience Middleware (Versión 2.0)",
+  "resumen": "SOFIAA — AI Experience Middleware (Versión 2.0) Repensando cómo las organizaciones aprenden, deciden y actúan a través de inteligencia artificial contextual Julio 2026 Sprints A→H completados Presentación Ejecutiva Confidencial Las organizaciones se ahogan en datos y mueren de sed de sabiduría[cite: 22]. 01 Los Datos Existen Terabytes de datos operativos generados cada día — atrapados en silos, inaccesibles para quienes los necesitan[cite: 22]. 02 Los Modelos Existen Los LLMs razonan a velocidad sobrehumana — pero operan sobre conocimiento estático, desconectados de la realidad[cite: 22]. 03 L",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "NORA",
+    "HERMES",
+    "TEC_BII"
+  ],
+  "sprint_referencia": "Sprint G",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona SOFIAA — AI Experience Middleware (Versi?",
+    "¿Cuál es la arquitectura de SOFIAA y NEXO?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó NORA en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "nexo",
+    "nora",
+    "hermes",
+    "tec-bii",
+    "experience",
+    "middleware"
+  ],
+  "texto_embedding": "SOFIAA — AI Experience Middleware (Versión 2.0) Repensando cómo las organizaciones aprenden, deciden y actúan a través de inteligencia artificial contextual Julio 2026 Sprints A→H completados Presentación Ejecutiva Confidencial Las organizaciones se ahogan en datos y mueren de sed de sabiduría[cite: 22]. 01 Los Datos Existen Terabytes de datos operativos generados cada día — atrapados en silos, inaccesibles para quienes los necesitan[cite: 22]. 02 Los Modelos Existen Los LLMs razonan a velocidad sobrehumana — pero operan sobre conocimiento estático, desconectados de la realidad[cite: 22]. 03 La Brecha No existe una capa inteligente que conecte datos empresariales en vivo, contexto por rol y lenguaje natural... hasta ahora[cite: 22]. ¿Cómo puede un sistema de IA adaptar conocimiento, comportamiento e interfaz en tiempo real según el usuario?[cite: 22] LLM (Razonamiento base)[cite: 22] Contexto (Rol + Ruta + Historia)[cite: 22] Política (Restricciones CPE)[cite: 22] Datos (Capability Runtime)[cite: 22] SOFIAA (Middleware Cognitivo)[cite: 22] Un middleware cognitivo en capas — combinando motores de política, grafos de experiencia, máquinas de estado de objetivos, Agent Runtime ReAct y runtimes de capacidades — puede transformar cualquier LLM en una inteligencia organizacional consciente del rol[cite: 22]. 8 fases de investigación — cada una extiende el middleware con nuevas capacidades cognitivas[cite: 22]. S0-2 Catálogo + JARVIS Completado[cite: 22] S3-7 SEE + RBAC + Firebase Completado[cite: 22] Spr D Motores Cognitivos Completado[cite: 22] Spr E Capability Runtime Completado[cite: 22] Spr F Smart Cache + Observer Completado[cite: 22] Spr G Agent Runtime (ReAct) Completado[cite: 22] Spr H Memoria Persistente Completado[cite: 22] Spr I N.O.R.A. Próximo[cite: 22] Interfaz Adaptativa Intent-Driven UI, Generative Cards, Onboarding[cite: 22]. LLM Orchestrator Groq LLaMA 3.3 70B → Gemini Fallback, Streaming SSE[cite: 22]. Agent Runtime ReAct (Nuevo - Sprint G) think → act (x3) → synthesize (query_data, search_memory, analyze)[cite: 22]. Motor de Política Cognitiva 8 Políticas, CPE Score 0-1, Evaluación post-stream[cite: 22]. Grafo de Experiencia + Memoria Nodos ponderados, Decaimiento 5%/día, Firestore dual-write (Nuevo)[cite: 22]. Máquina de Estado de Objetivos Objetivos multi-paso, sessionStorage, Detección automática[cite: 22]. Capability Runtime Firestore en vivo, Gateway RBAC, Resúmenes estructurados, BuscarRegistro[cite: 22]. Motor de razonamiento iterativo: piensa, actúa y observa hasta sintetizar la respuesta correcta[cite: 22]. THINK: Analiza el objetivo y planifica herramientas[cite: 22]. ACT: Ejecuta herramienta (query_data / analyze)[cite: 22]. OBSERVE: Procesa resultado y actualiza contexto[cite: 22]. SYNTHESIZE: Respuesta final cuando converge[cite: 22]. Máximo 3 iteraciones, fallback si alcanza límite, Edge-safe con 8s timeout[cite: 22]. Firestore en vivo[cite: 22] Contexto + Historial[cite: 22] Gemini 1.5 Flash[cite: 22] SOFIAA no olvida: memoria a largo plazo multi-dispositivo y datos de pipeline en Firestore[cite: 22]. Detección automática de consultas complejas (patrones: analiza, compara, reporte ejecutivo) y activación de ReAct para admin/director/vp[cite: 22]. Dual-write (localStorage + Firestore) sincronizable al autenticarse cross-device en users/{uid}/memory/long_term[cite: 22]. Cada request genera un evento en users/{uid}/pipeline_events/{id} con campo date para queries de N.O.R.A[cite: 22]. Write: localStorage (inmediato, sin latencia) + Firestore async (persistente, cross-device). Read: Lee siempre desde localStorage (ya sincronizado)[cite: 22]. Datos Empresariales en Vivo Sin Revelar la Fuente al LLM[cite: 22]. 1. Pregunta Natural[cite: 22] 2. LLM + Function Call[cite: 22] 3. Gateway RBAC[cite: 22] 4. Data Provider[cite: 22] 5. Summarizer Estructurado[cite: 22] 6. Respuesta Precisa[cite: 22] 60% vs. inyección JSON completa[cite: 22] 0 (Dato exacto de Firestore)[cite: 22] Firestore Monday SAP REST cite: 22 TTL Efímero (purgado tras cada turno)[cite: 22] TEC BI: Empleados, Proveedores, Clientes, Briefs, Proyectos, Evaluaciones, Costos, ROI[cite: 22]. Marketing Sofia: Clientes, Métricas, Calendario, Finanzas[cite: 22]. BuscarRegistro (admin): Cross-extension[cite: 22]. 9.8 60% 3 <2s 2 4 6 7 8 9 9 42% 35% 15% 8% Respuestas por rol (RBAC) Parcial No Parcial ✓ Gateway completo[cite: 22] Datos en tiempo real No Parcial No ✓ Capability Runtime[cite: 22] Contexto temporal usuario No No No ✓ Grafo de Experiencia[cite: 22] Políticas de comportamiento Básico No Entrenamiento ✓ CPE Score 0-1[cite: 22] Agent Runtime iterativo Parcial No No ✓ ReAct 3-step[cite: 22] Memoria persistente No No No ✓ Dual-write Firestore[cite: 22] Pipeline Analytics nativo No No No ✓ N.O.R.A. ready[cite: 22] I Inyección de Datos Bajo Demanda Obtiene datos en vivo de Firestore solo cuando el LLM declara una Function Call. Efímero, controlado por rol y eficiente en tokens[cite: 22]. vs. RAG: recuperación siempre activa[cite: 22] II Grafo de Experiencia Temporal Grafo ponderado de preferencias que decae con el tiempo modelando el olvido humano (5%/día)[cite: 22]. Novedad: sin arte previo[cite: 22] III Agent Runtime ReAct Edge-safe Motor ReAct (Reason+Act) con timeout de 8s, máx 3 iteraciones y streaming en tiempo real (query_data, search_memory, analyze)[cite: 22]. vs. LangChain: Edge-native, sin servidor[cite: 22] IV Pipeline Observer → N.O.R.A Dataset Cada request genera un evento en Firestore con taskType, latencia, proveedor y fecha, construyendo el dataset para aprendizaje de N.O.R.A[cite: 22]. Base de datos de comportamiento real[cite: 22] N.O.R.A. — Núcleo de Observación, Razonamiento y Aprendizaje[cite: 22] Capa de inteligencia emergente de SOFIAA que aprende de patrones reales de uso, construye vectores de comportamiento (BehaviorVector) y realiza predicciones operativas proactivas[cite: 22]. BehaviorVector Computa patrones semanales desde pipeline_events: taskType dominante, latencia, extensión ",
+  "documento_original": "gemini-code-1784914513163.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

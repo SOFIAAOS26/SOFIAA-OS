@@ -1,0 +1,39 @@
+{
+  "id": "decisionarquitectura_reporte_de_avances_20260707",
+  "tipo": "decision_arquitectura",
+  "fecha": "2026-07-07",
+  "fase_corpus": "fase_1",
+  "titulo": "Reporte de Avances",
+  "resumen": "Ingeniería completada hoy en el sistema N.E.X.O. y visión sobre la integración futura con N.O.R.A.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "NORA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Por qué se tomó la decisión sobre Reporte de Avances?",
+    "¿Qué alternativas se descartaron?",
+    "¿Cómo afectó esta decisión a la arquitectura del sistema?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó NORA en esta fase?"
+  ],
+  "tags": [
+    "decision-arquitectura",
+    "sofiaa",
+    "nexo",
+    "nora",
+    "avances",
+    "firebase",
+    "groq",
+    "firestore"
+  ],
+  "texto_embedding": "Reporte de Avances 7 de Julio 2026 Ingeniería completada hoy en el sistema N.E.X.O. y visión sobre la integración futura con N.O.R.A. Mi Grafo (Privacy Dashboard) Última pieza del sistema N.E.X.O. — página /nexo/mi-grafo con visualización en tiempo real del grafo de memoria, filtros por categoría, barras de peso con decaimiento visual, borrado individual y limpieza total con confirmación. Activada con la palabra clave secreta 'nexofia' desde el chat. Puesta en producción real CSP de Manifest V3 (Firebase bundleado localmente con esbuild) OAuth Client ID con Firebase Auth Google Sign-In habilitado como proveedor Firebase Service Account desplegado en Vercel FIREBASE_SERVICE_ACCOUNT_BASE64 conectado a Vercel. Pin de jose@^4 para compatibilidad ESM con firebase-admin. Timeout de 9 segundos en Groq con fallback inmediato a Gemini Flash cuando falla — eliminando el error 'Hubo un problema' que aparecía de forma intermitente. URL real del artículo ahora se inyecta en el bloque N.E.X.O. del system prompt, resolviendo las cards con links rotos. Mi Grafo ahora muestra el enlace al sitio original en cada nodo. Chrome Extension (captura página) PWA Share Target (comparte desde móvil) POST /api/nexo/ingest Gemini Flash classifier (categoría, entidades, resumen, importancia) Firestore: users/{uid}/nexo_nodes Decaimiento exponencial automático vía CRON 3AM CST Contexto invisible Visualización + control (/nexo/mi-grafo) SOFIAA ahora tiene memoria contextual persistente. Cada página capturada alimenta su comprensión de intereses (cámaras, restaurantes, arquitectura, trabajo) y lo usa proactivamente. El grafo decae con vidas medias distintas según la categoría (ej. comida decae en 7 días, investigación en 30). Lo reciente es más relevante. Captura exitosa de una página real recibida en Firestore. Pipeline completo en vivo. Infraestructura base lista — telemetría estructurada, logs por traceId, escritura en Firestore. Detectar patrones en el grafo N.E.X.O. y sugerir conexiones no vistas. Monitorear anomalías en el comportamiento del sistema y auto-corregirse. Generar briefings proactivos basados en lo capturado durante la semana. Conectar nodos de distintas categorías para inferir intenciones (ej. vuelos + fotografía = viaje fotográfico). Alertar cuando un tema en el grafo está por expirar y merece revisión. Salto de asistente inteligente a sistema operativo cognitivo — SOFIAA conociendo el contexto antes de abrir la conversación.",
+  "documento_original": "gemini-code-1784914638833.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

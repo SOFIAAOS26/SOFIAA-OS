@@ -1,0 +1,39 @@
+{
+  "id": "decisionarquitectura_sofiaa_114_plan_maestro_de_sprints_20260724",
+  "tipo": "decision_arquitectura",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA 1.1.4 — Plan Maestro de Sprints",
+  "resumen": "SOFIAA 1.1.4 — Plan Maestro de Sprints Core aburrido e indestructible · Extensiones infinitamente potentes · Filosofía LEAN 1.1.4 3 Sprints tácticos ~3 semanas Base estable Modular Prompt System 8 módulos, 542 tokens base, -88% vs origen URL como activación extensiones acopladas solo por pathname Guardrails doble capa cliente + servidor, bloqueo instantáneo RBAC Firebase Auth roles por extensión implementados Memory Timeline long-term + contextual, persistencia localStorage Goal Engine detección de objetivos por mensaje Response Cache normalización + hit detection <50ms Generative UI quick_act",
+  "modulos_afectados": [
+    "SOFIAA",
+    "HERMES",
+    "TEC_BII"
+  ],
+  "sprint_referencia": "Sprint A",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Por qué se tomó la decisión sobre SOFIAA 1.1.4 — Plan Maestro de Sprints?",
+    "¿Qué alternativas se descartaron?",
+    "¿Cómo afectó esta decisión a la arquitectura del sistema?",
+    "¿Cómo se implementó HERMES en esta fase?",
+    "¿Cómo se implementó TEC_BII en esta fase?"
+  ],
+  "tags": [
+    "decision-arquitectura",
+    "sofiaa",
+    "hermes",
+    "tec-bii",
+    "1.1.4",
+    "maestro",
+    "sprints",
+    "typescript"
+  ],
+  "texto_embedding": "SOFIAA 1.1.4 — Plan Maestro de Sprints Core aburrido e indestructible · Extensiones infinitamente potentes · Filosofía LEAN 1.1.4 3 Sprints tácticos ~3 semanas Base estable Modular Prompt System 8 módulos, 542 tokens base, -88% vs origen URL como activación extensiones acopladas solo por pathname Guardrails doble capa cliente + servidor, bloqueo instantáneo RBAC Firebase Auth roles por extensión implementados Memory Timeline long-term + contextual, persistencia localStorage Goal Engine detección de objetivos por mensaje Response Cache normalización + hit detection <50ms Generative UI quick_actions, info_card, extension_card Streaming SSE Groq LLaMA 3.3 70B, chunk a chunk 3 extensiones live TEC BI, JP Memorial, Marketing Pro Alta 🔴 Sin contrato formal extensiones acopladas con if/else hardcoded en resolver Alta 🔴 system.prompt.ts legacy archivo muerto que convive con el nuevo sistema Alta 🔴 Sin ExtensionRegistry agregar extensión requiere editar el Core Media 🟡 Sin observabilidad errores de Groq no dejan traza estructurada Media 🟡 Sin traceId imposible correlacionar error con request específico Media 🟡 UI tokens como strings un corchete roto del LLM puede romper la UI Media 🟡 Sin Edge Middleware RBAC no valida antes de llegar al route handler Media 🟡 Monday.com sync bloquea stream sin waitUntil() asíncrono Baja 🔵 Sin versionado semántico rollback de extensión requiere deploy Baja 🔵 Sin tool handlers SOFIAA consulta pero no ejecuta acciones El sistema tiene una base técnica sólida y moderna. Los gaps son la diferencia entre 'proyecto brillante' y 'plataforma comercial'. Los elementos rojos bloquean el escalamiento, los amarillos son riesgos operacionales y los azules representan la siguiente capa de madurez. Sprint A SDK + Limpieza Legacy El Core se vuelve ciego. Solo entiende contratos. 4–5 días ESTABILIDAD DESACOPLAMIENTO A1 Contrato formal SofiaaExtension Crear la especificación TypeScript completa: ExtensionManifest, SofiaaExtension, CapabilityType, ExtensionVersion. Contrato estricto para extensiones. types/sofiaa-platform.ts S · 2h A2 ExtensionRegistry agnóstico Clase que lee manifiestos por ruta. registry.resolve(pathname) retorna el módulo listo sin conocer la extensión específica. core/extension.registry.ts M · 4h A3 Manifiestos de las 3 extensiones Migrar tec-bi, jp-memorial y marketing-sofia al formato SofiaaExtension formal con sofiaa.manifest.json. extensions/tec-bi/sofiaa.manifest.json extensions/jp-memorial/sofiaa.manifest.json extensions/marketing/sofiaa.manifest.json M · 3h A4 Actualizar resolver → usa Registry prompt.resolver.ts elimina logic hardcoded y usa ExtensionRegistry. Agregar extensión = crear un manifiesto. core/prompt.resolver.ts S · 2h A5 Eliminar system.prompt.ts legacy Eliminación completa del archivo muerto. Verificación de imports para asegurar que la construcción sea 100% dinámica. src/config/system.prompt.ts S · 1h El Core se vuelve completamente ciego a las extensiones. Agregar nuevas áreas o extensiones solo requiere un sofiaa.manifest.json. Zero cambios en Core y zero riesgo de regresión. Sprint B El Escudo Operacional Gobernanza, observabilidad y blindaje de UI. 4–5 días SEGURIDAD OBSERVABILIDAD B1 Structured Log Correlation (traceId) POST /api/chat genera traceId único inyectado en x-correlation-id. Firestore /logs registra traza completa. core/tracer.ts app/api/chat/route.ts M · 4h B2 Edge Middleware — RBAC antes del handler middleware.ts de Next.js valida token Firebase y allowedRoles en el Edge antes de llegar al handler. middleware.ts M · 3h B3 waitUntil() — Event Bus asíncrono SSE se entrega inmediatamente. waitUntil() ejecuta ganchos asíncronos en segundo plano (logs, memoria, sync) sin latencia añadida. app/api/chat/route.ts core/event.bus.ts M · 4h B4 Structured Outputs — Function Calling para UI y Nav Migrar [NAVIGATE] y [UI] a Groq Function Calling nativo. Respuestas estructuradas por contrato sin riesgo de romperse. app/api/chat/route.ts types/generative-ui.ts L · 6h B5 Debouncing en escrituras Firestore Debounce de 800ms en el cliente para consolidar escrituras durante el streaming y optimizar uso de BD. hooks/useFirestoreDebounce.ts S · 2h Sistema observable, auditable y blindado. Trazabilidad completa de errores, UI generativa a prueba de fallos y cero bloqueos de red para el usuario. Sprint C Autonomía y Madurez de Plataforma SOFIAA deja de consultar y empieza a ejecutar. 5–6 días AUTONOMÍA VERSIONADO C1 Versionado semántico de extensiones Manifiesto soporta semantic versioning (ej. 1.2.0). Rollback inmediato cambiando puntero en Registry. core/extension.registry.ts extensions/*/sofiaa.manifest.json M · 3h C2 Tool Handler — TEC BI como primer agente Implementar tools.handler para ejecutar acciones reales (crear brief, actualizar proyecto) en Monday.com directamente desde el chat. extensions/tec-bi/tools.ts extensions/tec-bi/sofiaa.manifest.json L · 8h C3 Lifecycle Hooks — onGoalDetected + onStreamFinished Implementar ganchos de ciclo de vida en extensiones para desencadenar eventos, persistencia o alertas sin alterar el Core. core/extension.lifecycle.ts M · 4h C4 Test suite mínima del Core Pruebas unitarias para ExtensionRegistry, assemblePrompt, guardrails y traceId para garantizar la estabilidad del Core. __tests__/core/*.test.ts M · 4h SOFIAA 1.1.4 se consolida como un Runtime de orquestación de IA agnóstico y ejecutor de procesos, listo para escalamiento comercial. Ligero 🪶 542 tokens base. Extensiones desacopladas. Function Calling y waitUntil() para eliminar latencias. Directo 🎯 Registry.resolve(pathname) obtiene el prompt listo sin capas intermedias ni sobreprecio computacional. Potente ⚡ Tool handlers ejecutan acciones reales externas. Hooks de ciclo de vida por extensión. Estable 🧱 Aislamiento de fallos: si una extensión falla, se desactiva sin afectar el Core. Tests y traceId para auditoría. Desacoplado 🔌 Core totalmente ciego. Nuevas extensiones requieren solo manifiesto JSON y módulo de prompt. Agnóstico 🌐 D",
+  "documento_original": "gemini-code-1784913762073.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

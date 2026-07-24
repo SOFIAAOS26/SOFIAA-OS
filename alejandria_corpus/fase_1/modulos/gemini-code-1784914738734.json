@@ -1,0 +1,38 @@
+{
+  "id": "especificacionmodulo_nora_20260703",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-03",
+  "fase_corpus": "fase_1",
+  "titulo": "N.O.R.A.",
+  "resumen": "Diseño e implementación del Núcleo Empático (nucleo_empatico.ts) para eliminar la complacencia corporativa en asistentes IA mediante adaptación conductual en Edge, modelo VAD y procesamiento de señales en tiempo real.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NORA",
+    "ATENA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona N.O.R.A.?",
+    "¿Cuál es la arquitectura de SOFIAA y NORA?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó NORA en esta fase?",
+    "¿Cómo se implementó ATENA en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "nora",
+    "atena",
+    "n.o.r.a.",
+    "groq",
+    "api"
+  ],
+  "texto_embedding": "N.O.R.A. Núcleo Operativo de Reacción Autónoma (Núcleo Empático) 3 de Julio 2026 Abrahan Benjacob Cruz Urrutia Propuesta de Arquitectura HCI y Middleware Conductual Diseño e implementación del Núcleo Empático (nucleo_empatico.ts) para eliminar la complacencia corporativa en asistentes IA mediante adaptación conductual en Edge, modelo VAD y procesamiento de señales en tiempo real. Complacencia corporativa (hiper-educados, sumisos, positivos, incapacity para adaptar su energía o confrontar al usuario)[cite: 6]. Espejo cognitivo y conductual adaptativo en tiempo real basado en el comportamiento del usuario[cite: 6]. Edge route antes de invocar los modelos (Groq o Gemini)[cite: 6]. Virtualmente 0 (sin llamadas a APIs externas de análisis de sentimiento)[cite: 6]. Modulación dinámica concatenada al inicio de las instrucciones del sistema (system prompt)[cite: 6]. PRAGMATIC_ANXIOUS (Respuestas ultra rápidas, secas, busca soluciones inmediatas)[cite: 6] EXHAUSTIVE_DETAIL (Escribe lento, mensajes largos, vocabulario formal y estructurado)[cite: 6] HOSTILE_DEFENSIVE (Respuestas cortas, retadoras, sarcásticas o defensivas)[cite: 6] ENTHUSIASTIC_CREATIVE (Uso de exclamaciones, emojis, flujo rápido y verbo abundante)[cite: 6] PASSIVE_NEUTRAL (Interacción estándar, sin picos de latencia ni léxico polarizado)[cite: 6] Rango [-1.0 a 1.0] — Triste/Hostil vs. Feliz/Amigable[cite: 6] Rango [-1.0 a 1.0] — Pasivo/Calmado vs. Activo/Alerta[cite: 6] Rango [-1.0 a 1.0] — Sumiso/Complaciente vs. Asertivo/Directo[cite: 6] mal basura inutil no sirve peor tonto ridiculo error otra vez haces nada entiendes bobo pésimo perdiendo el tiempo cite: 6 ya rapido urge ahora listo ok go va directo punto no rodeos resumen sintesis dime ya cuanto cite: 6 súper genial excelente increible wow asombroso perfecto jaja haha buenísimo vamos chido padre cool cite: 6 considerando adicionalmente específicamente metodología estructura con respecto a consiguiente parámetro sin embargo consecuentemente cite: 6 classifyUser(metrics: UserMetrics): UserArchetype[cite: 6] computeEmotion(archetype: UserArchetype): SofiaaEmotionState[cite: 6] getDirective(archetype: UserArchetype, emotion: SofiaaEmotionState): string[cite: 6] modulate(metrics: UserMetrics): ModulatorOutput[cite: 6] Aplicación del modelo VAD a la experiencia de usuario (HCI moderno real)[cite: 6] Creación de una capa de interfaz conductual (behavioral interface layer)[cite: 6] Ejecución en Edge sin dependencias de APIs externas (óptimo en performance, privacidad y costo)[cite: 6] Arquitectura limpia y modular[cite: 6] Sobre-determinismo psicológico (riesgo de falsos positivos al asumir estados emocionales estables en cada mensaje)[cite: 6] Ajuste de salida HOSTILE_DEFENSIVE demasiado agresivo (riesgo de degradar la confianza del usuario al sonar frío/clínico en exceso)[cite: 6] Inestabilidad de la latencia como métrica única (afectada por lags de UI, multitarea o red)[cite: 6] Mezcla de modelado emocional interno con estrategias de UX externas[cite: 6] Riesgo de seguridad por inyección dinámica descontrolada en el system prompt[cite: 6] Behavioral Adaptation Layer[cite: 6] Estado interno (no visible al usuario)[cite: 6] Reglas de comportamiento visibles[cite: 6] Controlado, guardado y limitado[cite: 6] Sustituye los arquetipos rígidos por un vector continuo (behaviorVector)[cite: 6] Escala 0-1[cite: 6] Escala 0-1[cite: 6] Escala 0-1[cite: 6] Escala 0-1[cite: 6] Alta urgencia direct[cite: 6] Alta complejidad structured[cite: 6] Alta emoción supportive[cite: 6] Alta hostilidad neutral + boundaries[cite: 6] neutral_direct[cite: 6] low[cite: 6] moderate[cite: 6] calm_boundary[cite: 6] Transición de una psicología discreta a un modelo vectorial probabilístico de comportamiento[cite: 6].",
+  "documento_original": "gemini-code-1784914738734.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

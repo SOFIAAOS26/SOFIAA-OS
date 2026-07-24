@@ -1,0 +1,42 @@
+{
+  "id": "especificacionmodulo_hermes_20260701",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-01",
+  "fase_corpus": "fase_1",
+  "titulo": "HERMES",
+  "resumen": "Integración de HERMES como la capa de ejecución de acciones (Action Execution Layer) para SOFIAA OS, cerrando la brecha entre el razonamiento cognitivo de los motores (PROMETEO, ATENA, TEC Bii) y la ejecución del trabajo en el mundo real mediante un Approval Gate humano, conectores desacoplados y herramientas de chat.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "PROMETEO",
+    "HERMES",
+    "ATENA",
+    "TEC_BII"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona HERMES?",
+    "¿Cuál es la arquitectura de SOFIAA y NEXO?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó PROMETEO en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "nexo",
+    "prometeo",
+    "hermes",
+    "atena",
+    "tec-bii",
+    "firestore"
+  ],
+  "texto_embedding": "HERMES Action Execution Layer — La Capa de Ejecución Operativa SOFIAA OS (Next.js API Routes + Firestore + Conectores HTTP) Plan de Sprints, Arquitectura de Software e Ingeniería Julio 2026 Integración de HERMES como la capa de ejecución de acciones (Action Execution Layer) para SOFIAA OS, cerrando la brecha entre el razonamiento cognitivo de los motores (PROMETEO, ATENA, TEC Bii) y la ejecución del trabajo en el mundo real mediante un Approval Gate humano, conectores desacoplados y herramientas de chat. SOFIAA poseía capacidad de análisis y decisión pero carecía de 'manos' para ejecutar operativamente, generando fricción manual al obligar al usuario a manipular plataformas externas[cite: 23]. Action Execution Layer que convierte propuestas estratégicas en hechos reales dentro de un flujo controlado con aprobación humana (Human-in-the-loop)[cite: 23]. Conectores internos, Monday.com, Slack e integración nativa con SOFIAA (Despliegue inmediato)[cite: 23]. Conectores a plataformas de anuncios (Meta Ads, Google Ads) y CRM (Requiere flujos de aprobación de API externas y OAuth2)[cite: 23]. 1. Motor Origen (PROMETEO / ATENA / TEC Bii) genera propuesta de acción[cite: 23]. 2. Human Approval Gate: La propuesta ingresa a la cola en estado 'pendiente_aprobacion'[cite: 23]. 3. Aprobación / Rechazo: El usuario aprueba o rechaza manualmente en la UI (/hermes/cola)[cite: 23]. 4. Action Queue: Persistencia en la colección 'hermes_queue' de Firestore[cite: 23]. 5. Connector Layer / Executor: Despacho asíncrono hacia el conector correspondiente (Monday, Slack, Calendario, Interno)[cite: 23]. 6. Result Tracker & Feedback Loop: Publicación del resultado en N.E.X.O. y retroalimentación hacia los motores de origen[cite: 23]. hermes_queue/{actionId}[cite: 23] HermesAction id: string[cite: 23] workspaceId: string[cite: 23] sourceEngine: 'prometeo' | 'atena' | 'tec_bii' | 'manual'[cite: 23] sourceBriefId?: string[cite: 23] tipo: HermesActionType[cite: 23] payload: Record<string, unknown>[cite: 23] estado: 'pendiente_aprobacion' | 'aprobada' | 'ejecutando' | 'completada' | 'fallida' | 'rechazada'[cite: 23] resultado?: Record<string, unknown>[cite: 23] aprobadoPor?: string[cite: 23] createdAt: number[cite: 23] executedAt?: number[cite: 23] monday_crear_tarea[cite: 23] monday_actualizar_tarea[cite: 23] slack_notificar[cite: 23] calendario_agendar[cite: 23] creative_publicar[cite: 23] meta_ads_pausar (Etapa 2)[cite: 23] google_ads_pausar (Etapa 2)[cite: 23] H-0 Foundation & Layout /hermes Definición de tipos en src/extensions/hermes/schema.ts (HermesAction, HermesActionType, HermesConnector)[cite: 23]. Manifiesto SofiaaExtension en src/extensions/hermes/index.ts con paleta índigo eléctrico (#6366F1)[cite: 23]. Registro de la extensión en core/extension.registry.ts[cite: 23]. Layout e interfaz del Centro de Mando en /hermes, /hermes/cola, /hermes/conectores y /hermes/historial[cite: 23]. Funciones helper Firestore en src/lib/hermes/firestore.ts[cite: 23]. H-1 Action Engine Core & Connectors Motor de despacho executor.ts con política de reintentos (máximo 3)[cite: 23]. Conector Monday (monday.ts) para creación/actualización de tareas y movimiento de grupos[cite: 23]. Conector Slack (slack.ts) para notificaciones normales y urgentes vía Incoming Webhook[cite: 23]. Conector Calendario (calendario.ts) para agendamiento de publicaciones SMM[cite: 23]. Conector Interno (interno.ts) para actualizar BrandGoals y registrar CreativeMemory con Admin SDK[cite: 23]. Stubs informativos para conectores de Etapa 2 (Meta Ads, Google Ads, CRM)[cite: 23]. Endpoint autenticado POST /api/hermes/execute[cite: 23]. H-2 PROMETEO × HERMES Bridge Módulo prometeo-bridge.ts (enqueueBriefActions) para transformar diagnósticos de DirectorBrief en acciones HERMES automáticamente[cite: 23]. Mapeo de acciones: FATIGA → Slack urgente; ESCALAR/PAUSAR → Tareas Monday; NUEVO_CREATIVO → Post en Calendario[cite: 23]. Integración en el generador de briefs POST /api/prometeo/director/brief y en el CRON diario de PROMETEO[cite: 23]. Badge interactivo en la UI del Director Autónomo para acceso directo a /hermes/cola[cite: 23]. H-4 ATENA × HERMES Bridge Módulo atena-bridge.ts para escaneo de matrices AMEF (NPR ≥ 200/100) y cartas de control SPC (reglas Western Electric y Cpk < 1.0)[cite: 23]. Endpoint POST/GET /api/atena/hermes-scan para encolamiento proactivo de acciones preventivas[cite: 23]. Botón '⚡ Escanear con HERMES' en la interfaz /atena/amef con contador de métricas y acceso a la cola[cite: 23]. H-5 SOFIAA Chat Tools Herramientas de extensión en src/extensions/hermes/tools.ts: hermes_resumen, hermes_cola, hermes_historial y hermes_accion_detalle[cite: 23]. Activación de hermesTools en el manifiesto de la extensión y actualización del promptModule[cite: 23]. Soporte conversacional en el chat para consulta de pendientes, aprobaciones e historial[cite: 23]. H-7 Execution Loop Complete & Inline Feedback Cierre completo del circuito: Aprobación en UI → llamada a /api/hermes/execute → despacho por executor.ts → actualización en Firestore[cite: 23]. Feedback inline en tiempo real en la página de la cola con notificaciones visuales (✅/❌) y resumen del resultado devuelto por el conector[cite: 23]. Zero errores (tsc clean)[cite: 23] H-0 H-1 H-2 H-4 H-5 H-7 cite: 23 HERMES completamente operativo en producción como la capa oficial de ejecución de acciones de SOFIAA OS[cite: 23].",
+  "documento_original": "gemini-code-1784915615678.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

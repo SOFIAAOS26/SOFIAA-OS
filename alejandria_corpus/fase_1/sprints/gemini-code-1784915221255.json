@@ -1,0 +1,40 @@
+{
+  "id": "sprint_sesion_tec_bii_v2_sprints_p1_20260711",
+  "tipo": "sprint",
+  "fecha": "2026-07-11",
+  "fase_corpus": "fase_1",
+  "titulo": "Sesión — TEC Bii v2: Sprints P-1, Q-1, Q-2, Q-3",
+  "resumen": "Documentación técnica del despliegue de los Sprints P-1 y Q-1 a Q-3 para TEC Bii v2, cubriendo el motor predictivo de riesgo, la fundación de contexto en tiempo real, la integración de tools para SOFIAA Chat y el webhook de Monday v2.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "HERMES",
+    "TEC_BII"
+  ],
+  "sprint_referencia": "Sprint P-1",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Qué se implementó en el sprint Sesión — TEC Bii v2: Sprints P-1, Q-1, Q-2, Q-3?",
+    "¿Cuáles fueron los cambios técnicos en esta etapa?",
+    "¿Qué archivos y funcionalidades se crearon?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó HERMES en esta fase?"
+  ],
+  "tags": [
+    "sprint",
+    "sofiaa",
+    "nexo",
+    "hermes",
+    "tec-bii",
+    "sesion",
+    "sprints",
+    "firestore"
+  ],
+  "texto_embedding": "Sesión — TEC Bii v2: Sprints P-1, Q-1, Q-2, Q-3 11 de Julio 2026 Mergeado a main 19 archivos · +1,412 líneas Documentación técnica del despliegue de los Sprints P-1 y Q-1 a Q-3 para TEC Bii v2, cubriendo el motor predictivo de riesgo, la fundación de contexto en tiempo real, la integración de tools para SOFIAA Chat y el webhook de Monday v2. Sprint P-1 Motor Predictivo El ciclo predictivo corre automáticamente tras guardar una evaluación mediante 'updateEntityStatsFromEvaluaciones()'. Recalcula calidadPromedio, cumplimientoRate, tendenciaCalidad y alertaRiesgo en empleados y proveedores, propagando 'assigneeRisk' a sus proyectos activos. Endpoint 'GET /api/tec-bii/risk' (devuelve entidades en riesgo filtradas y enriquecidas). Sección 'Riesgo Predictivo' en '/tec-bii/inteligencia' (barras de métricas y proyectos activos expuestos). Sprint Q-1 Fundación v2 PageGuard.tsx (src/components/tec-bii/) Versión limpia sin props ni lógica de roles. Verifica sesión activa y redirige a '/' si no hay usuario autenticado. TecBiiContext.tsx Contexto compartido montado en layout.tsx con 'onSnapshot' para empleados, proveedores, clientes y briefs, permitiendo a las 9 páginas compartir una sola suscripción por colección. Migración masiva de '@/components/tec-bi/PageGuard' a '@/components/tec-bii/PageGuard' y reemplazo de '<PageGuard section=\"...\" />' por '<PageGuard />'. Sprint Q-2 SOFIAA Chat Tools v2 src/extensions/tec-bii/tools.ts users/{uid}/tec_bii_* crear_brief tec_bii_briefs actualizar_proyecto tec_bii_proyectos (estado y avance) listar_proyectos urgencyScore, estado y assigneeRisk consultar_riesgo alertas predictivas en tiempo real de empleados, proveedores y proyectos generar_analisis métricas operacionales completas del área SofiaaExtension v2.0.0 registrado en el Core Registry (src/extensions/tec-bii/index.ts). Al estar en '/tec-bii', SOFIAA recibe contexto completo y las 5 tools en la llamada LLM. En 'chat/route.ts', las tools de la extensión se mezclan dinámicamente con 'SOFIAA_TOOLS'. Si el LLM las invoca, el handler ejecuta la tool y realiza un segundo turno LLM con el resultado. Sprint Q-3 Monday Webhook v2 /api/monday/webhook Reconectado a paths v2 ('users/{MONDAY_OWNER_UID}/tec_bii_briefs' y 'tec_bii_proyectos'). Ante cambios de estado desde Monday, dispara 'publishEntityToGraph' de forma fire-and-forget para actualizar el nodo en NEXO. Nueva variable requerida en Vercel: MONDAY_OWNER_UID. Evaluación de Desempeño Guardada Ejecución de 'updateEntityStats()' → Actualización de 'alertaRiesgo' en empleado/proveedor. Propagación a 'assigneeRisk' en el proyecto activo. Actualización en tiempo real de la UI 'Riesgo Predictivo'. Interacción Chat SOFIAA en /tec-bii El LLM recibe las 5 tools + 'contextBlock' cognitivo. SOFIAA puede crear briefs, consultar riesgos y generar análisis operativos. Sincronización Externa Monday.com Cambio de estado en Monday.com → Webhook invocado. Actualización en Firestore v2. Disparo de 'publishEntityToGraph' → Nodo NEXO re-publicado en el grafo.",
+  "documento_original": "gemini-code-1784915221255.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

@@ -1,0 +1,40 @@
+{
+  "id": "decisionarquitectura_sistema_de_optimizacion_e_inteligencia_artificial_20260601",
+  "tipo": "decision_arquitectura",
+  "fecha": "2026-06-01",
+  "fase_corpus": "fase_1",
+  "titulo": "Sistema de Optimización e Inteligencia Artificial para la Gestión Integral de Producción Audiovisual",
+  "resumen": "SOFIAA no es un chatbot. Es el sistema nervioso digital del Área de Producción Audiovisual del TEC. IA Inteligencia Conversacional Motor Groq (LLaMA 3) con contexto institucional inyectado. Responde sobre proyectos, costos y equipos con datos en tiempo real. BI Business Intelligence Extensión TEC BI: dashboards KPIs en vivo, análisis de costos, evaluaciones de calidad, simulador ROI y exportación",
+  "modulos_afectados": [
+    "SOFIAA",
+    "HERMES",
+    "ATENA",
+    "TEC_BII"
+  ],
+  "sprint_referencia": "Sprint 8",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Por qué se tomó la decisión sobre Sistema de Optimización e Inteligencia A?",
+    "¿Qué alternativas se descartaron?",
+    "¿Cómo afectó esta decisión a la arquitectura del sistema?",
+    "¿Cómo se implementó HERMES en esta fase?",
+    "¿Cómo se implementó ATENA en esta fase?"
+  ],
+  "tags": [
+    "decision-arquitectura",
+    "sofiaa",
+    "hermes",
+    "atena",
+    "tec-bii",
+    "optimizacion",
+    "inteligencia",
+    "artificial"
+  ],
+  "texto_embedding": "TECNOLÓGICO DE MONTERREY ÁREA DE PRODUCCIÓN AUDIOVISUAL SOFIAA Sistema de Optimización e Inteligencia Artificial para la Gestión Integral de Producción Audiovisual Resumen Ejecutivo Doctoral Junio 2026 1.0 01 Qué es SOFIAA Definición, visión y propuesta de valor 02 Arquitectura Tecnológica Stack, integraciones y flujo de datos 03 Metodología Lean Six Sigma DMAIC aplicado al desarrollo ágil por sprints 04 Hitos del Proyecto Timeline de sprints y entregables clave 05 TEC BI Extension Business Intelligence en tiempo real 06 Seguridad y RBAC Control de acceso basado en roles 07 Integración Monday.com Sincronización bidireccional y automatización 08 Capacidades Actuales y Roadmap Lo que hace hoy y hacia dónde va 09 Tabla de Riesgos FMEA Análisis de modos de falla y mitigación 10 Impacto, ROI y Conclusión Propuesta de valor y próximos pasos SOFIAA no es un chatbot. Es el sistema nervioso digital del Área de Producción Audiovisual del TEC. IA Inteligencia Conversacional Motor Groq (LLaMA 3) con contexto institucional inyectado. Responde sobre proyectos, costos y equipos con datos en tiempo real. BI Business Intelligence Extensión TEC BI: dashboards KPIs en vivo, análisis de costos, evaluaciones de calidad, simulador ROI y exportación PDF. RBAC Gestión Segura Firebase Auth + RBAC granular. Tres niveles de acceso (admin, director, user) con rutas protegidas y acciones confirmadas. Next.js 16 App Router React 19 + TypeScript Tailwind CSS v4 Recharts Auth Context + RBAC Firestore real-time Groq AI LLAMA 3 API Routes Edge (<500ms Respuesta IA streaming) 100% Serverless + CDN global Firebase Firestore Firebase Auth Vercel CDN Global Monday.com API ~40 6 Firestore real-time sync (LIVE) DMAIC aplicado al desarrollo ágil por sprints Alcance del Área de Producción Audiovisual. Mapeo VSM. Identificación de desperdicios digitales y brechas de información. KPIs baseline: tiempo de respuesta, tasa de errores en briefs, costo promedio sin datos centralizados por proyecto. Root cause: fragmentación de datos, ausencia de BI, procesos manuales y sin trazabilidad formal de calidad. 8 Sprints iterativos con entrega incremental. CI/CD Vercel. Zero downtime. Feature flags por rol de usuario. RBAC granular, audit trail Firestore, PDF certificado, webhook Monday.com, FMEA documentado con NPR. 8 Sprints completados Zero-defect approach Git CI/CD Lean Six Sigma documentado S0 Fundación SEE Firebase, Firestore, arquitectura de extensiones y estructura Next.js S1 CRUD Core Módulos Empleados, Proveedores, Clientes con soft-delete y real-time S2 Briefs & Proy. Briefs con estados, proyectos con asignación interna y externa S3 Evaluaciones Calificación 1-5 estrellas por proyecto con métricas de calidad S4 Análisis + ROI Análisis de costos con Recharts y simulador ROI interactivo S5 Dashboard + IA KPIs en vivo, SOFIAA Intelligence Layer con contexto Firestore S6 PDF + Toast Exportación PDF profesional, toast notifications y polish UX S7 RBAC + Polish Firebase Auth, roles granulares, skeletons y confirm dialogs KPI Dashboard KPIs Proyectos activos, calidad promedio, % a tiempo y rentabilidad global. Datos vivos desde Firestore en tiempo real. ANS Análisis de Costos Comparativa costo vs. valor por proyecto. PieChart por tipo, BarChart por proveedor o empleado asignado. ROI Simulador ROI Slider interactivo $10-$1,000 MXN. Curva ROI dinámica, utilidad por unidad y productividad histórica vs. actual. EV Evaluaciones Sistema 1-5 estrellas por proyecto. Métricas de calidad, creatividad, ejecución técnica y alineación al brief. BR Briefs & Proyectos CRUD completo con estados, asignación interna/externa, timeline de entrega y cálculo de margen de días. PDF Exportación PDF Reportes profesionales de Análisis y Evaluaciones con jsPDF + autotable. Listos para auditoría institucional. Dashboard Ver Ver - Ver Briefs CRUD CRUD CRUD Ver Proyectos CRUD CRUD - Ver Empleados CRUD CRUD - Ver Proveedores CRUD CRUD - Ver Clientes CRUD CRUD - Ver Evaluaciones CRUD Ver - Ver Análisis + ROI Ver Ver - Ver AUTH Firebase Auth Email + Password PG PageGuard Rutas protegidas NAV Nav filtrado por rol activo CDG Confirm dialogs acciones críticas AUD Audit trail Firestore Bidireccional (GraphQL API) PREPARADO MONDAY_ENABLED true (.env.local) 5 min BR Briefs PR Proyectos EM Empleados EV Evaluaciones BA Boards del Área AS Asignaciones TL Timelines NT Notificaciones Sin duplicar datos entre sistemas Actualización automática de estados Trazabilidad completa por proyecto SOFIAA consulta Monday vía API Webhooks en tiempo real Plan Enterprise TEC incluye API IA conversacional con contexto institucional TEC BI CRUD: Empleados, Proveedores, Clientes, Briefs, Proyectos Análisis de costos con gráficas interactivas Recharts Dashboard KPIs en tiempo real (Firestore onSnapshot) Evaluaciones de calidad con métricas 1-5 estrellas Simulador ROI con proyecciones dinámicas por slider Exportación PDF profesional (jsPDF + autotable) RBAC: admin / director / user / sin sesión Firebase Auth con roles almacenados en Firestore Deploy Vercel con CI/CD automático desde Git Sprint 8 Integración Monday.com activa - sync bidireccional Proyectos y Briefs Sprint 9 Reportes semanales automáticos vía email (Resend API) Sprint 10 SOFIAA Mobile - PWA optimizada para coordinadores en campo Sprint 11 Analítica Predictiva - regresión para forecasting de costos Sprint 12 Integración ERP TEC - SAP/Banner para carga automática de presupuestos Rate limit Groq API (TPM) Respuestas interrumpidas en chat 6 7 8 336 MITIGADO Inyección solo en /tec-bi/*. Plan upgrade en roadmap. Pérdida conectividad Firebase Sin datos en tiempo real 8 3 6 144 CONTROLADO Firestore offline persistence. Failover automático. Acceso no autorizado a roles Fuga de datos institucionales 9 2 4 72 CONTROLADO RBAC + Firebase Auth + PageGuard + nav filtrado. Saturación Vercel serverless Latencia en API routes (>2s) 5 4 7 140 CONTROLADO Edge functions. CDN global Vercel. Cache summary. Desincronización Monday-Firestore Datos inconsistente",
+  "documento_original": "gemini-code-1784913214086.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

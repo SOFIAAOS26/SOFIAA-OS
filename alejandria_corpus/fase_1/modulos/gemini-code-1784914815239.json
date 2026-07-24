@@ -1,0 +1,39 @@
+{
+  "id": "especificacionmodulo_reporte_ejecutivo_memory_stack_20260701",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-01",
+  "fase_corpus": "fase_1",
+  "titulo": "Reporte Ejecutivo - Memory Stack",
+  "resumen": "Reporte Ejecutivo - Memory Stack SOFIAA OS — Sprints M-2 a M-6 Julio 2026 Confidencial | Documento interno - No distribuir sin autorizacion Capa de actualización más significativa en la historia de SOFIAA OS que la transforma de un asistente de IA contextual a un sistema adaptativo con memoria semántica persistente, perfil cognitivo por usuario y superficie proactiva de conocimiento. 5 3072 0.65 Tier 3 (IA Adaptativa) Peso simple sin comprensión semántica real Perfil de usuario fijo para todos Inyectado en silencio Sin visibilidad del perfil cognitivo No existían en el sistema Hybrid score: co",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "TEC_BII"
+  ],
+  "sprint_referencia": "Sprint M-2",
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona Reporte Ejecutivo - Memory Stack?",
+    "¿Cuál es la arquitectura de SOFIAA y NEXO?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó NEXO en esta fase?",
+    "¿Cómo se implementó TEC_BII en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "nexo",
+    "tec-bii",
+    "ejecutivo",
+    "memory",
+    "stack",
+    "firestore"
+  ],
+  "texto_embedding": "Reporte Ejecutivo - Memory Stack SOFIAA OS — Sprints M-2 a M-6 Julio 2026 Confidencial | Documento interno - No distribuir sin autorizacion Capa de actualización más significativa en la historia de SOFIAA OS que la transforma de un asistente de IA contextual a un sistema adaptativo con memoria semántica persistente, perfil cognitivo por usuario y superficie proactiva de conocimiento. 5 3072 0.65 Tier 3 (IA Adaptativa) Peso simple sin comprensión semántica real Perfil de usuario fijo para todos Inyectado en silencio Sin visibilidad del perfil cognitivo No existían en el sistema Hybrid score: coseno × 0.65 + peso × 0.35 Perfil cognitivo adaptativo por usuario Superficie proactiva cuando score >= 0.65 Dashboard en /nexo/perfil en tiempo real gemini-embedding-001 (3,072 dimensiones) Sprint M-2 Attention Engine Motor de Refuerzo de Atención Mecanismo asíncrono que refuerza el peso (+0.03) de los nodos N.E.X.O. seleccionados en cada conversación. Se dispara post-stream vía waitUntil() sin latencia adicional. src/lib/nexo/attention.ts api/chat/route.ts - post-stream waitUntil nexo/mi-grafo - badge con conteo de refuerzos Ninguno (ejecución asíncrona) Sprint M-3 Cognitive Variables Variables Cognitivas del Usuario Perfil cognitivo persistente por usuario (preferredDepth, formalityScore, topicAffinity, depthConfidence) actualizado automáticamente tras cada conversación con detección rule-based. src/lib/cognitive/signals.ts (regex patterns) src/lib/cognitive/profile.ts api/chat/route.ts (bloque PERFIL COGNITIVO DEL USUARIO) $0 (rule-based, sin tokens LLM) Sprint M-4 Semantic Retrieval Recuperación Semántica con Embeddings Sistema híbrido que combina similitud semántica vectorial (gemini-embedding-001) con peso de relevancia temporal mediante puntuación mixta. src/lib/nexo/embeddings.ts src/lib/nexo/firestore.ts - getSemanticNexoContext gemini-embedding-001 3,072 floats por vector Implementación nativa sin dependencias externas Sprint M-4B Embedding Backfill Procesamiento Retroactivo Script para procesar retroactivamente los nodos creados antes de M-4 sin embedding, integrando rate-limit de 220ms y migración SDK a gemini-embedding-001. scripts/backfill-embeddings.mjs npm run nexo:backfill-embeddings Sprint M-5 Proactive Surface Superficie Proactiva de Conocimiento Mención explícita en la respuesta de SOFIAA cuando un nodo alcanza un hybridScore >= 0.65, con un máximo de 2 nodos proactivos por respuesta. 0.65 hybridScore 2 nodos por conversación NexoContext (proactiveNodes, topScore) Inyección como contexto de fondo si score < 0.65 Sprint M-6 Cognitive Dashboard Dashboard Cognitivo Visualización en tiempo real (/nexo/perfil) del perfil cognitivo acumulado (profundidad, formalidad, afinidad temática, métricas de sesión). /nexo/perfil src/app/nexo/perfil/page.tsx 'nexoperfil' -> [NAVIGATE:/nexo/perfil] Tiempo real vía onSnapshot Modelo embedding text-embedding-004 (deprecado) gemini-embedding-001 Dimensiones 768 floats planificado 3,072 floats confirmado API endpoint v1beta directo (404) @google/generative-ai SDK Backfill nodos No existía npm run nexo:backfill-embeddings Diagnóstico key No existía listEmbeddingModels() auto-detect NexoContext type topNodes, nodeIds, clusters + proactiveNodes, topScore Cosine similarity No implementado Nativo en embeddings.ts 1. Captura: Extensiones / Share Target → /api/nexo/ingest → Gemini Flash → embedding 2. Almacenamiento: Firestore users/{uid}/nexo_nodes (vector 3,072 dims) 3. Retrieval: getSemanticNexoContext() (embedding + cosine ranking + hybridScore) 4. Proactive Surface: Score >= 0.65 inyectado en bloque ALTA RELEVANCIA 5. Attention Engine: Post-stream waitUntil() refuerza +0.03 a nodos seleccionados 6. Cognitive Profile: Detección de señales → updateCognitiveProfile() → inyección al prompt Conexión explícita y mención de temas capturados previamente. Adaptación progresiva al estilo de comunicación preferido. Transparencia sobre la comprensión del sistema vía /nexo/perfil. Memoria orgánica mejorada con el uso constante. Detección de señales y refuerzo asíncrono por conversación. Clasificación semántica y generación de embeddings por captura. Decaimiento exponencial de la memoria por categoría (e^-lambda*t). Funcionalidades de suscripción premium en mercado (Mem0, Cortex) integradas de forma nativa sin servicios de terceros. M-2 Attention Engine ACTIVO Refuerzo asíncrono operando en producción M-3 Cognitive Variables ACTIVO Perfil cognitivo acumulando datos por sesión M-4 Semantic Retrieval ACTIVO Hybrid scoring en cada conversación M-4B Backfill COMPLETO 5 nodos retroalimentados con gemini-embedding-001 M-5 Proactive Surface ACTIVO Mención explícita cuando score >= 0.65 M-6 Dashboard ACTIVO /nexo/perfil operativo con datos en tiempo real M-7 Gemini Refinement PENDIENTE CRON diario: Gemini analiza sesiones y refina perfil cognitivo Biblioteca PDFs (2) EN ESPERA 2 documentos pendientes de ingestar - cuota Gemini agotada Tests unitarios DÉBIL vitest configurado pero con cobertura mínima del Memory Stack UX móvil extensiones PENDIENTE TEC BI y Marketing Sofia no optimizadas para pantallas pequeñas SOFIAA OS ha evolucionado a un nivel de inteligencia adaptativa y memoria integrada Tier 3 sin añadir latencia visible en producción. El siguiente ciclo deberá elegir entre refinar la inteligencia (M-7), interconectar extensiones existentes o construir una nueva extensión nativa sobre este Memory Stack. SOFIAA OS | Julio 2026",
+  "documento_original": "gemini-code-1784914815239.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}

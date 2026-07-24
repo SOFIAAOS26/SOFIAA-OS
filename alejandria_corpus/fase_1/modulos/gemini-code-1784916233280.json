@@ -1,0 +1,116 @@
+{
+  "id": "reporte_integral_hermes_action_execution_layer_20260723",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-23",
+  "fase_corpus": "fase_1",
+  "titulo": "HERMES: Action Execution Layer — Reporte Técnico Integral Nivel Doctoral",
+  "resumen": "Especificación técnica profunda de HERMES v1.0, la capa de ejecución de acciones y sistema nervioso motor de SOFIAA OS. Define el modelo de datos en Firestore, la máquina de estados de 7 nodos, el motor de despacho (executor) con tolerancia a fallos, 4 conectores activos de Etapa 1, 5 stubs de Etapa 2, las bridges de integración con PROMETEO y ATENA, y el modelo de seguridad 'Human-in-the-Loop' obligatorio con autenticación Firebase ID Token.",
+  "modulos_afectados": [
+    "HERMES",
+    "SOFIAA",
+    "NEXO",
+    "PROMETEO",
+    "ATENA",
+    "TEC_BII",
+    "NORA"
+  ],
+  "sprint_referencia": "H-8",
+  "version_sofiaa": "4.0",
+  "decisiones": [
+    {
+      "decision": "Implementar el principio Human-in-the-Loop Mandatory de forma no configurable ni derivable en el servidor",
+      "contexto": "Evitar ejecuciones automáticas accidentales o no deseadas en plataformas externas de producción por parte de los motores cognitivos[cite: 27].",
+      "alternativas_descartadas": [
+        "Ejecución autónoma directa sin intervención humana — descartado por riesgo operacional y falta de auditoría[cite: 27].",
+        "Aprobación por umbral de confianza sin UI — descartado por violar los principios de seguridad de la plataforma[cite: 27]."
+      ],
+      "justificacion": "Garantiza el control ético y operativo total del usuario sobre cada acción externa[cite: 27].",
+      "consecuencias": "El executor server-side rechaza procesar cualquier acción cuyo estado sea diferente a 'aprobada'[cite: 27]."
+    },
+    {
+      "decision": "Diseñar un Forward-Compatible Schema que define los 22 tipos de acción de Etapa 1 y Etapa 2 desde el Sprint H-0",
+      "contexto": "Permitir que motores como PROMETEO o ATENA puedan encolar acciones para plataformas como Meta Ads o Google Ads antes de que los conectores estén desarrollados[cite: 27].",
+      "alternativas_descartadas": [
+        "Añadir tipos de acción progresivamente conforme se creen los conectores — descartado por romper compatibilidad de esquemas[cite: 27]."
+      ],
+      "justificacion": "Elimina la deuda técnica y las migraciones de datos al agregar nuevos conectores futuros en dispatch()[cite: 27].",
+      "consecuencias": "Las acciones dirigidas a Etapa 2 devuelven el código de estado especial 'ETAPA_2_NOT_IMPLEMENTED', el cual es tratado por el executor como completado de auditoría sin contar como falla[cite: 27]."
+    },
+    {
+      "decision": "Aislar cada conector en módulos independientes bajo el patrón Strategy y desacoplar los motores mediante Bridges de traducción (patrón Adapter)",
+      "contexto": "Impedir que el motor de despacho o los motores cognitivos conozcan la implementación específica de las APIs externas[cite: 27].",
+      "alternativas_descartadas": [
+        "Llamadas HTTP directas desde el código de PROMETEO o ATENA — descartado por acoplamiento fuerte y brechas de seguridad[cite: 27]."
+      ],
+      "justificacion": "Facilita el mantenimiento, las pruebas unitarias y el principio de responsabilidad única (Open/Closed Principle)[cite: 27].",
+      "consecuencias": "El executor solo invoca dispatch(accion) y recibe un HermesResultado tipado[cite: 27]."
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "Action Execution Layer (Sistema Nervioso Eferente)",
+      "definicion": "Capa del sistema operativo que convierte las intenciones y decisiones semánticas de los motores en operaciones reales sobre plataformas externas[cite: 27].",
+      "relacion_modulos": [
+        "HERMES",
+        "SOFIAA",
+        "PROMETEO",
+        "ATENA"
+      ]
+    },
+    {
+      "concepto": "Human-in-the-Loop Gate",
+      "definicion": "Mecanismo de seguridad que retiene las acciones encoladas en estado 'pendiente_aprobacion' hasta que un usuario autenticado la valida en la UI (/hermes/cola)[cite: 27].",
+      "relacion_modulos": [
+        "HERMES"
+      ]
+    },
+    {
+      "concepto": "PROMETEO Bridge",
+      "definicion": "Módulo adaptador (prometeo-bridge.ts) que traduce recomendaciones de un DirectorBrief en acciones atómicas encoladas de forma masiva (writeBatch)[cite: 27].",
+      "relacion_modulos": [
+        "HERMES",
+        "PROMETEO"
+      ]
+    },
+    {
+      "concepto": "ATENA Bridge",
+      "definicion": "Scanner de vigilancia científica (atena-bridge.ts) que analiza matrices AMEF (NPR > 100/200) y cartas SPC (Western Electric Rules / Cpk < 1.0) para encolar alertas preventivas[cite: 27].",
+      "relacion_modulos": [
+        "HERMES",
+        "ATENA"
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "Despliegue del núcleo de HERMES v1.0 y sus 4 conectores de Etapa 1 en producción (Sprint H-0 a H-8)",
+      "resultado": "exitoso",
+      "aprendizaje": "La separación entre razonamiento cognitivo y ejecución mediante un puerto de aprobación humano permite construir automatizaciones empresariales seguras e indispensables[cite: 27]."
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Qué es HERMES en la arquitectura de SOFIAA OS?",
+    "¿Cuáles son los 7 estados de la máquina de estados de una acción en HERMES?",
+    "¿Cómo funciona el Human-in-the-Loop Gate?",
+    "¿Qué conectores están activos en la Etapa 1 de HERMES?",
+    "¿Cómo se integra PROMETEO con HERMES mediante la PROMETEO Bridge?",
+    "¿Qué condiciones de AMEF y SPC disparan alertas en la ATENA Bridge?",
+    "¿Cómo se maneja la seguridad y la autenticación en el endpoint /api/hermes/execute?",
+    "¿Cuál es el comportamiento del executor ante conectores de Etapa 2 no implementados?"
+  ],
+  "tags": [
+    "hermes",
+    "action-execution-layer",
+    "human-in-the-loop",
+    "executor",
+    "state-machine",
+    "prometeo-bridge",
+    "atena-bridge",
+    "connectors",
+    "firestore-queue"
+  ],
+  "texto_embedding": "HERMES es la capa de ejecución de acciones de SOFIAA OS construida sobre Next.js 14, TypeScript, Firebase y Groq. Actúa como el sistema nervioso motor del ecosistema, recibiendo intenciones de PROMETEO, ATENA y TEC BII para materializarlas en plataformas como Monday.com, Slack, calendarios SMM y bases de datos internas. Sus tres principios son: Human-in-the-Loop Mandatory (ninguna acción se ejecuta sin aprobación explícita), Forward-Compatible Schema (tipos preparados para Etapa 2) y Fault-Tolerant Execution (MAX_REINTENTOS=3 con transiciones atómicas). El esquema Firestore guarda las acciones en smm_workspaces/{workspaceId}/hermes_queue/{actionId}. Los 7 estados del ciclo de vida son: propuesta, pendiente_aprobacion, aprobada, ejecutando, completada, fallida y rechazada. Los conectores de Etapa 1 activos son monday_cloud (API GraphQL v2024-10), slack (Incoming Webhooks con Block Kit), calendario_smm (Firebase Admin SDK) y hermes_interno (gestión de BrandGoals y CreativeMemory). Los conectores de Etapa 2 (Meta Ads, Google Ads, WhatsApp, Mailchimp, HubSpot) están definidos como stubs y retornan el código ETAPA_2_NOT_IMPLEMENTED, tratado como completado para auditoría. El motor executor.ts es server-only y se invoca desde POST /api/hermes/execute previa validación de Firebase ID Token. La PROMETEO Bridge traduce DirectorBriefs en acciones atómicas (fatiga a Slack urgente, pausar/escalar a Monday, nuevo creativo a Calendario). La ATENA Bridge escanea colecciones de AMEF (NPR > 100/200) y cartas SPC (reglas Western Electric y Cpk < 1.0) desde /api/atena/hermes-scan. Las credenciales de conectores se resuelven con jerarquía: variables de entorno en Vercel sobre secretos encriptados en Firestore.",
+  "documento_original": "HERMES inicio 23 de julio 2026 .docx",
+  "procesado_por": "gemini",
+  "fecha_procesamiento": "2026-07-24"
+}

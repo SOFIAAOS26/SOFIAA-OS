@@ -1,0 +1,54 @@
+{
+  "id": "especificacion_modulo_sofiaa_arquitectura_tecnologica_20260724",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-06-01",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA - Sistema de Optimización e Inteligencia Artificial para la Gestión Integral de Producción Audiovisual",
+  "resumen": "SOFIAA es un sistema de inteligencia artificial que busca optimizar la gestión integral de producción audiovisual en el Tecnológico de Monterrey. Está compuesto por varios módulos, incluyendo un núcleo de chat e IA principal, un sistema nervioso central, un motor de growth intelligence, un sistema de observación y memoria episódica del usuario, un motor de automatización y ejecución de acciones, un motor de análisis científico y un sistema de gestión institucional. La arquitectura tecnológica de SOFIAA se basa en Next.js, Firebase y Groq, y cuenta con una extensión de Business Intelligence en tiempo real.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "NEXO",
+    "PROMETEO",
+    "NORA",
+    "HERMES",
+    "ATENA",
+    "TEC BII"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": "1.0",
+  "decisiones": [
+    "Utilizar Next.js como framework de presentación",
+    "Utilizar Firebase como base de datos en tiempo real",
+    "Utilizar Groq como motor de inteligencia artificial",
+    "Implementar una extensión de Business Intelligence en tiempo real"
+  ],
+  "conceptos_clave": [
+    "Inteligencia artificial",
+    "Gestión integral de producción audiovisual",
+    "Arquitectura tecnológica",
+    "Business Intelligence"
+  ],
+  "hitos": [
+    "Desarrollo de la arquitectura tecnológica de SOFIAA",
+    "Implementación de la extensión de Business Intelligence en tiempo real",
+    "Desarrollo del núcleo de chat e IA principal"
+  ],
+  "preguntas_que_responde": [
+    "¿Cuál es la arquitectura tecnológica de SOFIAA?",
+    "¿Cómo se implementa la extensión de Business Intelligence en tiempo real?",
+    "¿Cuáles son los módulos que componen SOFIAA?"
+  ],
+  "tags": [
+    "Inteligencia artificial",
+    "Gestión integral de producción audiovisual",
+    "Arquitectura tecnológica",
+    "Business Intelligence",
+    "Next.js",
+    "Firebase",
+    "Groq"
+  ],
+  "texto_embedding": "SOFIAA es un sistema de inteligencia artificial que busca optimizar la gestión integral de producción audiovisual en el Tecnológico de Monterrey. La arquitectura tecnológica de SOFIAA se basa en Next.js, Firebase y Groq, y cuenta con una extensión de Business Intelligence en tiempo real. El sistema está compuesto por varios módulos, incluyendo un núcleo de chat e IA principal, un sistema nervioso central, un motor de growth intelligence, un sistema de observación y memoria episódica del usuario, un motor de automatización y ejecución de acciones, un motor de análisis científico y un sistema de gestión institucional.",
+  "documento_original": "SOFIAA - Sistema de Optimización e Inteligencia Artificial para la Gestión Integral de Producción Audiovisual",
+  "procesado_por": "groq",
+  "fecha_procesamiento": "2026-07-24"
+}

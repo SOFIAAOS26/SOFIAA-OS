@@ -1,0 +1,96 @@
+{
+  "id": "especificacion_modulo_alejandria_guia_procesamiento_20260724",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "ALEJANDRÍA — Guía de Procesamiento de Documentos",
+  "resumen": "Manual técnico y guía metodológica para transformar el corpus documental bruto de SOFIAA (2,000+ páginas) en nodos de conocimiento estructurado JSON para el Knowledge Graph del módulo ALEJANDRÍA[cite: 26]. Define la organización de carpetas por fases y temas, las convenciones de nombrado, las reglas de extracción semántica comprimida, el prompt estandarizado y el esquema JSON exacto de ingestión a Firestore[cite: 26].",
+  "modulos_afectados": [
+    "ALEJANDRIA",
+    "NEXO",
+    "SOFIAA",
+    "NORA",
+    "PROMETEO",
+    "ATENA",
+    "HERMES",
+    "TEC_BII",
+    "LIVE_SDK"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": "4.0",
+  "decisiones": [
+    {
+      "decision": "Estructurar la ingesta de conocimiento en un esquema JSON estandarizado con separación explícita de metadatos, decisiones, conceptos clave, hitos y texto denso para embeddings",
+      "contexto": "La documentación de SOFIAA está fragmentada en más de 2,000 páginas de archivos mixtos (.docx, .pdf, .html), impidiendo que el motor semántico de SOFIAA consulte su propia historia técnica de forma precisa[cite: 26].",
+      "alternativas_descartadas": [
+        "Inyectar documentos brutos directos al contexto del LLM — descartado por desbordamiento de límites de tokens, costos altos y alucinaciones por ruido informativo[cite: 26].",
+        "Almacenar archivos planos sin parsear en Firestore — descartado por la imposibilidad de realizar búsquedas semánticas vectoriales estructuradas[cite: 26]."
+      ],
+      "justificacion": "El formato JSON parseado permite almacenamiento estructurado en Firestore (users/{uid}/alejandria_nodos) y generación de embeddings híbridos de alta precisión en NEXO sin incluir texto de relleno[cite: 26].",
+      "consecuencias": "Se requiere un pipeline de preprocesamiento en lotes antes de la carga masiva a la base de datos viva[cite: 26]."
+    },
+    {
+      "decision": "Organizar el corpus por carpetas cronológicas (fase_1 para los documentos más recientes de julio 2026, fase_2 para antecedentes) y clasificarlos por tipo temático",
+      "contexto": "Garantizar la trazabilidad temporal del desarrollo del software y la prioridad de contexto histórico[cite: 26].",
+      "alternativas_descartadas": [
+        "Organización plana sin fases ni categorías — descartado por la dificultad de mantenimiento e indexación manual[cite: 26]."
+      ],
+      "justificacion": "Mantiene un índice maestro (_indice.json) sincronizado con las fases del proyecto SOFIAA OS[cite: 26].",
+      "consecuencias": "Establece la convención obligatoria de nombres: {tipo}_{modulo}_{descripcion_corta}_{fecha}.json[cite: 26]."
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "Corpus ALEJANDRÍA",
+      "definicion": "Conjunto organizado de documentos históricos de arquitectura, sprints, decisiones e ideas que alimentan la memoria de ingeniería de SOFIAA OS[cite: 26].",
+      "relacion_modulos": [
+        "ALEJANDRIA",
+        "NEXO"
+      ]
+    },
+    {
+      "concepto": "Texto Embedding Denso",
+      "definicion": "Reescritura técnica comprimida del documento (máximo 1,500 palabras) sin saludos ni relleno decorativo, optimizada para vectorización y búsqueda por similitud de coseno[cite: 26].",
+      "relacion_modulos": [
+        "NEXO",
+        "ALEJANDRIA"
+      ]
+    },
+    {
+      "concepto": "Índice Maestro (_indice.json)",
+      "definicion": "Archivo de metadatos globales generado al finalizar cada fase para acelerar la velocidad de consulta e ingestión masiva en Firestore[cite: 26].",
+      "relacion_modulos": [
+        "ALEJANDRIA"
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "Establecimiento de la guía de procesamiento de documentos y diseño del schema oficial de ALEJANDRÍA",
+      "resultado": "exitoso",
+      "aprendizaje": "Estandarizar el prompt de extracción y el formato JSON garantiza la interoperabilidad total entre los desarrolladores y la base de conocimiento en Firestore[cite: 26]."
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Cómo se organiza el corpus documental de ALEJANDRÍA?",
+    "¿Cuál es el esquema JSON oficial para procesar documentos en SOFIAA?",
+    "¿Qué convenciones de nombres deben seguir los archivos del corpus?",
+    "¿Cómo debe redactarse el campo texto_embedding para optimizar las búsquedas vectoriales?",
+    "¿En qué colección de Firestore se ingestan los nodos de conocimiento de ALEJANDRÍA?",
+    "¿Qué información debe extraerse prioritariamente según el tipo de documento?"
+  ],
+  "tags": [
+    "alejandria",
+    "guia-procesamiento",
+    "schema-json",
+    "knowledge-graph",
+    "ingestion-firestore",
+    "corpus-sofiaa",
+    "embeddings-densos",
+    "arquitectura-memoria"
+  ],
+  "texto_embedding": "ALEJANDRÍA es la guía técnica de procesamiento de documentos para convertir el corpus en bruto de SOFIAA en nodos de conocimiento estructurado e ingestarlos en el Knowledge Graph de NEXO. La organización del directorio se divide en fases cronológicas (/fase_1/ para documentos más recientes de julio 2026 a presente, /fase_2/ para anteriores) y subcarpetas temáticas: /sprints/, /decisiones/, /brainstorming/ y /modulos/. Los archivos siguen la convención {tipo}_{modulo}_{descripcion_corta}_{fecha}.json. El esquema JSON estandarizado incluye: id, tipo (sprint, decision_arquitectura, brainstorming, especificacion_modulo, experimento, hito, idea), fecha (YYYY-MM-DD), fase_corpus, titulo, resumen denso de 2-4 oraciones, modulos_afectados (SOFIAA, NEXO, PROMETEO, ATENA, HERMES, NORA, TEC_BII, ALEJANDRIA, LIVE_SDK), sprint_referencia, version_sofiaa, arreglo de decisiones (con contexto, alternativas descartadas, justificación y consecuencias), conceptos_clave, hitos, preguntas_que_responde, tags, texto_embedding (máximo 1500 palabras comprimidas sin relleno ni saludos), documento_original, procesado_por y fecha_procesamiento. El proceso de trabajo recomienda organizar por fases, priorizar documentos de arquitectura, procesar en lotes, validar el JSON con linters, construir el índice maestro _indice.json y ejecutar el script de carga a la colección Firestore users/{uid}/alejandria_nodos.",
+  "documento_original": "ALEJANDRIA — Guía de Procesamiento de Documentos.docx",
+  "procesado_por": "gemini",
+  "fecha_procesamiento": "2026-07-24"
+}

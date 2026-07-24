@@ -1,0 +1,41 @@
+{
+  "id": "especificacionmodulo_sofiaa_una_infraestructura_no_un_chatbot_20260724",
+  "tipo": "especificacion_modulo",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_1",
+  "titulo": "SOFIAA: Una Infraestructura. No un Chatbot.",
+  "resumen": "SOFIAA: Una Infraestructura. No un Chatbot. Por qué SOFIAA supera a ChatGPT, Gemini y Claude en contextos empresariales de misión crítica SOFIAA LAB Monterrey, México 2025 Infraestructura Operativa Propietaria false true Herramienta de consumo generalista true false Datos usados para reentrenamiento público true false Sistema Operativo Inteligente (IX-OS) false true Soberanía total - datos aislados por workspace false true Respuestas de texto plano sin ejecución true false Ejecuta acciones reales sobre bases de datos live false true Memoria limitada a la sesión activa true false Memoria estruc",
+  "modulos_afectados": [
+    "SOFIAA",
+    "HERMES",
+    "ATENA",
+    "TEC_BII",
+    "ALEJANDRIA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": null,
+  "decisiones": [],
+  "conceptos_clave": [],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Cómo funciona SOFIAA: Una Infraestructura. No un Chatb?",
+    "¿Cuál es la arquitectura de SOFIAA y HERMES?",
+    "¿Qué capacidades tiene este módulo?",
+    "¿Cómo se implementó HERMES en esta fase?",
+    "¿Cómo se implementó ATENA en esta fase?"
+  ],
+  "tags": [
+    "especificacion-modulo",
+    "sofiaa",
+    "hermes",
+    "atena",
+    "tec-bii",
+    "alejandria",
+    "sofiaa:",
+    "infraestructura."
+  ],
+  "texto_embedding": "SOFIAA: Una Infraestructura. No un Chatbot. Por qué SOFIAA supera a ChatGPT, Gemini y Claude en contextos empresariales de misión crítica SOFIAA LAB Monterrey, México 2025 Infraestructura Operativa Propietaria false true Herramienta de consumo generalista true false Datos usados para reentrenamiento público true false Sistema Operativo Inteligente (IX-OS) false true Soberanía total - datos aislados por workspace false true Respuestas de texto plano sin ejecución true false Ejecuta acciones reales sobre bases de datos live false true Memoria limitada a la sesión activa true false Memoria estructurada de 3 capas (persistente) false true Sin integración con sistemas empresariales true false Integración bidireccional (Monday, ERP, Webhooks) false true UI estática tipo ventana de chat true false Liquid Glass UI - interfaces reactivas generativas false true GOBERNANZA: Privacidad y Soberanía de Datos El argumento de Compliance que ninguna IA comercial puede resolver. ChatGPT / Gemini / Claude Los datos de la organización -reportes financieros, costos de producción, briefs estratégicos- son procesados en nubes comerciales abiertas y pueden utilizarse para reentrenar modelos globales. Riesgo crítico de filtración de propiedad intelectual. Multi-Workspace Firebase Cada organización opera en un entorno completamente estanco a nivel de base de datos en Firestore. guardrails.engine.ts Las peticiones pasan por el filtro perimetral. Las claves corren ocultas en servidor, nunca expuestas al cliente. Costo Cero en Licencias Arquitectura serverless de desarrollo interno. $0 en software comercial recurrente. EJECUCIÓN: Orquestación Operativa Real SOFIAA no te dice qué hacer. SOFIAA ejecuta. Input El usuario hace una solicitud en lenguaje natural al orbe neural SOFIAA. IX-OS SOFIAA Extension Ecosystem (SEE) procesa, valida y orquesta la acción. Ejecución Crea proyectos, actualiza tableros Monday.com y consulta el ERP en tiempo real. Bidireccional Enterprise en Tiempo Real MEMORIA: Arquitectura de Memoria Estructurada Tres capas persistentes contra la amnesia de sesión de las IA comerciales. Memoria limitada a la sesión activa. Al abrir una nueva ventana, el asistente olvida quién eres, tu presupuesto, tus proveedores y tus políticas. Vuelve a empezar desde cero. 1 Memoria Operativa Sesión activa Mantiene el contexto completo del prompt durante la interacción en curso. 2 Memoria Contextual Memory Timeline Recupera y reinyecta el historial analítico de las últimas 5 sesiones como contexto activo. 3 Memoria Histórica sofiaa_long_memory Resumen estructurado de largo plazo extraído por modelo secundario. Persiste permanentemente entre visitas. EXPERIENCIA: Liquid Glass UI & Generative Interface UI Estática ¿Cuánto cuesta producir el spot? Aquí tienes un análisis de costos estimados... El presupuesto aproximado sería de $50,000 MXN. ¿Necesitas que lo desglose por partida? Texto plano. Sin ejecución. Sin datos reales. Orbe Neural SVG con 7 estados cognitivos Cotizador SMM con 8 servicios renderizado live Catálogo Audiovisual con 27 servicios + IVA en tiempo real Interfaces React generadas dinámicamente según contexto La interfaz respira y muta con el objetivo semántico del usuario. Gobernanza de Datos Fuga: datos expuestos al reentrenamiento global Soberanía total: workspace aislado en Firestore Infraestructura Monolítica igual para 100M de usuarios Modular (SEE) extensiones por industria en semanas Acceso a Datos Vivos Ciegos: requieren subida manual en cada interacción Live listeners activos sobre bases de datos en tiempo real Integración Empresarial Nula o plugins experimentales de lectura ligera Bidireccional enterprise - Monday.com, ERP vía GraphQL Costo de Licenciamiento Prohibitivo por asiento Enterprise con analítica Arquitectura serverless interna - $0 en licencias Experiencia de Usuario Ventana de texto estática y monótona Liquid Glass UI - orbe neural, interfaces generativas Gobernanza Lean Six Sigma Restringe las interacciones bajo las compuertas estrictas del ciclo DMAIC institucional. Genera briefs perfectos vía Brief Canvas antes de que errores generen pérdidas por refilmaciones. Simulador de Impacto ROI Módulo TEC BI nativo que modela dinámicamente desperdicio operativo (proyectos, rondas de reedición, costo por ronda) para calcular matemáticamente el ahorro anual para directivos. Adaptación Emocional Contextual El sistema puede mutar de motor de inteligencia operacional de alta velocidad a JP Memorial, un santuario digital contemplativo de legado con estética respetuosa, mediante arquitectura SEE. ChatGPT y Gemini son herramientas de uso personal. SOFIAA es una propiedad intelectual de software e infraestructura de la que eres el dueño absoluto. No dependemos de las licencias restrictivas de una gran corporación de Silicon Valley. Gobernamos nuestros procesos creativos y financieros, automatizamos Monday.com y blindamos la privacidad de nuestros datos institucionales desde un entorno serverless que costó cero pesos en software comercial.",
+  "documento_original": "gemini-code-1784913481934.json",
+  "procesado_por": "extractor-deterministico",
+  "fecha_procesamiento": "2026-07-24"
+}
