@@ -100,9 +100,18 @@ export default function AtenaProyectosPage() {
 
       {/* Main */}
       <main className="flex-1 overflow-auto">
-        <header className="border-b border-[#1e1e2e] px-8 py-5">
-          <h1 className="text-xl font-bold text-white">Proyectos DMAIC</h1>
-          <p className="text-xs text-[#475569] font-mono mt-0.5">Portafolio de mejora continua · Lean Six Sigma</p>
+        <header className="border-b border-[#1e1e2e] px-8 py-5 flex items-center justify-between gap-4">
+          <div>
+            <h1 className="text-xl font-bold text-white">Proyectos DMAIC</h1>
+            <p className="text-xs text-[#475569] font-mono mt-0.5">Portafolio de mejora continua · Lean Six Sigma</p>
+          </div>
+          <button
+            onClick={() => router.push("/atena/proyectos/nuevo")}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-white"
+            style={{ background: "#2563eb" }}
+          >
+            ✨ Nuevo Proyecto
+          </button>
         </header>
 
         {loading ? (
@@ -110,9 +119,16 @@ export default function AtenaProyectosPage() {
             <span className="text-[#475569] font-mono text-sm animate-pulse">Cargando proyectos...</span>
           </div>
         ) : proyectos.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-64 gap-3">
-            <span className="text-3xl">◈</span>
-            <p className="text-[#475569] font-mono text-sm">Sin proyectos. Ejecuta <code className="text-[#60a5fa]">npm run atena:seed</code></p>
+          <div className="flex flex-col items-center justify-center h-64 gap-4">
+            <span className="text-4xl">◈</span>
+            <p className="text-[#475569] font-mono text-sm">Sin proyectos todavía.</p>
+            <button
+              onClick={() => router.push("/atena/proyectos/nuevo")}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold text-white"
+              style={{ background: "#2563eb" }}
+            >
+              ✨ Crear primer proyecto con IA
+            </button>
           </div>
         ) : (
           <div className="flex gap-0 h-[calc(100vh-89px)]">

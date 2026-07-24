@@ -208,6 +208,67 @@ export interface FinancialProjection {
   computedAt:          number;
 }
 
+// ── Hito / Milestone ─────────────────────────────────────────────────────────
+
+export type TipoHito = "PUERTA" | "ENTREGABLE" | "REVISION" | "KAIZEN";
+
+export interface Hito {
+  id:          string;
+  proyectoId:  string;
+  fase:        FaseDMAIC;
+  nombre:      string;
+  descripcion: string;
+  entregable:  string;   // entregable concreto del hito
+  semana:      number;   // semana del proyecto (1, 2, 3…)
+  tipo:        TipoHito;
+  completado:  boolean;
+}
+
+// ── Riesgo del Proyecto ───────────────────────────────────────────────────────
+
+export type NivelRiesgo = "ALTA" | "MEDIA" | "BAJA";
+export type TipoRiesgo  = "TECNICO" | "HUMANO" | "PROCESO" | "EXTERNO";
+
+export interface RiesgoProyecto {
+  id:           string;
+  proyectoId:   string;
+  descripcion:  string;
+  probabilidad: NivelRiesgo;
+  impacto:      NivelRiesgo;
+  tipo:         TipoRiesgo;
+  mitigacion:   string;
+  pokayoke?:    string;   // mecanismo a prueba de error
+  responsable?: string;
+}
+
+// ── Kaizen Event ──────────────────────────────────────────────────────────────
+
+export interface KaizenEvent {
+  id:              string;
+  proyectoId:      string;
+  nombre:          string;
+  fase:            FaseDMAIC;
+  descripcion:     string;
+  duracionDias:    number;
+  metricaObjetivo: string;
+  completado:      boolean;
+}
+
+// ── Proyecto Generado (output de la IA) ──────────────────────────────────────
+
+export interface ProyectoGenerado {
+  charter: {
+    objetivoSMART: string;
+    alcance:       string;
+    limites:       string;
+    ctq:           CTQVariable[];
+  };
+  hitos:        Omit<Hito,          "id" | "proyectoId" | "completado">[];
+  riesgos:      Omit<RiesgoProyecto, "id" | "proyectoId">[];
+  amefInicial:  Omit<FMEAItem,      "id" | "proyectoId" | "estado" | "critico" | "numeracion" | "npr">[];
+  kaizenEvents: Omit<KaizenEvent,   "id" | "proyectoId" | "completado">[];
+}
+
 // ── Colecciones Firestore ─────────────────────────────────────────────────────
 // Patrón: users/{uid}/atena_{col}
 
@@ -217,7 +278,10 @@ export type AtenaCollection =
   | "analisis"
   | "spc"
   | "amef"
-  | "financiero";
+  | "financiero"
+  | "hitos"
+  | "riesgos"
+  | "kaizen";
 
 /** Helper de path — igual que tecBiiPath */
 export function atenaPath(uid: string, col: AtenaCollection): string {

@@ -23,12 +23,13 @@ const MUTED  = "#475569";
 
 // ── Nav ───────────────────────────────────────────────────────────────────────
 const NAV = [
-  { href: "/atena",            label: "Centro de Mando", icon: "📊" },
-  { href: "/atena/proyectos",  label: "Proyectos DMAIC", icon: "🎯" },
-  { href: "/atena/analisis",   label: "Análisis",        icon: "📈" },
-  { href: "/atena/spc",        label: "Control SPC",     icon: "📉" },
-  { href: "/atena/amef",       label: "AMEF",            icon: "⚠️" },
-  { href: "/atena/financiero", label: "Financiero",      icon: "💹" },
+  { href: "/atena",                    label: "Centro de Mando", icon: "📊" },
+  { href: "/atena/proyectos",          label: "Proyectos DMAIC", icon: "🎯" },
+  { href: "/atena/proyectos/nuevo",    label: "Nuevo Proyecto",  icon: "✨" },
+  { href: "/atena/analisis",           label: "Análisis",        icon: "📈" },
+  { href: "/atena/spc",                label: "Control SPC",     icon: "📉" },
+  { href: "/atena/amef",               label: "AMEF",            icon: "⚠️" },
+  { href: "/atena/financiero",         label: "Financiero",      icon: "💹" },
 ];
 
 // ── Sidebar content ───────────────────────────────────────────────────────────
@@ -59,6 +60,8 @@ function SidebarContent({
           const active =
             item.href === "/atena"
               ? pathname === "/atena"
+              : item.href === "/atena/proyectos"
+              ? pathname === "/atena/proyectos"
               : pathname.startsWith(item.href);
           return (
             <Link
