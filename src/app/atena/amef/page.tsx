@@ -3,9 +3,18 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { db, auth } from "@/lib/firebase";
+import { getAuth } from "firebase/auth";
 import { collection, query, orderBy, getDocs } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import { useWorkspace } from "@/hooks/useWorkspace";
 import type { FMEAItem } from "@/extensions/atena/schema";
+interface AtenasScanResult {
+  accionesEncoladas: number;
+  amefCriticos:      number;
+  amefAltos:         number;
+  spcViolaciones:    number;
+  spcIncapaces:      number;
+}
 
 function atenaPath(uid: string, col: string) {
   return `users/${uid}/atena_${col}`;
@@ -53,10 +62,38 @@ function RatingCell({ value, max = 10 }: { value: number; max?: number }) {
 
 export default function AtenaAmefPage() {
   const router = useRouter();
-  const [uid,     setUid]  = useState<string | null>(null);
-  const [items,   setItems] = useState<(FMEAItem & { id: string })[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [soloNpr, setSoloNpr] = useState(false);
+  const { activeWorkspaceId } = useWorkspace();
+  const [uid,        setUid]       = useState<string | null>(null);
+  const [items,      setItems]     = useState<(FMEAItem & { id: string })[]>([]);
+  const [loading,    setLoading]   = useState(true);
+  const [soloNpr,    setSoloNpr]   = useState(false);
+  const [scanning,   setScanning]  = useState(false);
+  const [scanResult, setScanResult] = useState<AtenasScanResult | null>(null);
+  const [scanError,  setScanError]  = useState<string | null>(null);
+
+  const handleScan = async () => {
+    if (!activeWorkspaceId) { setScanError("Sin workspace activo"); return; }
+    setScanning(true);
+    setScanResult(null);
+    setScanError(null);
+    try {
+      const currentUser = getAuth().currentUser;
+      if (!currentUser) throw new Error("No autenticado");
+      const token = await currentUser.getIdToken();
+      const res = await fetch("/api/atena/hermes-scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ workspaceId: activeWorkspaceId }),
+      });
+      if (!res.ok) throw new Error(`Error ${res.status}`);
+      const data = await res.json();
+      setScanResult(data.resultado as AtenasScanResult);
+    } catch (err) {
+      setScanError(err instanceof Error ? err.message : "Error desconocido");
+    } finally {
+      setScanning(false);
+    }
+  };
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => { if (u) setUid(u.uid); });
@@ -120,17 +157,60 @@ export default function AtenaAmefPage() {
               Matriz de riesgos · NPR = Severidad × Ocurrencia × Detección
             </p>
           </div>
-          <button
-            onClick={() => setSoloNpr((v) => !v)}
-            className={`text-xs font-mono px-3 py-1.5 rounded-lg border transition-colors ${
-              soloNpr
-                ? "bg-[#1a0a0a] border-[#7f1d1d] text-[#ef4444]"
-                : "bg-[#111118] border-[#1e1e2e] text-[#475569] hover:text-white"
-            }`}
-          >
-            {soloNpr ? "⚠ Solo críticos NPR>200" : "Todos los modos de falla"}
-          </button>
+          <div className="flex items-center gap-3 flex-wrap">
+            <button
+              onClick={() => setSoloNpr((v) => !v)}
+              className={`text-xs font-mono px-3 py-1.5 rounded-lg border transition-colors ${
+                soloNpr
+                  ? "bg-[#1a0a0a] border-[#7f1d1d] text-[#ef4444]"
+                  : "bg-[#111118] border-[#1e1e2e] text-[#475569] hover:text-white"
+              }`}
+            >
+              {soloNpr ? "⚠ Solo críticos NPR>200" : "Todos los modos de falla"}
+            </button>
+
+            <button
+              onClick={handleScan}
+              disabled={scanning}
+              className="text-xs font-mono px-3 py-1.5 rounded-lg border transition-colors bg-[#0f1e38] border-[#1d4ed8] text-[#60a5fa] hover:bg-[#1e3a5f] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {scanning ? "⟳ Escaneando..." : "⚡ Escanear con HERMES"}
+            </button>
+          </div>
         </header>
+
+        {/* HERMES scan result badge */}
+        {scanError && (
+          <div className="mx-8 mt-4 px-4 py-2 rounded-lg border border-[#7f1d1d] bg-[#1a0a0a] text-[#ef4444] text-xs font-mono">
+            Error al escanear: {scanError}
+          </div>
+        )}
+        {scanResult && (
+          <div className="mx-8 mt-4 px-4 py-3 rounded-lg border border-[#1d4ed8] bg-[#0f1e38] flex items-center gap-6 flex-wrap">
+            <span className="text-xs font-mono text-[#93c5fd] font-semibold">HERMES SCAN</span>
+            {scanResult.amefCriticos > 0 && (
+              <span className="text-xs font-mono text-[#ef4444]">🚨 {scanResult.amefCriticos} críticos AMEF</span>
+            )}
+            {scanResult.amefAltos > 0 && (
+              <span className="text-xs font-mono text-[#f97316]">⚠️ {scanResult.amefAltos} altos AMEF</span>
+            )}
+            {scanResult.spcViolaciones > 0 && (
+              <span className="text-xs font-mono text-[#facc15]">📊 {scanResult.spcViolaciones} violaciones SPC</span>
+            )}
+            {scanResult.spcIncapaces > 0 && (
+              <span className="text-xs font-mono text-[#94a3b8]">📉 {scanResult.spcIncapaces} procesos incapaces</span>
+            )}
+            <span className="text-xs font-mono text-[#4ade80]">✅ {scanResult.accionesEncoladas} encoladas</span>
+            {scanResult.accionesEncoladas > 0 && (
+              <button
+                onClick={() => router.push("/hermes/cola")}
+                className="text-xs font-mono text-[#60a5fa] underline hover:text-white transition-colors ml-auto"
+              >
+                Ver cola →
+              </button>
+            )}
+          </div>
+        )}
 
         {loading ? (
           <div className="flex items-center justify-center h-64">
