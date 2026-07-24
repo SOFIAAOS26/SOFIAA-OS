@@ -8,15 +8,16 @@
  * Colección: users/{uid}/alejandria_nodos/{nodeId}
  */
 
-import { getAdminDb }           from "@/lib/firebase-admin";
-import { FieldValue }           from "firebase-admin/firestore";
+import { getAdminDb }                   from "@/lib/firebase-admin";
+import { FieldValue }                   from "firebase-admin/firestore";
 import type {
   AlejandriaNode,
   AlejandriaNodeType,
   AlejandriaModulo,
   AlejandriaStats,
 } from "@/extensions/alejandria/schema";
-import { alejandriaNodesCol }   from "@/extensions/alejandria/schema";
+import { alejandriaNodesCol }           from "@/extensions/alejandria/schema";
+import { getSemanticAlejandriaContext } from "@/lib/alejandria/search";
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
@@ -122,7 +123,7 @@ export async function getNodesBySprint(
   return snap.docs.map(d => ({ id: d.id, ...d.data() }) as AlejandriaNode);
 }
 
-// ── Búsqueda semántica (usada en AJ-2) ───────────────────────────────────────
+// ── Búsqueda semántica ────────────────────────────────────────────────────────
 
 /**
  * Búsqueda por keyword en tags y modulos_afectados.
@@ -156,30 +157,14 @@ export async function keywordSearchAlejandria(
 
 /**
  * Contexto de ALEJANDRÍA para inyectar en el prompt.
- * En AJ-2 se reemplaza por búsqueda semántica real.
- * Por ahora: keyword + más reforzados.
+ * AJ-2: usa búsqueda semántica real (cosine similarity + keyword + reinforceCount).
+ * Fallback automático a keyword-only si Gemini no está disponible.
  */
 export async function getAlejandriaContext(
   uid:   string,
   query: string,
 ): Promise<AlejandriaNode[]> {
-  const results = await keywordSearchAlejandria(uid, query, MAX_CONTEXT_NODES);
-
-  // Si hay pocos resultados, complementar con los más reforzados
-  if (results.length < 3) {
-    const topSnap = await col(uid)
-      .orderBy("reinforceCount", "desc")
-      .limit(MAX_CONTEXT_NODES - results.length)
-      .get();
-
-    const top = topSnap.docs
-      .map(d => ({ id: d.id, ...d.data() }) as AlejandriaNode)
-      .filter(n => !results.find(r => r.id === n.id));
-
-    results.push(...top);
-  }
-
-  return results.slice(0, MAX_CONTEXT_NODES);
+  return getSemanticAlejandriaContext(uid, query, MAX_CONTEXT_NODES);
 }
 
 // ── Refuerzo de nodos usados ──────────────────────────────────────────────────
