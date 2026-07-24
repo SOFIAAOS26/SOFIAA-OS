@@ -238,21 +238,6 @@ export default function PrometeoLayout({ children }: { children: React.ReactNode
           <SidebarContent />
         </aside>
 
-        {/* ── Mobile hamburger ─────────────────────────── */}
-        <button
-          onClick={() => setSideOpen(true)}
-          style={{
-            position: "fixed", top: 12, left: 12, zIndex: 60,
-            background: FIRE, border: "none", borderRadius: 8,
-            width: 36, height: 36, cursor: "pointer",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 18, color: "#fff", boxShadow: `0 0 12px ${FIRE}66`,
-          }}
-          className="flex md:hidden"
-        >
-          ☰
-        </button>
-
         {/* Mobile sidebar overlay */}
         {sideOpen && (
           <div
@@ -274,10 +259,43 @@ export default function PrometeoLayout({ children }: { children: React.ReactNode
           <SidebarContent />
         </div>
 
-        {/* ── Main content ─────────────────────────────── */}
-        <main style={{ flex: 1, minWidth: 0, overflowX: "hidden" }}>
-          {children}
-        </main>
+        {/* ── Main area (columna) ───────────────────────── */}
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
+
+          {/* Mobile top bar — sticky, reemplaza el botón flotante */}
+          <div
+            className="flex md:hidden"
+            style={{
+              position: "sticky", top: 0, zIndex: 50,
+              height: 48, background: SIDE,
+              borderBottom: `1px solid ${BORDER}`,
+              alignItems: "center", justifyContent: "space-between",
+              padding: "0 16px", flexShrink: 0,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{
+                width: 28, height: 28, borderRadius: 7,
+                background: `linear-gradient(135deg, ${FIRE}, ${CRIMSON})`,
+                display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14,
+              }}>🔥</div>
+              <span style={{ fontWeight: 800, fontSize: 14, color: TEXT }}>PROMETEO</span>
+            </div>
+            <button
+              onClick={() => setSideOpen(true)}
+              style={{
+                background: "transparent", border: `1px solid ${BORDER}`,
+                borderRadius: 8, width: 36, height: 36, cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 18, color: FIRE,
+              }}
+            >☰</button>
+          </div>
+
+          <main style={{ flex: 1, minWidth: 0, overflowX: "hidden" }}>
+            {children}
+          </main>
+        </div>
       </div>
     </>
   );

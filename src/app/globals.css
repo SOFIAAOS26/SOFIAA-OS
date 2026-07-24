@@ -208,7 +208,7 @@ input::placeholder {
 /* Panel sticky que se vuelve estático en móvil */
 .ext-sticky { position: sticky; top: 72px; }
 
-@media (max-width: 599px) {
+@media (max-width: 767px) {
   /* Ocultar nav y extras del header */
   .ext-header-nav    { display: none !important; }
   .ext-header-extras { display: none !important; }
@@ -242,6 +242,20 @@ input::placeholder {
   to   { opacity: 0; transform: scale(0.85) translateY(8px); }
 }
 
-@media (max-width: 599px) {
+@media (max-width: 767px) {
   .ext-hamburger-wrap { display: block; }
+}
+
+/* ── ATENA: ocultar sidebar per-página en móvil ─────────────────────────── */
+/* En desktop el aside per-página es el sidebar real. En móvil lo oculta el
+   layout (atena-root) y usa su propio top bar + slide-in sidebar. */
+@media (max-width: 767px) {
+  .atena-root aside {
+    display: none !important;
+  }
+  /* Las páginas ATENA usan min-h-screen flex — en móvil quitamos flex
+     para que el main ocupe todo el ancho sin el sidebar */
+  .atena-root .min-h-screen.flex {
+    display: block !important;
+  }
 }
