@@ -10,19 +10,22 @@
  *   scanAllEngines()       → ATENA (SPC + AMEF) + TEC Bii (urgency + alertaRiesgo)
  *   generatePredictions()  → motor de reglas, THEMIS gate, persistencia Firestore
  *
- * Sprint O-2 (pendiente):
+ * Sprint O-2:
  *   PROMETEO scanner (BrandGoal deviation + fatiga creativa)
- *   NEXO scanner (hypotheses de alto confidence)
- *   HERMES scanner (veto ratio)
- *   THEMIS scanner (violations recurrentes)
+ *   NEXO scanner (hypotheses de alto confidence sin validar)
+ *   HERMES scanner (veto ratio en los últimos 30 días)
+ *   THEMIS scanner (error-severity verdicts en 48h)
  */
 
 import { adminDb }    from "@/lib/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 import { evaluateResponse } from "@/core/themis";
 
-import type { FMEAItem, SPCData }               from "@/extensions/atena/schema";
-import type { ProyectoV2, ProveedorV2 }          from "@/extensions/tec-bii/schema";
+import type { FMEAItem, SPCData }                    from "@/extensions/atena/schema";
+import type { ProyectoV2, ProveedorV2, Hypothesis }  from "@/extensions/tec-bii/schema";
+import type { BrandGoal, CreativeMemory }            from "@/extensions/prometeo/schema";
+import type { HermesAction }                         from "@/extensions/hermes/schema";
+import type { ThemisVerdict }                        from "@/types/themis";
 
 import type {
   OracleSignal,
@@ -32,6 +35,7 @@ import type {
   OracleCategory,
   OracleSeverity,
   OracleHorizon,
+  OracleForecast,
   DEFAULT_ORACLE_CONFIG,
 } from "@/types/oraculo";
 import { DEFAULT_ORACLE_CONFIG as DEFAULT_CONFIG } from "@/types/oraculo";
@@ -288,6 +292,289 @@ async function scanTecBii(
   return signals;
 }
 
+// ── PROMETEO Scanner ──────────────────────────────────────────────────────────
+
+async function scanPrometeo(
+  uid:    string,
+  config: OracleConfig,
+): Promise<OracleSignal[]> {
+  if (!config.enginesEnabled.prometeo) return [];
+
+  const signals:           OracleSignal[] = [];
+  const deviationThreshold = config.thresholds.goalDeviationPct; // 0.2
+  const now                = Date.now();
+
+  try {
+    const wsSnap = await adminDb.collection("smm_workspaces").get();
+
+    for (const wsDoc of wsSnap.docs) {
+      const wid = wsDoc.id;
+
+      // ── BrandGoals: objetivos activos con desviación bajo el target ──────────
+      try {
+        const goalsSnap = await adminDb
+          .collection(`smm_workspaces/${wid}/prometeo_goals`)
+          .where("estado", "==", "activo")
+          .get();
+
+        for (const gDoc of goalsSnap.docs) {
+          const goal = { id: gDoc.id, ...gDoc.data() } as BrandGoal;
+          if (goal.valorObjetivo <= 0) continue;
+
+          const deviation = 1 - goal.valorActual / goal.valorObjetivo;
+          if (deviation < deviationThreshold) continue;
+
+          const isCritical = deviation >= 0.4;
+          signals.push({
+            id:           genId(),
+            sourceEngine: "prometeo",
+            signalType:   "goal_at_risk",
+            severity:     isCritical ? "critical" : "warning",
+            entityId:     goal.id,
+            entityLabel:  `${goal.clienteNombre} — ${goal.titulo}`,
+            category:     "marketing_risk",
+            payload: {
+              workspaceId:   wid,
+              clienteId:     goal.clienteId,
+              clienteNombre: goal.clienteNombre,
+              titulo:        goal.titulo,
+              metaKPI:       goal.metaKPI,
+              valorActual:   goal.valorActual,
+              valorObjetivo: goal.valorObjetivo,
+              unidad:        goal.unidad,
+              desviacionPct: deviation,
+              fechaLimite:   goal.fechaLimite,
+              canal:         goal.canal,
+            },
+            capturedAt: now,
+            userId:     uid,
+          });
+        }
+      } catch (err) {
+        console.warn(`[ORÁCULO][prometeo] Error goals workspace ${wid}:`, err);
+      }
+
+      // ── Creative Memory: creativos con performanceScore bajo ─────────────────
+      try {
+        const memSnap = await adminDb
+          .collection(`smm_workspaces/${wid}/prometeo_creative_memory`)
+          .where("usarDeNuevo", "==", false)
+          .get();
+
+        const badCreatives = memSnap.docs
+          .map((d) => ({ id: d.id, ...d.data() } as CreativeMemory))
+          .filter((m) => m.performanceScore < 30);
+
+        if (badCreatives.length >= 3) {
+          const avg = badCreatives.reduce((s, m) => s + m.performanceScore, 0) / badCreatives.length;
+          signals.push({
+            id:           genId(),
+            sourceEngine: "prometeo",
+            signalType:   "creative_fatigue",
+            severity:     "warning",
+            entityId:     `${wid}_fatiga`,
+            entityLabel:  `Workspace ${wid} — ${badCreatives.length} creativos de bajo rendimiento`,
+            category:     "marketing_risk",
+            payload: {
+              workspaceId:       wid,
+              badCreativesCount: badCreatives.length,
+              avgPerformance:    avg,
+            },
+            capturedAt: now,
+            userId:     uid,
+          });
+        }
+      } catch (err) {
+        console.warn(`[ORÁCULO][prometeo] Error creative memory workspace ${wid}:`, err);
+      }
+    }
+  } catch (err) {
+    console.warn("[ORÁCULO][prometeo] Error obteniendo workspaces:", err);
+  }
+
+  return signals;
+}
+
+// ── NEXO Scanner ──────────────────────────────────────────────────────────────
+
+async function scanNexo(
+  uid:    string,
+  config: OracleConfig,
+): Promise<OracleSignal[]> {
+  if (!config.enginesEnabled.nexo) return [];
+
+  const signals:       OracleSignal[] = [];
+  const CONF_MIN       = 0.7;
+  const now            = Date.now();
+
+  const entityCols: Array<{ col: string; labelField: string }> = [
+    { col: "tec_bii_proyectos",  labelField: "titulo" },
+    { col: "tec_bii_proveedores", labelField: "nombre" },
+    { col: "tec_bii_empleados",   labelField: "nombre" },
+  ];
+
+  for (const { col, labelField } of entityCols) {
+    try {
+      const snap = await adminDb.collection(`users/${uid}/${col}`).get();
+
+      for (const doc of snap.docs) {
+        const entity     = { id: doc.id, ...doc.data() } as Record<string, unknown>;
+        const hypotheses = (entity.hypotheses ?? []) as Hypothesis[];
+
+        const pending = hypotheses.filter(
+          (h) => h.confidence >= CONF_MIN && h.validated !== true && h.dismissed !== true,
+        );
+        if (pending.length === 0) continue;
+
+        const best = pending.sort((a, b) => b.confidence - a.confidence)[0];
+        signals.push({
+          id:           genId(),
+          sourceEngine: "nexo",
+          signalType:   "hypothesis_pending",
+          severity:     best.confidence >= 0.9 ? "critical" : "warning",
+          entityId:     doc.id,
+          entityLabel:  String(entity[labelField] ?? doc.id),
+          category:     "strategic_opportunity",
+          payload: {
+            collection:     col,
+            pendingCount:   pending.length,
+            bestHypothesis: best.text,
+            bestConfidence: best.confidence,
+            bestSources:    best.sources,
+          },
+          capturedAt: now,
+          userId:     uid,
+        });
+      }
+    } catch (err) {
+      console.warn(`[ORÁCULO][nexo] Error escaneando ${col}:`, err);
+    }
+  }
+
+  return signals;
+}
+
+// ── HERMES Scanner ────────────────────────────────────────────────────────────
+
+async function scanHermes(
+  uid:    string,
+  config: OracleConfig,
+): Promise<OracleSignal[]> {
+  if (!config.enginesEnabled.hermes) return [];
+
+  const signals:      OracleSignal[] = [];
+  const now           = Date.now();
+  const cutoff30d     = now - 30 * 24 * 60 * 60 * 1000;
+  const vetoThreshold = config.thresholds.hermesVetoRatio; // 0.1
+
+  try {
+    const wsSnap = await adminDb.collection("smm_workspaces").get();
+
+    for (const wsDoc of wsSnap.docs) {
+      const wid = wsDoc.id;
+      try {
+        const qSnap = await adminDb
+          .collection(`smm_workspaces/${wid}/hermes_queue`)
+          .where("createdAt", ">=", cutoff30d)
+          .get();
+
+        const total  = qSnap.size;
+        if (total === 0) continue;
+
+        const vetoed = qSnap.docs.filter(
+          (d) => (d.data() as HermesAction).estado === "vetada_por_themis",
+        ).length;
+
+        const ratio = vetoed / total;
+        if (ratio < vetoThreshold) continue;
+
+        const isCritical = ratio >= 0.25;
+        signals.push({
+          id:           genId(),
+          sourceEngine: "hermes",
+          signalType:   "hermes_veto_ratio",
+          severity:     isCritical ? "critical" : "warning",
+          entityId:     wid,
+          entityLabel:  `HERMES Workspace ${wid}`,
+          category:     "compliance_risk",
+          payload: {
+            workspaceId: wid,
+            total,
+            vetoed,
+            ratio,
+            cutoffDays:  30,
+          },
+          capturedAt: now,
+          userId:     uid,
+        });
+      } catch (err) {
+        console.warn(`[ORÁCULO][hermes] Error workspace ${wid}:`, err);
+      }
+    }
+  } catch (err) {
+    console.warn("[ORÁCULO][hermes] Error obteniendo workspaces:", err);
+  }
+
+  return signals;
+}
+
+// ── THEMIS Scanner ────────────────────────────────────────────────────────────
+
+async function scanThemis(
+  uid:    string,
+  config: OracleConfig,
+): Promise<OracleSignal[]> {
+  if (!config.enginesEnabled.themis) return [];
+
+  const signals  = [] as OracleSignal[];
+  const now      = Date.now();
+  // THEMIS verdicts usan campo `date` (YYYY-MM-DD) para queries por fecha
+  const cutoff   = new Date(now - 48 * 60 * 60 * 1000);
+  const cutoffDate = cutoff.toISOString().slice(0, 10); // "YYYY-MM-DD"
+
+  try {
+    const snap = await adminDb
+      .collection(`users/${uid}/themis_verdicts`)
+      .where("severity", "==", "error")
+      .where("date", ">=", cutoffDate)
+      .orderBy("date", "desc")
+      .get();
+
+    const count = snap.size;
+    if (count <= 3) return signals;
+
+    // Agregar políticas únicas afectadas
+    const policiesSet = new Set<string>();
+    for (const doc of snap.docs) {
+      const verdict = doc.data() as ThemisVerdict;
+      verdict.violations?.forEach((v) => policiesSet.add(v.policyName));
+    }
+
+    const isCritical = count >= 8;
+    signals.push({
+      id:           genId(),
+      sourceEngine: "themis",
+      signalType:   "themis_violations",
+      severity:     isCritical ? "critical" : "warning",
+      entityId:     `${uid}_themis_errors`,
+      entityLabel:  `THEMIS — ${count} violaciones críticas (48h)`,
+      category:     "compliance_risk",
+      payload: {
+        errorCount:     count,
+        uniquePolicies: policiesSet.size,
+        topPolicies:    [...policiesSet].slice(0, 3).join(", "),
+        windowHours:    48,
+      },
+      capturedAt: now,
+      userId:     uid,
+    });
+  } catch (err) {
+    console.warn("[ORÁCULO][themis] Error escaneando themis_verdicts:", err);
+  }
+
+  return signals;
+}
+
 // ── ══════════════════════════════════════════════════════════════════════════ ──
 //    SCAN PRINCIPAL
 // ── ══════════════════════════════════════════════════════════════════════════ ──
@@ -303,13 +590,30 @@ export async function scanAllEngines(
 ): Promise<OracleSignal[]> {
   const cfg = config ?? await getConfig();
 
-  const [atenaSignals, tecBiiSignals] = await Promise.all([
+  const [
+    atenaSignals,
+    tecBiiSignals,
+    prometeoSignals,
+    nexoSignals,
+    hermesSignals,
+    themisSignals,
+  ] = await Promise.all([
     scanAtena(userId, cfg),
     scanTecBii(userId, cfg),
-    // Sprint O-2: scanPrometeo, scanNexo, scanHermes, scanThemis
+    scanPrometeo(userId, cfg),
+    scanNexo(userId, cfg),
+    scanHermes(userId, cfg),
+    scanThemis(userId, cfg),
   ]);
 
-  return [...atenaSignals, ...tecBiiSignals];
+  return [
+    ...atenaSignals,
+    ...tecBiiSignals,
+    ...prometeoSignals,
+    ...nexoSignals,
+    ...hermesSignals,
+    ...themisSignals,
+  ];
 }
 
 // ── ══════════════════════════════════════════════════════════════════════════ ──
@@ -332,6 +636,17 @@ function computeHorizon(signal: OracleSignal): OracleHorizon {
     return count >= 5 ? "24h" : "7d";
   }
   if (signal.signalType === "proveedor_riesgo") return "30d";
+  if (signal.signalType === "goal_at_risk") {
+    const dev = signal.payload.desviacionPct as number;
+    return dev >= 0.4 ? "7d" : "30d";
+  }
+  if (signal.signalType === "creative_fatigue")   return "30d";
+  if (signal.signalType === "hypothesis_pending") {
+    const conf = signal.payload.bestConfidence as number;
+    return conf >= 0.9 ? "7d" : "30d";
+  }
+  if (signal.signalType === "hermes_veto_ratio")  return "30d";
+  if (signal.signalType === "themis_violations")  return "7d";
   return "7d";
 }
 
@@ -386,6 +701,26 @@ function buildTitle(signals: OracleSignal[]): string {
     return `Proveedor con alerta de riesgo: ${primary.entityLabel}`;
   }
 
+  if (types.includes("goal_at_risk") && signals.length === 1) {
+    const dev = ((primary.payload.desviacionPct as number) * 100).toFixed(0);
+    return `Objetivo PROMETEO en riesgo: ${primary.entityLabel} (−${dev}% del objetivo)`;
+  }
+  if (types.includes("creative_fatigue") && signals.length === 1) {
+    const count = primary.payload.badCreativesCount as number;
+    return `Fatiga creativa: ${count} creativos de bajo rendimiento detectados`;
+  }
+  if (types.includes("hypothesis_pending") && signals.length === 1) {
+    return `Hipótesis NEXO sin validar: ${primary.entityLabel}`;
+  }
+  if (types.includes("hermes_veto_ratio") && signals.length === 1) {
+    const pct = ((primary.payload.ratio as number) * 100).toFixed(0);
+    return `HERMES: ${pct}% de acciones vetadas por THEMIS (30 días)`;
+  }
+  if (types.includes("themis_violations") && signals.length === 1) {
+    const count = primary.payload.errorCount as number;
+    return `THEMIS: ${count} violaciones críticas en las últimas 48 horas`;
+  }
+
   // Múltiples señales del mismo tipo
   const engine = primary.sourceEngine.toUpperCase().replace("_", " ");
   const count  = signals.length;
@@ -434,6 +769,47 @@ function buildSummary(signals: OracleSignal[], title: string): string {
              cumpl != null    ? `Cumplimiento: ${(cumpl * 100).toFixed(0)}%.`  : null,
              tendencia        ? `Tendencia: ${tendencia}.`                     : null,
            ].filter(Boolean).join(" ");
+  }
+
+  if (primary.signalType === "goal_at_risk") {
+    const dev   = ((primary.payload.desviacionPct as number) * 100).toFixed(0);
+    const val   = primary.payload.valorActual    as number;
+    const obj   = primary.payload.valorObjetivo  as number;
+    const unid  = primary.payload.unidad         as string;
+    return `El objetivo "${primary.payload.titulo}" de ${primary.payload.clienteNombre} está ${dev}% por debajo del target ` +
+           `(${val} vs ${obj} ${unid}). Se requiere ajuste de estrategia o presupuesto en los próximos ${horizon}.`;
+  }
+
+  if (primary.signalType === "creative_fatigue") {
+    const count = primary.payload.badCreativesCount as number;
+    const avg   = (primary.payload.avgPerformance  as number).toFixed(0);
+    return `${count} creativos con performance promedio de ${avg}/100 detectados en PROMETEO. ` +
+           `Señal de agotamiento creativo en el workspace. Rotar creativos o generar nuevas variantes con Creative Lab.`;
+  }
+
+  if (primary.signalType === "hypothesis_pending") {
+    const conf  = ((primary.payload.bestConfidence as number) * 100).toFixed(0);
+    const count = primary.payload.pendingCount as number;
+    return `NEXO identificó ${count} hipótesis de alta confianza sin validar en "${primary.entityLabel}". ` +
+           `Hipótesis principal (${conf}% confianza): "${primary.payload.bestHypothesis}". ` +
+           `Valida o descarta para mantener el grafo cognitivo limpio.`;
+  }
+
+  if (primary.signalType === "hermes_veto_ratio") {
+    const pct    = ((primary.payload.ratio  as number) * 100).toFixed(0);
+    const vetoed = primary.payload.vetoed   as number;
+    const total  = primary.payload.total    as number;
+    return `HERMES registró ${vetoed} de ${total} acciones vetadas por THEMIS en los últimos 30 días (${pct}%). ` +
+           `Un ratio alto indica políticas mal calibradas o intenciones fuera del marco ético definido. ` +
+           `Revisar las políticas THEMIS activas.`;
+  }
+
+  if (primary.signalType === "themis_violations") {
+    const count    = primary.payload.errorCount   as number;
+    const policies = primary.payload.topPolicies  as string;
+    return `THEMIS registró ${count} veredictos de error en las últimas 48 horas. ` +
+           `Políticas más afectadas: ${policies}. ` +
+           `Revisar los policy overrides y el comportamiento de los engines para contener las violaciones.`;
   }
 
   // Fallback multi-señal
@@ -530,6 +906,75 @@ function buildRecommendations(signals: OracleSignal[]): OracleRecommendation[] {
       text:       `Considerar proveedor de respaldo mientras se resuelve el riesgo.`,
       actionType: "user_decision",
       priority:   "low",
+    });
+  }
+
+  if (primary.signalType === "goal_at_risk") {
+    recs.push({
+      id:         genId(),
+      text:       `Revisar la estrategia del objetivo "${primary.payload.titulo}" en PROMETEO y ajustar el plan de medios.`,
+      actionType: "review",
+      priority:   primary.severity === "critical" ? "high" : "medium",
+    });
+    recs.push({
+      id:         genId(),
+      text:       `Generar un nuevo Director Brief para "${primary.payload.clienteNombre}" con enfoque en recuperación del objetivo.`,
+      actionType: "user_decision",
+      priority:   "high",
+    });
+  }
+
+  if (primary.signalType === "creative_fatigue") {
+    recs.push({
+      id:         genId(),
+      text:       `Abrir Creative Lab de PROMETEO y generar nuevas variantes creativas para romper la fatiga.`,
+      actionType: "review",
+      priority:   "medium",
+    });
+    recs.push({
+      id:         genId(),
+      text:       `Revisar los creativos de bajo rendimiento en Creative Memory y marcar los que deben archivarse.`,
+      actionType: "user_decision",
+      priority:   "low",
+    });
+  }
+
+  if (primary.signalType === "hypothesis_pending") {
+    recs.push({
+      id:         genId(),
+      text:       `Revisar y validar la hipótesis "${primary.payload.bestHypothesis}" en "${primary.entityLabel}" en TEC Bii.`,
+      actionType: "user_decision",
+      priority:   primary.severity === "critical" ? "high" : "medium",
+    });
+  }
+
+  if (primary.signalType === "hermes_veto_ratio") {
+    recs.push({
+      id:         genId(),
+      text:       `Revisar el Policy Override Dashboard de THEMIS y recalibrar las políticas que generan más vetos.`,
+      actionType: "review",
+      priority:   "high",
+    });
+    recs.push({
+      id:         genId(),
+      text:       `Auditar las acciones vetadas en HERMES Historial para identificar patrones y ajustar las intenciones.`,
+      actionType: "review",
+      priority:   "medium",
+    });
+  }
+
+  if (primary.signalType === "themis_violations") {
+    recs.push({
+      id:         genId(),
+      text:       `Revisar los veredictos de THEMIS en las últimas 48 horas e identificar el engine causante de más violaciones.`,
+      actionType: "review",
+      priority:   "high",
+    });
+    recs.push({
+      id:         genId(),
+      text:       `Considerar activar un policy override temporal en THEMIS si las violaciones son falsos positivos.`,
+      actionType: "user_decision",
+      priority:   "medium",
     });
   }
 
@@ -716,6 +1161,182 @@ export async function ingestSignal(
   // Intentar generar predicción con esta señal
   const preds = await generatePredictions([signal], signal.userId);
   return { signalId: signal.id, predictionsTriggered: preds.length };
+}
+
+/**
+ * Genera pronósticos de series de tiempo para métricas clave de cada engine.
+ * Motor determinista: linear regression sobre los últimos N puntos.
+ * Persiste en users/{uid}/oracle_forecasts/{id}.
+ *
+ * Métricas cubierta en O-2:
+ *   - spc_violations   (ATENA)   → violaciones por proyecto
+ *   - urgency_score    (TEC Bii) → urgencyScore promedio de proyectos activos
+ *   - goal_deviation   (PROMETEO)→ desviación promedio de objetivos activos
+ */
+export async function generateForecasts(
+  userId: string,
+): Promise<OracleForecast[]> {
+  const forecasts: OracleForecast[] = [];
+  const now = Date.now();
+
+  // ── Helper: proyectar valor con regresión lineal simple ───────────────────
+  function linearProject(
+    points:   Array<{ timestamp: number; value: number }>,
+    horizonMs: number,
+  ): { projectedValue: number; confidence: number } {
+    if (points.length < 2) return { projectedValue: points[0]?.value ?? 0, confidence: 0.4 };
+
+    const n = points.length;
+    const xs = points.map((p) => p.timestamp);
+    const ys = points.map((p) => p.value);
+    const xMean = xs.reduce((s, x) => s + x, 0) / n;
+    const yMean = ys.reduce((s, y) => s + y, 0) / n;
+
+    let num = 0, den = 0;
+    for (let i = 0; i < n; i++) {
+      num += (xs[i] - xMean) * (ys[i] - yMean);
+      den += (xs[i] - xMean) ** 2;
+    }
+
+    const slope     = den !== 0 ? num / den : 0;
+    const intercept = yMean - slope * xMean;
+    const targetX   = now + horizonMs;
+    const projected = slope * targetX + intercept;
+    const conf      = Math.min(0.9, 0.5 + (n - 2) * 0.05);
+
+    return { projectedValue: projected, confidence: conf };
+  }
+
+  // ── Forecast 1: violaciones SPC (ATENA) ───────────────────────────────────
+  try {
+    const spcSnap = await adminDb.collection(`users/${userId}/atena_spc`).get();
+    if (spcSnap.size >= 2) {
+      const points = spcSnap.docs.map((d) => {
+        const data = d.data() as { violacionesWesternElectric?: number; _serverTs?: { toMillis?: () => number } };
+        return {
+          timestamp: data._serverTs?.toMillis?.() ?? now,
+          value:     data.violacionesWesternElectric ?? 0,
+        };
+      }).sort((a, b) => a.timestamp - b.timestamp);
+
+      const horizon7d = 7 * 24 * 60 * 60 * 1000;
+      const { projectedValue, confidence } = linearProject(points, horizon7d);
+      const current = points[points.length - 1].value;
+
+      const ref = adminDb.collection(`users/${userId}/oracle_forecasts`).doc();
+      const forecast: OracleForecast = {
+        id:             ref.id,
+        userId,
+        metric:         "spc_violations",
+        engine:         "atena",
+        currentValue:   current,
+        projectedValue: Math.max(0, Math.round(projectedValue)),
+        projectionDate: now + horizon7d,
+        confidence,
+        methodology:    "linear_regression",
+        dataPoints:     points,
+        createdAt:      now,
+      };
+      await ref.set({ ...forecast, _serverTs: FieldValue.serverTimestamp() });
+      forecasts.push(forecast);
+    }
+  } catch (err) {
+    console.warn("[ORÁCULO][forecasts] Error forecast SPC:", err);
+  }
+
+  // ── Forecast 2: urgencyScore promedio (TEC Bii) ───────────────────────────
+  try {
+    const projSnap = await adminDb.collection(`users/${userId}/tec_bii_proyectos`).get();
+    if (projSnap.size >= 2) {
+      // Cada documento es un punto; usamos updatedAt como timestamp
+      const points = projSnap.docs
+        .map((d) => {
+          const data = d.data() as { urgencyScore?: number; updatedAt?: number };
+          return {
+            timestamp: data.updatedAt ?? now,
+            value:     data.urgencyScore ?? 0,
+          };
+        })
+        .filter((p) => p.value > 0)
+        .sort((a, b) => a.timestamp - b.timestamp);
+
+      if (points.length >= 2) {
+        const horizon30d    = 30 * 24 * 60 * 60 * 1000;
+        const { projectedValue, confidence } = linearProject(points, horizon30d);
+        const current = points.reduce((s, p) => s + p.value, 0) / points.length;
+
+        const ref = adminDb.collection(`users/${userId}/oracle_forecasts`).doc();
+        const forecast: OracleForecast = {
+          id:             ref.id,
+          userId,
+          metric:         "urgency_score_avg",
+          engine:         "tec_bii",
+          currentValue:   parseFloat(current.toFixed(3)),
+          projectedValue: parseFloat(Math.min(1, Math.max(0, projectedValue)).toFixed(3)),
+          projectionDate: now + horizon30d,
+          confidence,
+          methodology:    "linear_regression",
+          dataPoints:     points,
+          createdAt:      now,
+        };
+        await ref.set({ ...forecast, _serverTs: FieldValue.serverTimestamp() });
+        forecasts.push(forecast);
+      }
+    }
+  } catch (err) {
+    console.warn("[ORÁCULO][forecasts] Error forecast urgency:", err);
+  }
+
+  // ── Forecast 3: desviación promedio de goals PROMETEO ─────────────────────
+  try {
+    const wsSnap = await adminDb.collection("smm_workspaces").get();
+    const deviations: Array<{ timestamp: number; value: number }> = [];
+
+    for (const wsDoc of wsSnap.docs) {
+      const wid = wsDoc.id;
+      try {
+        const goalsSnap = await adminDb
+          .collection(`smm_workspaces/${wid}/prometeo_goals`)
+          .where("estado", "==", "activo")
+          .get();
+
+        for (const gDoc of goalsSnap.docs) {
+          const g = gDoc.data() as { valorActual?: number; valorObjetivo?: number; updatedAt?: number };
+          if (!g.valorObjetivo || g.valorObjetivo <= 0) continue;
+          const dev = 1 - (g.valorActual ?? 0) / g.valorObjetivo;
+          deviations.push({ timestamp: g.updatedAt ?? now, value: dev });
+        }
+      } catch { /* skip workspace */ }
+    }
+
+    if (deviations.length >= 2) {
+      const sorted  = deviations.sort((a, b) => a.timestamp - b.timestamp);
+      const horizon30d = 30 * 24 * 60 * 60 * 1000;
+      const { projectedValue, confidence } = linearProject(sorted, horizon30d);
+      const current = sorted.reduce((s, p) => s + p.value, 0) / sorted.length;
+
+      const ref = adminDb.collection(`users/${userId}/oracle_forecasts`).doc();
+      const forecast: OracleForecast = {
+        id:             ref.id,
+        userId,
+        metric:         "goal_deviation_avg",
+        engine:         "prometeo",
+        currentValue:   parseFloat(current.toFixed(3)),
+        projectedValue: parseFloat(Math.max(0, projectedValue).toFixed(3)),
+        projectionDate: now + horizon30d,
+        confidence,
+        methodology:    "linear_regression",
+        dataPoints:     sorted,
+        createdAt:      now,
+      };
+      await ref.set({ ...forecast, _serverTs: FieldValue.serverTimestamp() });
+      forecasts.push(forecast);
+    }
+  } catch (err) {
+    console.warn("[ORÁCULO][forecasts] Error forecast PROMETEO:", err);
+  }
+
+  return forecasts;
 }
 
 /**
