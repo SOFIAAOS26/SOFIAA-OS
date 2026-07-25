@@ -27,8 +27,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
+  let userId = "anonymous";
   try {
-    await getAuth(getAdminApp()).verifyIdToken(token);
+    const decoded = await getAuth(getAdminApp()).verifyIdToken(token);
+    userId = decoded.uid;
   } catch {
     return NextResponse.json({ error: "Token inválido" }, { status: 401 });
   }
@@ -51,7 +53,7 @@ export async function POST(req: NextRequest) {
 
   // ── Ejecutar ──────────────────────────────────────────────────────────────
   try {
-    const resultado = await executeAction(workspaceId, actionId);
+    const resultado = await executeAction(workspaceId, actionId, userId);
     return NextResponse.json({ resultado }, { status: 200 });
   } catch (err) {
     console.error("[HERMES execute]", err);

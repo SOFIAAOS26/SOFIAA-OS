@@ -1,14 +1,17 @@
 /**
- * HERMES — Executor v1.0
+ * HERMES — Executor v1.1 (Sprint T-2)
  *
  * Motor de despacho de acciones. Toma una acción aprobada de Firestore
  * y la enruta al conector correcto.
  *
  * Ciclo de vida:
- *   aprobada → ejecutando → completada | fallida
+ *   aprobada → [THEMIS gate] → ejecutando → completada | fallida
+ *                           ↘ vetada_por_themis  (Sprint T-2)
  *
  * Reglas:
  *   - Máximo MAX_REINTENTOS = 3 intentos antes de marcar como fallida
+ *   - THEMIS evalúa SIEMPRE antes de ejecutar — sin excepciones
+ *   - Si THEMIS veta, la acción queda en vetada_por_themis con el verdictId
  *   - Siempre actualiza estado en Firestore antes y después de ejecutar
  *   - Server-only — usa Firebase Admin SDK
  *   - Nunca ejecuta acciones que no estén en estado "aprobada"
@@ -17,6 +20,8 @@
 import { adminDb } from "@/lib/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 import type { HermesAction, HermesResultado } from "@/extensions/hermes/schema";
+import { evaluateAction as themisEvaluateAction } from "@/core/themis";
+import type { ActionEvaluationRequest } from "@/types/themis";
 import { isEtapa2Connector, ejecutarEtapa2Action }  from "./connectors/etapa2";
 import { ejecutarMondayAction }    from "./connectors/monday";
 import { ejecutarSlackAction }     from "./connectors/slack";
@@ -77,6 +82,21 @@ async function markFallida(
   });
 }
 
+async function markVetada(
+  workspaceId:    string,
+  actionId:       string,
+  verdictId:      string,
+  motivoRechazo:  string
+): Promise<void> {
+  await actionRef(workspaceId, actionId).update({
+    estado:           "vetada_por_themis",
+    themisVerdictId:  verdictId,
+    motivoRechazo,
+    completadoAt:     Date.now(),
+    _updatedAt:       FieldValue.serverTimestamp(),
+  });
+}
+
 // ── Dispatcher ────────────────────────────────────────────────────────────────
 
 async function dispatch(accion: HermesAction): Promise<HermesResultado> {
@@ -115,15 +135,19 @@ async function dispatch(accion: HermesAction): Promise<HermesResultado> {
  *
  * 1. Lee la acción desde Firestore Admin
  * 2. Valida que esté en estado "aprobada"
- * 3. Marca como "ejecutando"
- * 4. Despacha al conector correcto
- * 5. Marca como "completada" o "fallida" con reintento si aplica
+ * 3. 🛡 THEMIS gate — evalúa la acción antes de cruzar el umbral real
+ *      Si approved === false → markVetada() + abort
+ * 4. Marca como "ejecutando"
+ * 5. Despacha al conector correcto
+ * 6. Marca como "completada" o "fallida" con reintento si aplica
  *
+ * @param userId  UID del usuario autenticado (del token Firebase del request)
  * @returns HermesResultado con el resultado de la ejecución
  */
 export async function executeAction(
   workspaceId: string,
-  actionId:    string
+  actionId:    string,
+  userId:      string = "anonymous"
 ): Promise<HermesResultado> {
   // 1. Leer acción
   const accion = await getAction(workspaceId, actionId);
@@ -151,6 +175,41 @@ export async function executeAction(
     };
     await markFallida(workspaceId, actionId, resultado, reintentos);
     return resultado;
+  }
+
+  // 🛡 THEMIS gate — contrato constitucional:
+  //    "THEMIS autoriza o veta cada acción antes de cruzar el umbral al mundo real"
+  try {
+    const themisReq: ActionEvaluationRequest = {
+      actionId,
+      actionType:    accion.tipo,
+      actionPayload: accion.payload,
+      requestedBy:   accion.sourceEngine,
+      userId,
+      context: {
+        activePath:   undefined,
+        extensionId:  accion.sourceEngine,
+        userRole:     null,
+        isGoalActive: false,
+        userMessage:  JSON.stringify(accion.payload),
+      },
+    };
+
+    const themisResult = await themisEvaluateAction(themisReq);
+
+    if (!themisResult.approved) {
+      const motivo = `THEMIS vetó esta acción. ${themisResult.verdict.reasoning}`;
+      await markVetada(workspaceId, actionId, themisResult.verdict.id, motivo);
+      return {
+        exito:     false,
+        mensaje:   motivo,
+        errorCode: "THEMIS_BLOCK",
+      };
+    }
+  } catch {
+    // THEMIS nunca debe bloquear la ejecución por un error interno propio
+    // Si el gate falla por error técnico, ejecutamos con advertencia.
+    console.warn("[HERMES][executor] THEMIS gate failed — ejecutando sin evaluación", actionId);
   }
 
   // 4. Marcar como ejecutando

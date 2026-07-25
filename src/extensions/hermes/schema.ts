@@ -8,7 +8,7 @@
  *
  * Ciclo de vida de una acción:
  *   propuesta → pendiente_aprobacion → aprobada → ejecutando → completada
- *                                              ↘ rechazada
+ *                                              ↘ rechazada       ↓ vetada_por_themis (Sprint T-2)
  *                                                                ↘ fallida
  *
  * Arquitectura de conectores:
@@ -111,7 +111,8 @@ export type HermesActionStatus =
   | "ejecutando"            // en proceso de ejecución
   | "completada"            // ejecutada con éxito
   | "fallida"               // intentada pero falló
-  | "rechazada";            // rechazada por el usuario
+  | "rechazada"             // rechazada por el usuario
+  | "vetada_por_themis";    // THEMIS bloqueó la ejecución — veredicto persistido (Sprint T-2)
 
 // ── Nivel de urgencia ─────────────────────────────────────────────────────────
 
@@ -216,6 +217,9 @@ export interface HermesAction {
   rechazadoPor?:  string;
   motivoRechazo?: string;        // texto libre del usuario al rechazar
 
+  // ── THEMIS (Sprint T-2) ─────────────────────────────────────────────────
+  themisVerdictId?: string;      // ID del veredicto de THEMIS si fue evaluada
+
   // ── Resultado ───────────────────────────────────────────────────────────
   resultado?:     HermesResultado;
   reintentos:     number;        // veces que se intentó ejecutar (max 3)
@@ -282,4 +286,5 @@ export const ESTADO_COLOR: Record<HermesActionStatus, string> = {
   completada:           "#22c55e",
   fallida:              "#ef4444",
   rechazada:            "#64748b",
+  vetada_por_themis:    "#059669", // verde THEMIS — la balanza habló
 };

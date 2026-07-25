@@ -1,10 +1,13 @@
 "use client";
 
 /**
- * HERMES — Historial de ejecuciones (Sprint H-8)
+ * HERMES — Historial de ejecuciones (Sprint H-8 · T-2 update)
  *
- * Muestra todas las acciones terminadas (completada / fallida / rechazada)
+ * Muestra todas las acciones terminadas (completada / fallida / rechazada / vetada_por_themis)
  * con sus resultados, filtros por estado y conector, y KPIs resumen.
+ *
+ * Sprint T-2: acciones vetadas por THEMIS aparecen con 🛡 badge y panel
+ * expandible con el razonamiento del veredicto.
  */
 
 import { useState, useEffect } from "react";
@@ -15,23 +18,25 @@ import { CONNECTOR_LABELS, URGENCIA_COLOR, ESTADO_COLOR } from "@/extensions/her
 
 // ── Constantes de color ───────────────────────────────────────────────────────
 
-const INDIGO = "#6366f1";
-const TEXT   = "#e2e8f0";
-const MUTED  = "#64748b";
-const CARD   = "#0f0f1e";
-const BORDER = "#1a1a30";
-const GREEN  = "#22c55e";
-const YELLOW = "#f59e0b";
-const RED    = "#ef4444";
-const CYAN   = "#22d3ee";
+const INDIGO  = "#6366f1";
+const TEXT    = "#e2e8f0";
+const MUTED   = "#64748b";
+const CARD    = "#0f0f1e";
+const BORDER  = "#1a1a30";
+const GREEN   = "#22c55e";
+const YELLOW  = "#f59e0b";
+const RED     = "#ef4444";
+const CYAN    = "#22d3ee";
+const THEMIS  = "#059669"; // verde THEMIS — la balanza habló
 
-type EstadoFiltro = "todas" | "completada" | "fallida" | "rechazada";
+type EstadoFiltro = "todas" | "completada" | "fallida" | "rechazada" | "vetada_por_themis";
 
 const ESTADO_LABEL: Record<EstadoFiltro, string> = {
-  todas:     "Todas",
-  completada: "Completadas",
-  fallida:    "Fallidas",
-  rechazada:  "Rechazadas",
+  todas:             "Todas",
+  completada:        "Completadas",
+  fallida:           "Fallidas",
+  rechazada:         "Rechazadas",
+  vetada_por_themis: "Vetadas THEMIS",
 };
 
 // ── Componente ────────────────────────────────────────────────────────────────
@@ -50,7 +55,7 @@ export default function HistorialPage() {
 
   // Solo acciones terminadas, más recientes primero
   const terminadas = acciones.filter((a) =>
-    ["completada", "fallida", "rechazada"].includes(a.estado)
+    ["completada", "fallida", "rechazada", "vetada_por_themis"].includes(a.estado)
   ).sort((a, b) =>
     (b.completadoAt ?? b.executedAt ?? b.createdAt) -
     (a.completadoAt ?? a.executedAt ?? a.createdAt)
@@ -58,11 +63,12 @@ export default function HistorialPage() {
 
   // Stats
   const stats = {
-    total:      terminadas.length,
-    completada: terminadas.filter((a) => a.estado === "completada").length,
-    fallida:    terminadas.filter((a) => a.estado === "fallida").length,
-    rechazada:  terminadas.filter((a) => a.estado === "rechazada").length,
-    exitoPct:   terminadas.length
+    total:             terminadas.length,
+    completada:        terminadas.filter((a) => a.estado === "completada").length,
+    fallida:           terminadas.filter((a) => a.estado === "fallida").length,
+    rechazada:         terminadas.filter((a) => a.estado === "rechazada").length,
+    vetada_por_themis: terminadas.filter((a) => a.estado === "vetada_por_themis").length,
+    exitoPct:          terminadas.length
       ? Math.round((terminadas.filter((a) => a.resultado?.exito).length / terminadas.length) * 100)
       : 0,
   };
@@ -91,6 +97,14 @@ export default function HistorialPage() {
     return ESTADO_COLOR[e as keyof typeof ESTADO_COLOR] ?? MUTED;
   }
 
+  function estadoIcon(a: HermesAction): string {
+    if (a.estado === "vetada_por_themis")                   return "🛡";
+    if (a.estado === "completada" && a.resultado?.exito)    return "✅";
+    if (a.estado === "completada" && !a.resultado?.exito)   return "⚠️";
+    if (a.estado === "fallida")                             return "❌";
+    return "🚫";
+  }
+
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
@@ -107,12 +121,13 @@ export default function HistorialPage() {
       </div>
 
       {/* KPI chips */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12, marginBottom: 24 }}>
         {[
-          { label: "Total",       val: stats.total,      color: CYAN   },
-          { label: "Completadas", val: stats.completada, color: GREEN  },
-          { label: "Fallidas",    val: stats.fallida,    color: RED    },
-          { label: "Rechazadas",  val: stats.rechazada,  color: YELLOW },
+          { label: "Total",        val: stats.total,             color: CYAN   },
+          { label: "Completadas",  val: stats.completada,        color: GREEN  },
+          { label: "Fallidas",     val: stats.fallida,           color: RED    },
+          { label: "Rechazadas",   val: stats.rechazada,         color: YELLOW },
+          { label: "🛡 Vetadas",   val: stats.vetada_por_themis, color: THEMIS },
         ].map((k) => (
           <div key={k.label} style={{
             background: CARD, border: `1px solid ${BORDER}`,
@@ -144,12 +159,14 @@ export default function HistorialPage() {
       {/* Filtros */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 }}>
         {/* Filtro por estado */}
-        {(["todas", "completada", "fallida", "rechazada"] as EstadoFiltro[]).map((f) => (
+        {(["todas", "completada", "fallida", "rechazada", "vetada_por_themis"] as EstadoFiltro[]).map((f) => (
           <button key={f} onClick={() => setEstadoFiltro(f)} style={{
             padding: "5px 14px", borderRadius: 20, border: "none", cursor: "pointer",
             fontSize: 11, fontWeight: 600,
-            background: estadoFiltro === f ? INDIGO : `${INDIGO}20`,
-            color:      estadoFiltro === f ? "#fff"  : MUTED,
+            background: estadoFiltro === f
+              ? (f === "vetada_por_themis" ? THEMIS : INDIGO)
+              : `${f === "vetada_por_themis" ? THEMIS : INDIGO}20`,
+            color: estadoFiltro === f ? "#fff" : MUTED,
           }}>
             {ESTADO_LABEL[f]}
           </button>
@@ -207,15 +224,16 @@ export default function HistorialPage() {
       {/* Lista */}
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {filtradas.map((a) => {
-          const isExp = expandido === a.id;
-          const ec    = estadoColor(a.estado);
+          const isExp    = expandido === a.id;
+          const ec       = estadoColor(a.estado);
+          const isVetada = a.estado === "vetada_por_themis";
 
           return (
             <div
               key={a.id}
               style={{
-                background: CARD,
-                border:     `1px solid ${isExp ? INDIGO : BORDER}`,
+                background: isVetada ? `${THEMIS}08` : CARD,
+                border:     `1px solid ${isExp ? (isVetada ? THEMIS : INDIGO) : (isVetada ? `${THEMIS}40` : BORDER)}`,
                 borderLeft: `4px solid ${ec}`,
                 borderRadius: 12, overflow: "hidden",
                 transition: "border-color 0.2s",
@@ -231,10 +249,7 @@ export default function HistorialPage() {
               >
                 {/* Ícono estado */}
                 <span style={{ fontSize: 16, flexShrink: 0 }}>
-                  {a.estado === "completada" && a.resultado?.exito  ? "✅"
-                  : a.estado === "completada" && !a.resultado?.exito ? "⚠️"
-                  : a.estado === "fallida"    ? "❌"
-                  :                             "🚫"}
+                  {estadoIcon(a)}
                 </span>
 
                 {/* Título + badges */}
@@ -249,9 +264,18 @@ export default function HistorialPage() {
                       fontSize: 9, fontWeight: 700, color: URGENCIA_COLOR[a.urgencia],
                       background: `${URGENCIA_COLOR[a.urgencia]}15`, padding: "1px 6px", borderRadius: 4,
                     }}>{a.urgencia}</span>
+                    {isVetada && (
+                      <span style={{
+                        fontSize: 9, fontWeight: 700, color: THEMIS,
+                        background: `${THEMIS}20`, padding: "1px 8px", borderRadius: 4,
+                        border: `1px solid ${THEMIS}40`,
+                      }}>🛡 THEMIS</span>
+                    )}
                   </div>
                   <div style={{ fontSize: 11, color: MUTED, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {a.resultado?.mensaje ?? a.descripcion}
+                    {isVetada
+                      ? (a.motivoRechazo ?? "Acción vetada por THEMIS — veredicto persistido")
+                      : (a.resultado?.mensaje ?? a.descripcion)}
                   </div>
                 </div>
 
@@ -273,7 +297,39 @@ export default function HistorialPage() {
 
               {/* Panel expandido */}
               {isExp && (
-                <div style={{ borderTop: `1px solid ${BORDER}`, padding: "16px 20px", background: "#0a0a1a" }}>
+                <div style={{ borderTop: `1px solid ${isVetada ? `${THEMIS}30` : BORDER}`, padding: "16px 20px", background: "#0a0a1a" }}>
+
+                  {/* 🛡 Panel THEMIS — solo para acciones vetadas */}
+                  {isVetada && (
+                    <div style={{
+                      background: `${THEMIS}10`,
+                      border: `1px solid ${THEMIS}40`,
+                      borderRadius: 10, padding: "14px 16px", marginBottom: 16,
+                    }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                        <span style={{ fontSize: 16 }}>🛡</span>
+                        <p style={{ fontSize: 12, fontWeight: 800, color: THEMIS, margin: 0 }}>
+                          Veredicto THEMIS
+                        </p>
+                        {a.themisVerdictId && (
+                          <span style={{
+                            fontSize: 9, color: MUTED,
+                            background: `${THEMIS}15`, padding: "1px 6px", borderRadius: 4,
+                            fontFamily: "monospace",
+                          }}>
+                            #{a.themisVerdictId.slice(0, 8)}
+                          </span>
+                        )}
+                      </div>
+                      <p style={{ fontSize: 12, color: TEXT, margin: 0, lineHeight: 1.6 }}>
+                        {a.motivoRechazo ?? "THEMIS vetó esta acción antes de ejecutarse. El veredicto ha sido persistido."}
+                      </p>
+                      <p style={{ fontSize: 10, color: MUTED, margin: "8px 0 0" }}>
+                        La acción fue interceptada antes de cruzar el umbral al mundo real. Ningún conector externo fue contactado.
+                      </p>
+                    </div>
+                  )}
+
                   {/* Descripción */}
                   <div style={{ marginBottom: 14 }}>
                     <p style={{ fontSize: 11, color: MUTED, margin: "0 0 4px", fontWeight: 700 }}>Descripción</p>
@@ -290,8 +346,8 @@ export default function HistorialPage() {
                     </div>
                   )}
 
-                  {/* Resultado */}
-                  {a.resultado && (
+                  {/* Resultado — solo para no-vetadas */}
+                  {!isVetada && a.resultado && (
                     <div style={{
                       background: a.resultado.exito ? `${GREEN}10` : `${RED}10`,
                       border: `1px solid ${a.resultado.exito ? GREEN : RED}33`,
@@ -314,7 +370,7 @@ export default function HistorialPage() {
                     </div>
                   )}
 
-                  {/* Motivo rechazo */}
+                  {/* Motivo rechazo — solo para rechazadas por usuario */}
                   {a.estado === "rechazada" && a.motivoRechazo && (
                     <div style={{
                       background: `${YELLOW}10`, border: `1px solid ${YELLOW}30`,
@@ -328,11 +384,14 @@ export default function HistorialPage() {
                   )}
 
                   {/* Meta */}
-                  <div style={{ display: "flex", gap: 24, fontSize: 11, color: MUTED }}>
+                  <div style={{ display: "flex", gap: 24, fontSize: 11, color: MUTED, flexWrap: "wrap" }}>
                     {a.clienteNombre && <span>Cliente: <span style={{ color: TEXT }}>{a.clienteNombre}</span></span>}
                     {a.aprobadoPor   && <span>Aprobado por: <span style={{ color: TEXT }}>{a.aprobadoPor}</span></span>}
                     {a.reintentos != null && a.reintentos > 0 && <span>Reintentos: <span style={{ color: TEXT }}>{a.reintentos}</span></span>}
                     <span>Motor: <span style={{ color: TEXT }}>{a.sourceEngine ?? "—"}</span></span>
+                    {isVetada && a.themisVerdictId && (
+                      <span>Veredicto: <span style={{ color: THEMIS, fontFamily: "monospace" }}>{a.themisVerdictId.slice(0, 12)}…</span></span>
+                    )}
                   </div>
                 </div>
               )}
