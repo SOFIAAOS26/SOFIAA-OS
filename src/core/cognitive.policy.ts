@@ -268,15 +268,33 @@ const POLICY_REGISTRY: CognitivePolicy[] = [
   POLICY_UNAUTHENTICATED,
 ];
 
+// ── Overrides de admin (Sprint T-3) ──────────────────────────────────────
+
+/**
+ * Mapa de overrides: { [policyId]: { enabled: boolean } }
+ * Leído de Firestore (system/themis) y pasado desde themis.ts.
+ * Las políticas con enabled === false se excluyen de la evaluación.
+ */
+export type PolicyOverridesMap = Record<string, { enabled: boolean }>;
+
 // ── Resolución de políticas para el contexto actual ───────────────────────
 
 /**
  * Devuelve las políticas aplicables al contexto del request actual.
  * Ordenadas de mayor a menor prioridad.
+ *
+ * @param ctx       Contexto del request (path, extensión, rol, etc.)
+ * @param overrides Overrides de admin — políticas con enabled===false se excluyen
  */
-export function getPoliciesForContext(ctx: PolicyContext): CognitivePolicy[] {
+export function getPoliciesForContext(
+  ctx:       PolicyContext,
+  overrides?: PolicyOverridesMap
+): CognitivePolicy[] {
   return POLICY_REGISTRY
     .filter((policy) => {
+      // Sprint T-3: override de admin — política desactivada explícitamente
+      if (overrides?.[policy.id]?.enabled === false) return false;
+
       switch (policy.scope) {
         case "global":
           return true;
@@ -297,6 +315,14 @@ export function getPoliciesForContext(ctx: PolicyContext): CognitivePolicy[] {
       }
     })
     .sort((a, b) => b.priority - a.priority);
+}
+
+/**
+ * Devuelve todas las políticas del registry, sin filtrar por contexto.
+ * Usado por el Policy Override Dashboard para listar todas las políticas.
+ */
+export function getAllPolicies(): CognitivePolicy[] {
+  return [...POLICY_REGISTRY].sort((a, b) => b.priority - a.priority);
 }
 
 // ── Generación del bloque de system prompt ────────────────────────────────

@@ -22,6 +22,7 @@ const NAV = [
   { href: "/hermes/cola",        label: "Cola de Acciones", icon: "📥" },
   { href: "/hermes/conectores",  label: "Conectores",       icon: "🔌" },
   { href: "/hermes/historial",   label: "Historial",        icon: "📋" },
+  { href: "/hermes/themis",      label: "Políticas THEMIS", icon: "🛡" },
 ];
 
 const NAV_SOON = [

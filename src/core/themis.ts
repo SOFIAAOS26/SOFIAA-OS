@@ -21,6 +21,7 @@ import {
   type CognitivePolicy,
   type PolicyContext,
   type PolicyConstraint,
+  type PolicyOverridesMap,
 } from "@/core/cognitive.policy";
 
 import type {
@@ -31,6 +32,56 @@ import type {
   ActionEvaluationRequest,
   ActionEvaluationResponse,
 } from "@/types/themis";
+
+// ── Overrides cache (Sprint T-3) ─────────────────────────────────────────
+
+/** TTL del cache de overrides: 60 segundos. */
+const OVERRIDES_TTL = 60_000;
+
+let _overridesCache:    PolicyOverridesMap | null = null;
+let _overridesCacheAt:  number = 0;
+
+/**
+ * Lee los overrides de admin desde Firestore (system/themis).
+ * Cache de 60s para no hit Firestore en cada request.
+ * Falla silenciosamente — si Firestore no responde, usa cache anterior o vacío.
+ *
+ * Path: system/themis → campo overrides: { [policyId]: { enabled: boolean } }
+ */
+async function getOverrides(): Promise<PolicyOverridesMap> {
+  const now = Date.now();
+  if (_overridesCache !== null && now - _overridesCacheAt < OVERRIDES_TTL) {
+    return _overridesCache;
+  }
+
+  try {
+    const { adminDb } = await import("@/lib/firebase-admin");
+    const snap = await adminDb.collection("system").doc("themis").get();
+    if (snap.exists) {
+      const data = snap.data() as { overrides?: PolicyOverridesMap };
+      _overridesCache   = data.overrides ?? {};
+      _overridesCacheAt = now;
+    } else {
+      _overridesCache   = {};
+      _overridesCacheAt = now;
+    }
+  } catch {
+    // No hay Firestore — usar cache anterior o mapa vacío
+    if (_overridesCache === null) _overridesCache = {};
+  }
+
+  return _overridesCache;
+}
+
+/**
+ * Invalida el cache de overrides inmediatamente.
+ * Llamar después de escribir un nuevo override para que el próximo
+ * request lo lea fresco.
+ */
+export function invalidateOverridesCache(): void {
+  _overridesCache   = null;
+  _overridesCacheAt = 0;
+}
 
 // ── Helper: ID sin dependencia externa ────────────────────────────────────
 function generateId(): string {
@@ -159,7 +210,8 @@ export async function evaluateResponse(
   userId:    string,
   messageId: string
 ): Promise<ThemisVerdict> {
-  const policies   = getPoliciesForContext(context);
+  const overrides  = await getOverrides();
+  const policies   = getPoliciesForContext(context, overrides);
   const violations = detectViolations(response, context, policies);
   const severity   = computeSeverity(violations);
   const reasoning  = buildReasoning(policies, violations);
@@ -198,7 +250,8 @@ export async function evaluateResponse(
 export async function evaluateAction(
   request: ActionEvaluationRequest
 ): Promise<ActionEvaluationResponse> {
-  const policies = getPoliciesForContext(request.context);
+  const overrides = await getOverrides();
+  const policies = getPoliciesForContext(request.context, overrides);
 
   // Serializar el payload para evaluación
   const payloadText = JSON.stringify(request.actionPayload);
