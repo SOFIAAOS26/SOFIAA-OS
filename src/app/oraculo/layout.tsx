@@ -20,6 +20,7 @@ const NAV = [
   { href: "/oraculo",              label: "Centro de Mando", icon: "🔮" },
   { href: "/oraculo/predicciones", label: "Predicciones",    icon: "⚠️" },
   { href: "/oraculo/forecasts",    label: "Pronósticos",     icon: "📈" },
+  { href: "/oraculo/insights",     label: "Insights",        icon: "✨" },
 ];
 
 export default function OraculoLayout({ children }: { children: React.ReactNode }) {
@@ -86,8 +87,7 @@ export default function OraculoLayout({ children }: { children: React.ReactNode 
           PRÓXIMAMENTE
         </div>
         {[
-          { label: "Insights Cruzados", icon: "💡", badge: "O-4" },
-          { label: "Dashboard SOFIAA",  icon: "🖥",  badge: "O-5" },
+          { label: "Dashboard SOFIAA", icon: "🖥", badge: "O-5" },
         ].map((item) => (
           <div
             key={item.label}

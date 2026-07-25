@@ -20,6 +20,7 @@
 import { adminDb }    from "@/lib/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 import { evaluateResponse } from "@/core/themis";
+import { callGroq }  from "@/lib/groq";
 
 import type { FMEAItem, SPCData }                    from "@/extensions/atena/schema";
 import type { ProyectoV2, ProveedorV2, Hypothesis }  from "@/extensions/tec-bii/schema";
@@ -36,6 +37,7 @@ import type {
   OracleSeverity,
   OracleHorizon,
   OracleForecast,
+  OracleInsight,
   DEFAULT_ORACLE_CONFIG,
 } from "@/types/oraculo";
 import { DEFAULT_ORACLE_CONFIG as DEFAULT_CONFIG } from "@/types/oraculo";
@@ -1337,6 +1339,121 @@ export async function generateForecasts(
   }
 
   return forecasts;
+}
+
+// ── generateInsights — Sprint O-4 ─────────────────────────────────────────────
+
+/**
+ * Sintetiza predicciones activas en insights estratégicos cross-engine
+ * usando Groq como motor narrativo.
+ *
+ * Reglas:
+ *  - < 2 predicciones activas → retorna []
+ *  - Llama a Groq UNA sola vez (JSON mode) con todas las predicciones
+ *  - Parsea la respuesta en OracleInsight[] y persiste en Firestore
+ *  - Retorna los insights generados
+ */
+export async function generateInsights(userId: string): Promise<OracleInsight[]> {
+  // 1. Fetch active predictions
+  const snap = await adminDb
+    .collection(`users/${userId}/oracle_predictions`)
+    .where("status", "==", "active")
+    .orderBy("createdAt", "desc")
+    .limit(30)
+    .get();
+
+  const predictions = snap.docs.map(d => d.data() as OraclePrediction);
+
+  if (predictions.length < 2) return [];
+
+  // 2. Build a compact summary for Groq (avoid token overload)
+  const predSummary = predictions.map(p => ({
+    id:         p.id,
+    engine:     p.signals[0]?.sourceEngine ?? "unknown",
+    category:   p.category,
+    severity:   p.severity,
+    title:      p.title,
+    summary:    p.summary.slice(0, 200),
+    confidence: p.confidence,
+    horizon:    p.horizon,
+  }));
+
+  const prompt = `Eres ORÁCULO, el motor de inteligencia predictiva de SOFIAA OS.
+A continuación tienes ${predictions.length} predicciones activas de múltiples engines (ATENA, TEC Bii, PROMETEO, NEXO, HERMES, THEMIS).
+
+PREDICCIONES ACTIVAS:
+${JSON.stringify(predSummary, null, 2)}
+
+Tu tarea: generar entre 1 y 3 insights estratégicos cross-engine en español.
+Cada insight debe:
+1. Identificar un patrón sistémico que involucra al menos 2 engines distintos.
+2. Explicar la implicación estratégica concreta (no genérica).
+3. Sugerir una acción de alto nivel.
+4. Asignar una confianza (0.0–1.0) basada en la calidad de las señales.
+
+Responde SOLO con JSON válido (sin markdown, sin texto extra):
+{
+  "insights": [
+    {
+      "title": "Título conciso (máx 80 chars)",
+      "body": "Narrativa estratégica de 2-4 oraciones.",
+      "relatedPredictionIds": ["id1", "id2"],
+      "confidence": 0.75
+    }
+  ]
+}`;
+
+  // 3. Call Groq in JSON mode
+  const raw = await callGroq(prompt, {
+    maxTokens:   1200,
+    temperature: 0.45,
+    json:        true,
+    system:      "Eres ORÁCULO. Devuelves SOLO JSON válido con insights estratégicos cross-engine en español. Sin texto adicional.",
+  });
+
+  if (!raw) return [];
+
+  // 4. Parse response
+  let parsed: { insights: Array<{ title: string; body: string; relatedPredictionIds: string[]; confidence: number }> };
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    console.warn("[ORÁCULO][insights] Groq JSON parse error:", raw.slice(0, 200));
+    return [];
+  }
+
+  const rawInsights = Array.isArray(parsed?.insights) ? parsed.insights : [];
+  if (rawInsights.length === 0) return [];
+
+  // 5. Validate IDs — keep only IDs that exist in our prediction set
+  const validIds = new Set(predictions.map(p => p.id));
+  const now = Date.now();
+  const insights: OracleInsight[] = [];
+
+  // Batch write
+  const batch = adminDb.batch();
+
+  for (const raw of rawInsights) {
+    if (!raw.title || !raw.body) continue;
+
+    const ref = adminDb.collection(`users/${userId}/oracle_insights`).doc();
+    const insight: OracleInsight = {
+      id:                   ref.id,
+      userId,
+      title:                raw.title.slice(0, 120),
+      body:                 raw.body,
+      relatedPredictionIds: (raw.relatedPredictionIds ?? []).filter((id: string) => validIds.has(id)),
+      confidence:           Math.min(1, Math.max(0, raw.confidence ?? 0.5)),
+      generatedAt:          now,
+    };
+
+    batch.set(ref, { ...insight, _serverTs: FieldValue.serverTimestamp() });
+    insights.push(insight);
+  }
+
+  await batch.commit();
+  console.log(`[ORÁCULO][insights] Generated ${insights.length} insight(s) for ${userId}`);
+  return insights;
 }
 
 /**
