@@ -78,6 +78,17 @@ service cloud.firestore {
       match /atena_amef/{docId}        { allow read, write: if request.auth != null && request.auth.uid == uid; }
       match /atena_financiero/{docId}  { allow read, write: if request.auth != null && request.auth.uid == uid; }
       match /atena_mediciones/{docId}  { allow read, write: if request.auth != null && request.auth.uid == uid; }
+
+      // APOLO — Client Intelligence & Reporting Engine (Sprint AP-0)
+      // Reportes: solo Admin SDK escribe; usuario autenticado lee
+      match /apolo_reports/{reportId} {
+        allow read:  if request.auth != null && request.auth.uid == uid;
+        allow write: if false; // solo Admin SDK escribe
+      }
+      // Plantillas: el usuario puede crear y editar sus propias plantillas
+      match /apolo_templates/{templateId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
     }
 
     // ── TEC BI — colecciones institucionales ─────────────────────────────────
