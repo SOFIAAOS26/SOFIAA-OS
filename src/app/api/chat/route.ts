@@ -45,6 +45,8 @@ import { getAlejandriaContext }  from "@/lib/alejandria/firestore";
 import { reinforceAlejandriaNodes } from "@/lib/alejandria/firestore";
 import type { NexoContext }      from "@/types/nexo";
 import type { ExtensionContext } from "@/types/sofiaa-platform";
+import { adminDb }               from "@/lib/firebase-admin";
+import type { OraclePrediction } from "@/types/oraculo";
 
 // ── Registro de providers (módulo, se ejecuta una vez) ────────────────────
 const _useMock = process.env.NEXT_PUBLIC_MOCK_CAPABILITIES === "true";
@@ -164,6 +166,42 @@ const ALEJANDRIA_TRIGGERS = [
 function isAlejandriaQuery(text: string): boolean {
   const lower = text.toLowerCase();
   return ALEJANDRIA_TRIGGERS.some(t => lower.includes(t));
+}
+
+// ── Helper: contexto ORÁCULO — predicciones críticas activas ─────────────────
+
+/** Obtiene predicciones críticas/warning activas del usuario (max 5, silencioso) */
+async function getOraculoContext(userId: string): Promise<OraclePrediction[]> {
+  try {
+    const snap = await adminDb
+      .collection(`users/${userId}/oracle_predictions`)
+      .where("status", "==", "active")
+      .orderBy("createdAt", "desc")
+      .limit(5)
+      .get();
+    return snap.docs.map(d => d.data() as OraclePrediction);
+  } catch {
+    return [];
+  }
+}
+
+/** Formatea predicciones activas de ORÁCULO para el system prompt */
+function buildOraculoBlock(predictions: OraclePrediction[]): string {
+  if (predictions.length === 0) return "";
+
+  const SEV: Record<string, string> = { critical: "🔴 CRÍTICO", warning: "🟡 ALERTA", info: "🔵 INFO" };
+  const lines = predictions
+    .sort((a, b) => {
+      const order = { critical: 0, warning: 1, info: 2 };
+      return (order[a.severity] ?? 2) - (order[b.severity] ?? 2);
+    })
+    .map(p => `• ${SEV[p.severity] ?? p.severity} [${p.category}] ${p.title} (confianza ${(p.confidence * 100).toFixed(0)}%)`);
+
+  return (
+    `\n\nALERTAS ORÁCULO — Predicciones activas del sistema:\n` +
+    lines.join("\n") +
+    `\n\nSi el usuario menciona alguno de estos temas, puedes avisarle que ORÁCULO detectó una alerta relacionada y sugerirle ir a /oraculo para ver el detalle completo.`
+  );
 }
 
 /** Formatea los nodos de ALEJANDRÍA para inyectar en el system prompt */
@@ -361,6 +399,13 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // ORÁCULO — Predicciones críticas activas (Sprint O-5)
+  let oraculoBlock = "";
+  if (userId && userId !== "anonymous") {
+    const oraculoPreds = await getOraculoContext(userId);
+    oraculoBlock = buildOraculoBlock(oraculoPreds);
+  }
+
   // N.E.X.O. Biblioteca — Conocimiento global de SOFIAA (Sprint M-1B)
   const bibliotecaBlock = await getBibliotecaContext();
 
@@ -423,7 +468,7 @@ export async function POST(req: NextRequest) {
   // ─────────────────────────────────────────────────────────────────────
 
   // ── LLM Orchestrator — elige el mejor provider disponible ────────────
-  const systemContent = `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${nexoBlock}${bibliotecaBlock}${alejandriaBlock}${cognitiveBlock}${policyBlock}${capabilityMenuBlock}`;
+  const systemContent = `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${nexoBlock}${bibliotecaBlock}${alejandriaBlock}${cognitiveBlock}${oraculoBlock}${policyBlock}${capabilityMenuBlock}`;
 
   // ── Sprint G: Agent Runtime — ReAct loop para tareas multi-paso ──────
   if (agentMode) {
