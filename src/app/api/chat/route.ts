@@ -26,7 +26,7 @@ import type { LLMStreamChunk } from "@/core/llm.client";
 import type { GoalState } from "@/core/goal.state";
 import { buildGoalPromptBlock } from "@/core/goal.state";
 import { getPoliciesForContext, buildPolicyBlock } from "@/core/cognitive.policy";
-import { evaluateResponse, reportToEventPayload } from "@/core/policy.evaluator";
+import { evaluateResponse as themisEvaluateResponse } from "@/core/themis";
 import { capabilityGateway } from "@/core/capability.gateway";
 import { capabilityRuntime } from "@/core/capability.runtime";
 import type { CapabilityContext } from "@/core/capability.runtime";
@@ -469,6 +469,9 @@ export async function POST(req: NextRequest) {
           if (userId && userId !== "anonymous") {
             updateCognitiveProfile(userId, cognitiveSignals).catch(() => {});
           }
+          // THEMIS: evaluación formal post-stream (agent mode)
+          themisEvaluateResponse(result.finalAnswer, policyCtx, userId ?? "anonymous", tracer.id)
+            .catch(() => {});
         } catch (err) {
           console.error("[SOFIAA][agent] fatal error:", err);
           tracer.log("agent_error", "failed", "error", { error: String(err) });
@@ -719,19 +722,27 @@ export async function POST(req: NextRequest) {
               provider: usedProvider,
             });
 
-            // ── CPE: evaluar respuesta post-stream (fire-and-forget) ────
-            try {
-              const report = evaluateResponse(fullText, activePolicies, policyCtx);
-              if (report.violations.length > 0) {
-                bus.dispatch("cpe_violation", reportToEventPayload(
-                  report, tracer.id, usedProvider, activeExtId
-                ));
-                tracer.log("cpe_eval", "ok", report.hasErrors ? "error" : "warn", {
-                  score: report.score,
-                  summary: report.summary,
-                });
-              }
-            } catch { /* evaluación nunca debe romper el stream */ }
+            // ── THEMIS: evaluación formal post-stream (fire-and-forget) ────
+            themisEvaluateResponse(fullText, policyCtx, userId ?? "anonymous", tracer.id)
+              .then(verdict => {
+                if (verdict.violations.length > 0) {
+                  bus.dispatch("themis_violation", {
+                    verdictId:  verdict.id,
+                    severity:   verdict.severity,
+                    violations: verdict.violations.length,
+                    approved:   verdict.approved,
+                    traceId:    tracer.id,
+                    provider:   usedProvider,
+                    extensionId: activeExtId ?? "none",
+                  });
+                  tracer.log("themis_eval", "ok", verdict.severity === "error" ? "error" : "warn", {
+                    verdictId:  verdict.id,
+                    severity:   verdict.severity,
+                    violations: verdict.violations.length,
+                  });
+                }
+              })
+              .catch(() => { /* THEMIS nunca rompe el stream */ });
 
             bus.flush().catch(() => {});
             // Sprint M-2: Attention Engine — refuerzo post-stream (normal mode)

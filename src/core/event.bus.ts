@@ -21,7 +21,9 @@ export type SofiaaEventType =
   | "memory_updated"       // la memoria long-term fue actualizada
   | "nav_triggered"        // el usuario va a navegar
   | "guardrail_triggered"  // un guardrail bloqueó el mensaje
-  | "cpe_violation"        // el CPE detectó una violación de política
+  | "cpe_violation"        // el CPE detectó una violación de política (legacy)
+  | "themis_violation"     // THEMIS detectó una violación — veredicto persistido
+  | "themis_block"         // THEMIS vetó una acción (Sprint T-2)
   | "capability_executed"; // Sprint E: una capability fue ejecutada exitosamente
 
 export interface SofiaaEvent {

@@ -51,6 +51,13 @@ service cloud.firestore {
         allow write: if false;
       }
 
+      // THEMIS — veredictos de Governance & Ethics Engine (Sprint T-1)
+      // Solo lectura del propio usuario; escritura exclusiva del Admin SDK
+      match /themis_verdicts/{verdictId} {
+        allow read:  if request.auth != null && request.auth.uid == uid;
+        allow write: if false; // solo Admin SDK escribe
+      }
+
       // TEC Bii — entidades cognitivas (users/{uid}/tec_bii_{tipo}/{docId})
       match /tec_bii_proyectos/{docId}   { allow read, write: if request.auth != null && request.auth.uid == uid; }
       match /tec_bii_briefs/{docId}       { allow read, write: if request.auth != null && request.auth.uid == uid; }
