@@ -26,6 +26,7 @@ import { marketingExtension }      from "@/extensions/marketing-sofia";
 import { atenaExtension }          from "@/extensions/atena";         // ATENA Scientific Engine
 import { prometeoExtension }       from "@/extensions/prometeo";       // PROMETEO Growth Intelligence
 import { hermesExtension }         from "@/extensions/hermes";          // HERMES Action Execution Layer
+import { oraculoExtension }        from "@/extensions/oraculo";          // ORÁCULO Predictive Engine Gen 2
 
 // ── Registro centralizado ─────────────────────────────────────────────────────
 // Agregar nuevas versiones de una extensión = añadir otra entrada aquí.
@@ -38,6 +39,7 @@ const REGISTRY: SofiaaExtension[] = [
   atenaExtension,        // ATENA Scientific Intelligence Engine — /atena
   prometeoExtension,     // PROMETEO Growth Intelligence Engine v2 — /prometeo
   hermesExtension,       // HERMES Action Execution Layer v1 — /hermes
+  oraculoExtension,      // ORÁCULO Predictive Intelligence Engine — /oraculo (Gen 2)
 ];
 
 // ── Semver utils ──────────────────────────────────────────────────────────────

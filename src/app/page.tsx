@@ -1659,6 +1659,7 @@ export default function Home() {
             { label: "PROMETEO",   icon: "🔥", path: "/prometeo",   color: "rgba(249,115,22,0.13)",  border: "rgba(249,115,22,0.30)"  },
             { label: "ATENA",      icon: "⚡", path: "/atena",      color: "rgba(168,85,247,0.13)",  border: "rgba(168,85,247,0.30)"  },
             { label: "ALEJANDRÍA", icon: "📚", path: "/alejandria", color: "rgba(251,191,36,0.13)",  border: "rgba(251,191,36,0.30)"  },
+            { label: "ORÁCULO",    icon: "🔮", path: "/oraculo",    color: "rgba(109,40,217,0.13)",  border: "rgba(109,40,217,0.30)"  },
           ].map(({ label, icon, path, color, border }) => (
             <button
               key={path}
