@@ -1,10 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  eslint: {
-    // ESLint corre en pre-commit / CI manual — no bloquear el build de producción
-    ignoreDuringBuilds: true,
-  },
+  /* Next.js 16 — ESLint ya no corre durante build (usar `next lint` por separado) */
 };
 
 export default nextConfig;

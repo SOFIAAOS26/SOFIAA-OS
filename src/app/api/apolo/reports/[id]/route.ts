@@ -25,12 +25,13 @@ async function verifyToken(req: NextRequest): Promise<string | null> {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const userId = await verifyToken(req);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const ref  = adminDb.collection(`users/${userId}/apolo_reports`).doc(params.id);
+  const { id } = await params;
+  const ref  = adminDb.collection(`users/${userId}/apolo_reports`).doc(id);
   const snap = await ref.get();
 
   if (!snap.exists) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -42,10 +43,12 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const userId = await verifyToken(req);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { id } = await params;
 
   let body: { status?: string; clientName?: string };
   try {
@@ -68,7 +71,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Nada que actualizar" }, { status: 400 });
   }
 
-  const ref = adminDb.collection(`users/${userId}/apolo_reports`).doc(params.id);
+  const ref = adminDb.collection(`users/${userId}/apolo_reports`).doc(id);
   await ref.update(updates);
 
   return NextResponse.json({ ok: true, updated: updates });
