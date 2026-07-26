@@ -1,13 +1,15 @@
 /**
  * APOLO — Client Intelligence & Reporting Engine
  * Sprint AP-1 · Data Aggregator + buildSections
- * Sprint AP-2 · generateReport (shell → implementado en AP-2)
+ * Sprint AP-2 · generateNarrative (Groq) + applyThemisGate + status "ready"
  *
  * Generación 2 · El Sol que Ilumina el Olimpo
  */
 
 import { adminDb } from "@/lib/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
+import { callGroq } from "@/lib/groq";
+import { evaluateAction } from "@/core/themis";
 import type {
   ApoloReport,
   ApoloReportSection,
@@ -565,7 +567,114 @@ function _addNexoSection(
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// AP-2: generateReport — implementado en Sprint AP-2
+// AP-2: generateNarrative — Groq genera cuerpo narrativo por sección + summary
+// ══════════════════════════════════════════════════════════════════════════════
+
+async function generateNarrative(
+  sections:    ApoloReportSection[],
+  type:        ReportType,
+  period:      { from: number; to: number },
+  clientName?: string
+): Promise<{ sections: ApoloReportSection[]; summary: string }> {
+  const periodLabel =
+    new Date(period.from).toLocaleDateString("es-MX", { month: "long", day: "numeric" }) +
+    " al " +
+    new Date(period.to).toLocaleDateString("es-MX", { month: "long", day: "numeric", year: "numeric" });
+
+  const clientCtx = clientName ? `Cliente: ${clientName}.` : "Uso interno.";
+
+  // ── Generar body por sección en paralelo ─────────────────────────────────
+  const enriched = await Promise.all(sections.map(async (sec) => {
+    const dpLines = sec.dataPoints
+      .map(dp => `• ${dp.label}: ${dp.value}${dp.trend ? ` (tendencia: ${dp.trend})` : ""}`)
+      .join("\n");
+
+    const prompt =
+      `Eres APOLO, motor de inteligencia de negocios de SOFIAA OS.\n` +
+      `Genera una narrativa ejecutiva para la sección "${sec.title}" del reporte.\n` +
+      `${clientCtx} Período: ${periodLabel}.\n\n` +
+      `Datos disponibles:\n${dpLines}\n\n` +
+      `Instrucciones:\n` +
+      `- 2 párrafos concisos en español ejecutivo, orientados al cliente\n` +
+      `- Interpreta los datos, no los repitas literalmente\n` +
+      `- Lenguaje profesional de consultoría de negocios\n` +
+      `- Sin emojis, sin markdown, solo texto plano\n` +
+      `- Máximo 180 palabras`;
+
+    const body = await callGroq(prompt, { maxTokens: 300, temperature: 0.4 });
+    return { ...sec, body: body ?? `Análisis de ${sec.title} para el período ${periodLabel}.` };
+  }));
+
+  // ── Resumen ejecutivo global ──────────────────────────────────────────────
+  const typeLabels: Record<ReportType, string> = {
+    weekly_summary:       "Resumen Semanal",
+    campaign_performance: "Rendimiento de Campaña",
+    project_status:       "Estado de Proyectos",
+    quality_report:       "Reporte de Calidad",
+    executive_brief:      "Brief Ejecutivo",
+    strategic_outlook:    "Outlook Estratégico",
+  };
+
+  const sectionDigest = enriched
+    .map(s => `${s.title}: ${s.body.slice(0, 120)}…`)
+    .join("\n");
+
+  const summaryPrompt =
+    `Eres APOLO. Genera un resumen ejecutivo de máximo 120 palabras para este reporte.\n` +
+    `Tipo: ${typeLabels[type]}. ${clientCtx} Período: ${periodLabel}.\n\n` +
+    `Secciones del reporte:\n${sectionDigest}\n\n` +
+    `El resumen debe ser una visión integral del estado del negocio.\n` +
+    `Español ejecutivo. Sin markdown. Sin emojis.`;
+
+  const summary = await callGroq(summaryPrompt, { maxTokens: 200, temperature: 0.3 });
+  const fallbackSummary =
+    `Reporte ${typeLabels[type]} generado el ${new Date().toLocaleDateString("es-MX", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}. ` +
+    `Contiene ${sections.length} sección(es) analizadas por APOLO.`;
+
+  return { sections: enriched, summary: summary ?? fallbackSummary };
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// AP-2: applyThemisGate — THEMIS evalúa si el reporte es seguro para "ready"
+// ══════════════════════════════════════════════════════════════════════════════
+
+async function applyThemisGate(
+  userId:    string,
+  reportId:  string,
+  type:      ReportType,
+  sections:  ApoloReportSection[]
+): Promise<{ approved: boolean; verdictId?: string }> {
+  try {
+    const response = await evaluateAction({
+      actionId:      `apolo-report-${reportId}`,
+      actionType:    "generate_report",
+      actionPayload: {
+        reportId,
+        type,
+        sectionCount:  sections.length,
+        engines:       [...new Set(sections.map(s => s.engine))],
+      },
+      requestedBy: "apolo",
+      userId,
+      context: {
+        extensionId: "apolo",
+        activePath:  "/apolo",
+      },
+    });
+
+    return {
+      approved:  response.approved,
+      verdictId: response.verdict.id,
+    };
+  } catch (err) {
+    // THEMIS no bloquea la operación si falla — el reporte queda en "draft"
+    console.error("[APOLO][themisGate] error:", err);
+    return { approved: false };
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// AP-2: generateReport — pipeline completo con Groq + THEMIS
 // ══════════════════════════════════════════════════════════════════════════════
 
 export async function generateReport(
@@ -579,9 +688,9 @@ export async function generateReport(
 ): Promise<ApoloReport> {
   const period = options.period ?? defaultPeriod();
 
-  // AP-1: agrega datos y construye secciones (sin narrativa Groq aún)
+  // 1. Agregar datos de engines + construir secciones estructuradas
   const aggregated = await aggregateEngineData(userId, options.type, period);
-  const sections   = buildSections(aggregated, options.type);
+  const rawSections = buildSections(aggregated, options.type);
 
   const titleMap: Record<ReportType, string> = {
     weekly_summary:       "Resumen Semanal",
@@ -597,24 +706,37 @@ export async function generateReport(
     " – " +
     new Date(period.to).toLocaleDateString("es-MX", { month: "short", day: "numeric", year: "numeric" });
 
+  // 2. Generar narrativa Groq por sección + resumen ejecutivo
+  const { sections, summary } = await generateNarrative(
+    rawSections,
+    options.type,
+    period,
+    options.clientName
+  );
+
+  // 3. Persistir en Firestore (draft primero, se actualiza después del gate)
+  const ref = adminDb.collection(`users/${userId}/apolo_reports`).doc();
+  const reportId = ref.id;
+
+  // 4. Evaluar con THEMIS
+  const gate = await applyThemisGate(userId, reportId, options.type, sections);
+
   const report: ApoloReport = {
-    id:           "",           // se asigna al persistir
+    id:              reportId,
     userId,
-    workspaceId:  options.workspaceId,
-    type:         options.type,
-    title:        `${titleMap[options.type]} · ${periodLabel}`,
-    clientName:   options.clientName,
+    workspaceId:     options.workspaceId,
+    type:            options.type,
+    title:           `${titleMap[options.type]} · ${periodLabel}`,
+    clientName:      options.clientName,
     period,
     sections,
-    summary:      `Reporte generado el ${new Date().toLocaleDateString("es-MX", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}. Contiene ${sections.length} sección(es) con datos de ${Object.keys(aggregated.engines).filter(k => (aggregated.engines[k] as unknown[]).length > 0).join(", ")}.`,
-    status:       "draft",
-    themisApproved: false,
-    generatedAt:  Date.now(),
+    summary,
+    status:          gate.approved ? "ready" : "draft",
+    themisApproved:  gate.approved,
+    themisVerdictId: gate.verdictId,
+    generatedAt:     Date.now(),
   };
 
-  // Persistir en Firestore
-  const ref = adminDb.collection(`users/${userId}/apolo_reports`).doc();
-  report.id = ref.id;
   await ref.set({ ...report, _serverTs: FieldValue.serverTimestamp() });
 
   return report;
