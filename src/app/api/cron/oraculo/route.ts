@@ -36,7 +36,6 @@ export async function GET(req: NextRequest) {
   }
 
   const now = new Date();
-  const hourUTC = now.getUTCHours();
 
   console.log(`[CRON][ORÁCULO] Iniciando scan — ${now.toISOString()}`);
 
@@ -47,13 +46,10 @@ export async function GET(req: NextRequest) {
 
     console.log(`[CRON][ORÁCULO] Scan completo: ${signals.length} señales, ${predictions.length} predicciones`);
 
-    // 2. Insights estratégicos — solo a las 07:00 UTC (una vez al día)
-    let insightsCreated = 0;
-    if (hourUTC === 7) {
-      const insights = await generateInsights(PRIMARY_UID);
-      insightsCreated = insights.length;
-      console.log(`[CRON][ORÁCULO] Insights generados: ${insightsCreated}`);
-    }
+    // 2. Insights estratégicos — corre una vez al día junto con el scan
+    const insights = await generateInsights(PRIMARY_UID);
+    const insightsCreated = insights.length;
+    console.log(`[CRON][ORÁCULO] Insights generados: ${insightsCreated}`);
 
     return NextResponse.json({
       ok:               true,
