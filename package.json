@@ -19,6 +19,7 @@
     "@google/generative-ai": "^0.24.1",
     "@react-three/fiber": "^9.6.1",
     "@react-three/postprocessing": "^3.0.4",
+    "docx": "^9.7.1",
     "firebase": "^12.15.0",
     "firebase-admin": "^14.0.0",
     "jspdf": "^4.2.1",
