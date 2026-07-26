@@ -779,9 +779,12 @@ export function buildApoloBlock(ctx: ApoloContextSummary | null): string {
     new Date(ctx.period.from).toLocaleDateString("es-MX", { month: "short", day: "numeric" }) +
     " – " +
     new Date(ctx.period.to).toLocaleDateString("es-MX", { month: "short", day: "numeric" });
+  // Truncar resumen a 150 chars para no saturar el contexto
+  const summarySnippet = ctx.summary.length > 150
+    ? ctx.summary.slice(0, 150) + "..."
+    : ctx.summary;
   return (
-    `\n\nÚLTIMO REPORTE APOLO — ${ctx.title} (${periodLabel}):\n` +
-    ctx.summary +
-    `\n\nSi el usuario pregunta sobre el estado del negocio, campañas o proyectos, puedes referenciar este reporte.`
+    `\n\nÚLTIMO REPORTE APOLO — ${ctx.title} (${periodLabel}): ${summarySnippet}` +
+    ` → ir a /apolo/reportes para el detalle completo.`
   );
 }

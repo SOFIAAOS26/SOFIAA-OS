@@ -123,13 +123,11 @@ function buildNexoBlock(ctx: NexoContext | null): string {
   let block = "";
 
   // ── Proactive Surface (Sprint M-5) ────────────────────────────────────────
-  // Nodos con alta similitud semántica → SOFIAA DEBE mencionarlos en su respuesta
+  // Nodos con alta similitud semántica — contexto relevante, no obligación
   if (ctx.proactiveNodes.length > 0) {
     const proactiveLines = ctx.proactiveNodes.map(formatNode).join("\n");
     block +=
-      `\n\nMEMORIA N.E.X.O. — ALTA RELEVANCIA (INSTRUCCIÓN: menciona estos temas en tu respuesta de forma natural y conversacional, ` +
-      `como si lo recordaras. Usa frases como "Esto me recuerda algo que guardaste sobre...", ` +
-      `"Justo tengo en mente algo tuyo relacionado con...", "Vi que te interesa..." o similares):\n` +
+      `\n\nMEMORIA N.E.X.O. — Contexto relevante (usa solo si encaja de forma natural en la conversación):\n` +
       proactiveLines;
   }
 
@@ -151,17 +149,19 @@ function buildNexoBlock(ctx: NexoContext | null): string {
 }
 
 // ── ALEJANDRÍA — Detector de queries sobre arquitectura propia ────────────
+// IMPORTANTE: solo disparar en preguntas genuinamente técnicas sobre SOFIAA.
+// Triggers genéricos como "cómo funciona" o "qué eres" causan falsos positivos.
 const ALEJANDRIA_TRIGGERS = [
-  // Módulos
-  "nexo", "prometeo", "hermes", "atena", "tec bii", "tec-bii", "nora", "live sdk",
+  // Módulos específicos de SOFIAA OS
+  "prometeo", "hermes", "atena", "tec bii", "tec-bii", "nora", "live sdk",
   "alejandría", "alejandria",
-  // Preguntas de introspección
-  "cómo funciona", "como funciona", "arquitectura", "cómo está hecho", "como esta hecho",
-  "por qué se decidió", "por que se decidio", "decisión de", "decision de",
+  // Preguntas explícitas sobre la arquitectura del sistema
+  "arquitectura de sofiaa", "cómo está hecho sofiaa", "como esta hecho sofiaa",
+  "por qué se decidió", "por que se decidio", "decisión de arquitectura", "decision de arquitectura",
   "cuándo se construyó", "cuando se construyo", "historia de sofiaa",
-  "sprint", "diseño del sistema", "módulo", "modulo", "memoria histórica",
-  "qué eres", "que eres", "cómo te llamas", "quien te creo", "quién te creó",
-  "evolución", "evolucion", "versión", "version 1.1", "sofiaa os",
+  "diseño del sistema", "memoria histórica de sofiaa",
+  "quien te creo", "quién te creó", "evolución de sofiaa", "evolucion de sofiaa",
+  "version 1.1", "sofiaa os",
 ];
 
 function isAlejandriaQuery(text: string): boolean {

@@ -36,7 +36,7 @@ export async function getBibliotecaContext(): Promise<string> {
     const snap = await db
       .collection("sofiaa_biblioteca")
       .orderBy("processedAt", "desc")
-      .limit(15)
+      .limit(5)
       .get();
 
     if (snap.empty) {
