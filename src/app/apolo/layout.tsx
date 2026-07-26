@@ -82,20 +82,20 @@ export default function ApoloLayout({ children }: { children: React.ReactNode })
           );
         })}
 
-        {/* Próximamente */}
+        {/* Sistema activo */}
         <div style={{ fontSize: 9, fontWeight: 700, color: MUTED, letterSpacing: "1px", padding: "16px 8px 8px" }}>
-          PRÓXIMAMENTE
+          SISTEMA ACTIVO
         </div>
         {[
-          { label: "CRON Digest",      icon: "⏰", badge: "AP-5" },
-          { label: "Chat Integration", icon: "💬", badge: "AP-5" },
+          { label: "CRON Semanal",     icon: "⏰", desc: "Lunes 08:00 UTC" },
+          { label: "Chat Integration", icon: "💬", desc: "AP-5 activo"     },
         ].map((item) => (
           <div
             key={item.label}
             style={{
               display: "flex", alignItems: "center", justifyContent: "space-between",
               padding: "7px 10px", borderRadius: 8, marginBottom: 2,
-              color: MUTED, fontSize: 12, opacity: 0.55,
+              color: MUTED, fontSize: 12,
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -103,10 +103,11 @@ export default function ApoloLayout({ children }: { children: React.ReactNode })
               <span>{item.label}</span>
             </div>
             <span style={{
-              fontSize: 8, fontWeight: 700, color: AMBER_L, letterSpacing: "0.5px",
-              background: `${AMBER_L}18`, padding: "1px 5px", borderRadius: 4,
+              fontSize: 8, fontWeight: 700, color: "#4ade80", letterSpacing: "0.5px",
+              background: "rgba(74,222,128,0.12)", padding: "1px 5px", borderRadius: 4,
+              border: "1px solid rgba(74,222,128,0.3)",
             }}>
-              {item.badge}
+              ✓ ON
             </span>
           </div>
         ))}

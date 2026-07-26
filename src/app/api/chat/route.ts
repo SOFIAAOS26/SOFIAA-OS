@@ -47,6 +47,7 @@ import type { NexoContext }      from "@/types/nexo";
 import type { ExtensionContext } from "@/types/sofiaa-platform";
 import { adminDb }               from "@/lib/firebase-admin";
 import type { OraclePrediction } from "@/types/oraculo";
+import { getApoloContext, buildApoloBlock } from "@/core/apolo";
 
 // ── Registro de providers (módulo, se ejecuta una vez) ────────────────────
 const _useMock = process.env.NEXT_PUBLIC_MOCK_CAPABILITIES === "true";
@@ -406,6 +407,13 @@ export async function POST(req: NextRequest) {
     oraculoBlock = buildOraculoBlock(oraculoPreds);
   }
 
+  // APOLO — Último reporte listo (Sprint AP-5)
+  let apoloBlock = "";
+  if (userId && userId !== "anonymous") {
+    const apoloCtx = await getApoloContext(userId);
+    apoloBlock = buildApoloBlock(apoloCtx);
+  }
+
   // N.E.X.O. Biblioteca — Conocimiento global de SOFIAA (Sprint M-1B)
   const bibliotecaBlock = await getBibliotecaContext();
 
@@ -468,7 +476,7 @@ export async function POST(req: NextRequest) {
   // ─────────────────────────────────────────────────────────────────────
 
   // ── LLM Orchestrator — elige el mejor provider disponible ────────────
-  const systemContent = `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${nexoBlock}${bibliotecaBlock}${alejandriaBlock}${cognitiveBlock}${oraculoBlock}${policyBlock}${capabilityMenuBlock}`;
+  const systemContent = `${systemPrompt}${memoryBlock}${contextualBlock}\n\n${authStatus}\n\n${firebaseStatus}${goalBlock}${goalStateBlock}${graphBlock}${nexoBlock}${bibliotecaBlock}${alejandriaBlock}${cognitiveBlock}${oraculoBlock}${apoloBlock}${policyBlock}${capabilityMenuBlock}`;
 
   // ── Sprint G: Agent Runtime — ReAct loop para tareas multi-paso ──────
   if (agentMode) {
