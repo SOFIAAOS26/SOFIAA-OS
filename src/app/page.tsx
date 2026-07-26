@@ -172,6 +172,7 @@ export default function Home() {
   const [showNora,  setShowNora]                = useState(false);
   const [pendingNav, setPendingNav]         = useState<string | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showNav, setShowNav]               = useState(false);
   const messagesEndRef  = useRef<HTMLDivElement>(null);
   const inputRef        = useRef<HTMLInputElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1239,8 +1240,135 @@ export default function Home() {
           animation: "gradientFlow 22s ease infinite",
         }} />
       </div>
+      {/* ── Hamburger Menu Global ─────────────────────────────────── */}
+      {/* Overlay */}
+      {showNav && (
+        <div
+          onClick={() => setShowNav(false)}
+          style={{
+            position: "fixed", inset: 0, zIndex: 9000,
+            background: "rgba(0,0,0,0.35)",
+            backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
+          }}
+        />
+      )}
+      {/* Drawer */}
+      <div style={{
+        position: "fixed", top: 0, left: 0, zIndex: 9001,
+        width: 240, height: "100dvh",
+        background: isDark
+          ? "rgba(12,10,22,0.97)"
+          : "rgba(255,255,255,0.96)",
+        backdropFilter: "blur(32px)", WebkitBackdropFilter: "blur(32px)",
+        borderRight: isDark ? "1px solid rgba(168,85,247,0.15)" : "1px solid rgba(168,85,247,0.12)",
+        boxShadow: "8px 0 40px rgba(0,0,0,0.18)",
+        transform: showNav ? "translateX(0)" : "translateX(-100%)",
+        transition: "transform 0.26s cubic-bezier(0.32,0,0.15,1)",
+        display: "flex", flexDirection: "column", padding: "0 0 20px",
+        overflowY: "auto",
+      }}>
+        {/* Logo + close */}
+        <div style={{
+          padding: "18px 16px 14px",
+          borderBottom: isDark ? "1px solid rgba(168,85,247,0.12)" : "1px solid rgba(168,85,247,0.10)",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+        }}>
+          <div>
+            <div style={{ fontWeight: 800, fontSize: 15, letterSpacing: "0.12em",
+              background: "linear-gradient(135deg,#F472B6,#A855F7,#60A5FA)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              SOFIAA OS
+            </div>
+            <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.08em",
+              color: isDark ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)", marginTop: 1 }}>
+              IX-OS · NAVEGACIÓN
+            </div>
+          </div>
+          <button
+            onClick={() => setShowNav(false)}
+            style={{ background: "none", border: "none", cursor: "pointer",
+              fontSize: 18, color: isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.35)",
+              lineHeight: 1, padding: 4 }}
+          >×</button>
+        </div>
+
+        {/* Nav items */}
+        {([
+          { section: "CHAT",        items: [
+            { label: "SOFIAA",      icon: "✦", path: "/" },
+          ]},
+          { section: "EXTENSIONES", items: [
+            { label: "TEC Bii",     icon: "🧠", path: "/tec-bii"    },
+            { label: "PROMETEO",    icon: "🔥", path: "/prometeo"   },
+            { label: "ATENA",       icon: "⚡", path: "/atena"      },
+            { label: "HERMES",      icon: "⚙️", path: "/hermes"     },
+            { label: "ORÁCULO",     icon: "🔮", path: "/oraculo"    },
+            { label: "APOLO",       icon: "☀️", path: "/apolo"      },
+            { label: "ALEJANDRÍA",  icon: "📚", path: "/alejandria" },
+          ]},
+          { section: "NEXO",        items: [
+            { label: "Mi Grafo",    icon: "◈", path: "/nexo/mi-grafo"   },
+            { label: "Biblioteca",  icon: "◎", path: "/nexo/biblioteca" },
+          ]},
+          { section: "SOFIAA LAB",  items: [
+            { label: "Servicios",   icon: "→", path: "/servicios"      },
+            { label: "Quiénes Somos", icon: "→", path: "/quienes-somos" },
+            { label: "Contacto",    icon: "→", path: "/contacto"       },
+          ]},
+        ] as { section: string; items: { label: string; icon: string; path: string }[] }[]).map(({ section, items }) => (
+          <div key={section}>
+            <div style={{
+              padding: "14px 16px 6px",
+              fontSize: 9, fontWeight: 700, letterSpacing: "0.08em",
+              color: isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.28)",
+            }}>{section}</div>
+            {items.map(({ label, icon, path }) => (
+              <button
+                key={path}
+                onClick={() => { router.push(path); setShowNav(false); }}
+                style={{
+                  display: "flex", alignItems: "center", gap: 10,
+                  width: "100%", padding: "8px 16px",
+                  background: "none", border: "none", cursor: "pointer",
+                  textAlign: "left", fontSize: 13, fontWeight: 500,
+                  color: isDark ? "rgba(255,255,255,0.78)" : "rgba(0,0,0,0.72)",
+                  borderRadius: 0, transition: "background 0.12s",
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = isDark ? "rgba(168,85,247,0.10)" : "rgba(168,85,247,0.07)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "none"; }}
+              >
+                <span style={{ fontSize: 14, width: 20, textAlign: "center", flexShrink: 0 }}>{icon}</span>
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
+        ))}
+      </div>
+
       {/* Header */}
       <div className="shrink-0 relative flex flex-col items-center gap-0.5 pt-10 pb-1 w-full px-5">
+        {/* Hamburger button — sutil, esquina superior izquierda */}
+        <button
+          onClick={() => setShowNav(true)}
+          className="absolute left-4 top-5"
+          style={{
+            background: isDark ? "rgba(168,85,247,0.10)" : "rgba(168,85,247,0.07)",
+            border: isDark ? "1px solid rgba(168,85,247,0.18)" : "1px solid rgba(168,85,247,0.14)",
+            borderRadius: 8, width: 32, height: 32, cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            flexDirection: "column", gap: 4, padding: 0,
+            transition: "all 0.15s",
+          }}
+          aria-label="Menú de navegación"
+        >
+          {[0,1,2].map(i => (
+            <span key={i} style={{
+              display: "block", width: 13, height: 1.5, borderRadius: 2,
+              background: isDark ? "rgba(168,85,247,0.65)" : "rgba(168,85,247,0.55)",
+              transition: "all 0.15s",
+            }} />
+          ))}
+        </button>
         <p className="text-xs tracking-[0.32em] uppercase font-light" style={{ color: isDark ? "rgba(255,255,255,0.28)" : "rgba(0,0,0,0.28)" }}>
           SOFIAA LAB
         </p>
@@ -1652,15 +1780,12 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Atajos de extensiones */}
+        {/* Atajos de extensiones — solo los 3 principales */}
         <div className="flex justify-center gap-2 mt-2.5">
           {[
-            { label: "TEC Bii",    icon: "🧠", path: "/tec-bii",     color: "rgba(6,182,212,0.13)",   border: "rgba(6,182,212,0.30)"   },
-            { label: "PROMETEO",   icon: "🔥", path: "/prometeo",   color: "rgba(249,115,22,0.13)",  border: "rgba(249,115,22,0.30)"  },
-            { label: "ATENA",      icon: "⚡", path: "/atena",      color: "rgba(168,85,247,0.13)",  border: "rgba(168,85,247,0.30)"  },
-            { label: "ALEJANDRÍA", icon: "📚", path: "/alejandria", color: "rgba(251,191,36,0.13)",  border: "rgba(251,191,36,0.30)"  },
-            { label: "ORÁCULO",    icon: "🔮", path: "/oraculo",    color: "rgba(109,40,217,0.13)",  border: "rgba(109,40,217,0.30)"  },
-            { label: "APOLO",      icon: "☀️", path: "/apolo",      color: "rgba(217,119,6,0.13)",   border: "rgba(217,119,6,0.30)"   },
+            { label: "TEC Bii",  icon: "🧠", path: "/tec-bii",   color: "rgba(6,182,212,0.13)",  border: "rgba(6,182,212,0.30)"  },
+            { label: "PROMETEO", icon: "🔥", path: "/prometeo",  color: "rgba(249,115,22,0.13)", border: "rgba(249,115,22,0.30)" },
+            { label: "ATENA",    icon: "⚡", path: "/atena",     color: "rgba(168,85,247,0.13)", border: "rgba(168,85,247,0.30)" },
           ].map(({ label, icon, path, color, border }) => (
             <button
               key={path}

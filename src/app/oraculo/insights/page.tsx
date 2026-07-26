@@ -211,7 +211,7 @@ export default function InsightsPage() {
   };
 
   return (
-    <div style={{ padding: "24px 24px 48px", maxWidth: 860, margin: "0 auto" }}>
+    <div className="pt-14 md:pt-0" style={{ padding: "0 24px 48px", maxWidth: 860, margin: "0 auto" }}><div style={{ paddingTop: 24 }}>
       {/* Header */}
       <div style={{
         display: "flex", alignItems: "flex-start",
@@ -314,6 +314,7 @@ export default function InsightsPage() {
           El motor identifica conexiones causales o de riesgo acumulado que las predicciones individuales
           no revelan. La confianza refleja la solidez de las señales subyacentes.
         </p>
+      </div>
       </div>
     </div>
   );

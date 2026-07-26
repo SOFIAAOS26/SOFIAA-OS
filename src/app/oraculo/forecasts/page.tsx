@@ -242,7 +242,7 @@ export default function ForecastsPage() {
   }, {});
 
   return (
-    <div style={{ padding: "24px 24px 48px", maxWidth: 900, margin: "0 auto" }}>
+    <div className="pt-14 md:pt-0" style={{ padding: "0 24px 48px", maxWidth: 900, margin: "0 auto" }}><div style={{ paddingTop: 24 }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 24, flexWrap: "wrap" }}>
         <div>
@@ -352,6 +352,7 @@ export default function ForecastsPage() {
           Los pronósticos son indicativos — no reemplazaban el juicio operativo.
           Sprints futuros incorporarán regresión ponderada y detección de tendencias no lineales.
         </p>
+      </div>
       </div>
     </div>
   );
