@@ -1,0 +1,153 @@
+{
+  "id": "reporte_doctoral_alejandria_20260727",
+  "tipo": "reporte_doctoral",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_2",
+  "titulo": "ALEJANDRÍA — Knowledge Graph de Autoconocimiento de Ingeniería · Reporte Doctoral v1.0",
+  "resumen": "Análisis técnico exhaustivo de ALEJANDRÍA, el sistema de autoconocimiento de ingeniería de SOFIAA OS. Cubre el corpus de 59 nodos JSON, el pipeline de ingestión con embeddings Gemini, el motor de búsqueda semántica con scoring híbrido (coseno + keywords + reinforcement), la inyección automática de contexto en el chat route, las extension tools expuestas al LLM, y la interfaz /alejandria. ALEJANDRÍA resuelve el déficit de autoconocimiento de los LLMs sobre sistemas propietarios mediante RAG especializado.",
+  "modulos_afectados": [
+    "ALEJANDRÍA",
+    "SOFIAA"
+  ],
+  "sprint_referencia": "AJ-0 AJ-1 AJ-2 AJ-3 AJ-4 AJ-5",
+  "version_sofiaa": "2.0",
+  "decisiones": [
+    {
+      "decision": "Corpus como Fuente de Verdad — 59 documentos JSON estructurados determinísticamente",
+      "contexto": "Los LLMs alucinan sobre sistemas propietarios por no tener acceso a documentación interna",
+      "alternativas_descartadas": [
+        "Memoria paramétrica del LLM",
+        "Base de datos vectorial pura"
+      ],
+      "justificacion": "El corpus JSON estructurado es determinista, auditable e inmutable — elimina alucinaciones sobre el propio sistema",
+      "consecuencias": "ALEJANDRÍA puede responder preguntas arquitectónicas con precisión de fuente de verdad"
+    },
+    {
+      "decision": "Búsqueda Híbrida: coseno sobre embeddings Gemini 768d + scoring keywords + RL por uso",
+      "contexto": "El solo coseno semántico no captura bien términos técnicos específicos",
+      "alternativas_descartadas": [
+        "Solo keyword search",
+        "Solo coseno semántico"
+      ],
+      "justificacion": "El algoritmo híbrido aumenta relevancia en consultas técnicas donde los términos exactos importan",
+      "consecuencias": "Mayor precisión de retrieval; el RL por uso refuerza documentos frecuentemente útiles"
+    },
+    {
+      "decision": "Zero-Latency Context Injection — inyección automática sin intervención del usuario",
+      "contexto": "El usuario no debería tener que activar manualmente ALEJANDRÍA para cada query arquitectónica",
+      "alternativas_descartadas": [
+        "Comando explícito del usuario",
+        "Siempre inyectar contexto"
+      ],
+      "justificacion": "El detector de queries arquitectónicas activa ALEJANDRÍA solo cuando es relevante, sin overhead innecesario",
+      "consecuencias": "Experiencia transparente; SOFIAA responde sobre su propia arquitectura sin fricción"
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "Corpus ALEJANDRÍA",
+      "definicion": "59 documentos JSON estructurados que constituyen la fuente de verdad del conocimiento de SOFIAA OS sobre sí mismo. Distribuidos en fase_1 (documentación histórica) y fase_2 (reportes doctorales 2026).",
+      "relacion_modulos": [
+        "ALEJANDRÍA",
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "Scoring Híbrido",
+      "definicion": "Algoritmo que combina similitud coseno sobre embeddings de 768 dimensiones (Gemini gemini-embedding-001), scoring por presencia de keywords, y reinforcement learning por frecuencia de uso. Fórmula: hybridScore = coseno*0.65 + peso*0.35.",
+      "relacion_modulos": [
+        "ALEJANDRÍA"
+      ]
+    },
+    {
+      "concepto": "AJ-1 Pipeline de Ingestión",
+      "definicion": "Pipeline que procesa documentos fuente (PDFs, DOCXs) en JSON estructurado con embeddings Gemini y los persiste en Firestore bajo users/{uid}/alejandria_corpus.",
+      "relacion_modulos": [
+        "ALEJANDRÍA"
+      ]
+    },
+    {
+      "concepto": "AJ-2 Motor de Búsqueda Semántica",
+      "definicion": "Endpoint REST POST /api/alejandria/search que aplica el algoritmo híbrido y retorna los top-K documentos más relevantes para una query.",
+      "relacion_modulos": [
+        "ALEJANDRÍA"
+      ]
+    },
+    {
+      "concepto": "AJ-3 Inyección de Contexto",
+      "definicion": "Mecanismo que detecta automáticamente queries arquitectónicas en el chat route e inyecta el contexto ALEJANDRÍA relevante en el system prompt antes de la respuesta.",
+      "relacion_modulos": [
+        "ALEJANDRÍA",
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "Extension Tools AJ-4",
+      "definicion": "Tres herramientas expuestas al LLM: searchKnowledge (búsqueda semántica), getDocument (recuperación por ID), listCategories (exploración del corpus).",
+      "relacion_modulos": [
+        "ALEJANDRÍA"
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "AJ-0 — Schema + Manifest + Firestore helpers",
+      "resultado": "Estructura de datos definida; helpers de lectura/escritura en Firestore implementados",
+      "aprendizaje": "El schema JSON estructurado debe definirse antes del pipeline para garantizar consistencia"
+    },
+    {
+      "hito": "AJ-1 — Pipeline de ingestión con embeddings Gemini",
+      "resultado": "Los documentos del corpus se procesan y almacenan con vectores de 768 dimensiones",
+      "aprendizaje": "Gemini gemini-embedding-001 ofrece embeddings de alta calidad para texto técnico en español"
+    },
+    {
+      "hito": "AJ-2 — Motor de búsqueda semántica + endpoint REST",
+      "resultado": "POST /api/alejandria/search operativo con scoring híbrido",
+      "aprendizaje": "El algoritmo híbrido supera al coseno puro en consultas sobre términos técnicos específicos"
+    },
+    {
+      "hito": "AJ-3 — Inyección de contexto en chat route",
+      "resultado": "SOFIAA responde preguntas arquitectónicas con fuente de verdad automáticamente",
+      "aprendizaje": "La detección de intent arquitectónico debe ser conservadora para no contaminar el contexto innecesariamente"
+    },
+    {
+      "hito": "AJ-4 — Extension tools para el LLM",
+      "resultado": "El LLM puede buscar y recuperar documentos del corpus directamente durante la conversación",
+      "aprendizaje": "Las tools deben retornar datos estructurados, no texto plano, para mayor control del LLM"
+    },
+    {
+      "hito": "AJ-5 — Interfaz /alejandria gold-themed",
+      "resultado": "Panel de administración del corpus con búsqueda en tiempo real, vista de documentos y métricas de uso",
+      "aprendizaje": "La UI del corpus acelera la auditoría y el debugging del sistema de retrieval"
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Qué es ALEJANDRÍA y cuál es su función en SOFIAA OS?",
+    "¿Cómo funciona el pipeline de ingestión de documentos (AJ-1)?",
+    "¿Cómo funciona el motor de búsqueda semántica de ALEJANDRÍA?",
+    "¿Qué es el scoring híbrido y cómo se calcula?",
+    "¿Cómo se inyecta el contexto de ALEJANDRÍA en el chat?",
+    "¿Qué herramientas (extension tools) expone ALEJANDRÍA al LLM?",
+    "¿Cuántos documentos tiene el corpus y cómo están estructurados?",
+    "¿Por qué ALEJANDRÍA usa embeddings Gemini en lugar de otra solución?",
+    "¿Cuál es el esquema Firestore de ALEJANDRÍA?",
+    "¿Cómo acceder a la interfaz de ALEJANDRÍA?"
+  ],
+  "tags": [
+    "alejandria",
+    "knowledge-graph",
+    "autoconocimiento",
+    "rag",
+    "embeddings",
+    "corpus",
+    "busqueda-semantica",
+    "fase-2",
+    "reporte-doctoral",
+    "gemini",
+    "firestore"
+  ],
+  "texto_embedding": "ALEJANDRÍA es el sistema de autoconocimiento de ingeniería de SOFIAA OS. Implementa RAG especializado con corpus de 59 documentos JSON y búsqueda híbrida coseno+keywords+RL. Pipeline AJ-1 procesa documentos con embeddings Gemini 768d. AJ-2 sirve búsqueda semántica. AJ-3 inyecta contexto automáticamente en el chat. AJ-4 expone tools al LLM. AJ-5 es la interfaz /alejandria. Principio: corpus inmutable como fuente de verdad, nunca memoria paramétrica del LLM.",
+  "documento_original": "ALEJANDRIA_Reporte_Doctoral.pdf",
+  "procesado_por": "sofiaa",
+  "fecha_procesamiento": "2026-07-27"
+}

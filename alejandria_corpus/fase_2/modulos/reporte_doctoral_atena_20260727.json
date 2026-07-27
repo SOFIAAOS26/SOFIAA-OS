@@ -1,0 +1,118 @@
+{
+  "id": "reporte_doctoral_atena_20260727",
+  "tipo": "reporte_doctoral",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_2",
+  "titulo": "ATENA — Advanced Technology for Enterprise Nexus & Analytics · Reporte Doctoral v1.0",
+  "resumen": "Análisis técnico integral de ATENA, el motor de inteligencia científica de SOFIAA OS con metodologías Lean Six Sigma (DMAIC/DMADV). Cubre el principio de Determinismo Estadístico: todos los cálculos (ANOVA, F-statistic, Cp/Cpk, VAN/TIR, Monte Carlo) corren en servidor y son pre-computados — el LLM solo interpreta. Incluye Control Estadístico del Proceso (SPC), AMEF/FMEA, Proyección Financiera con simulación Monte Carlo, Sprint A-9 con generador de proyectos vía IA, y las 5 extension tools.",
+  "modulos_afectados": [
+    "ATENA",
+    "HERMES",
+    "SOFIAA"
+  ],
+  "sprint_referencia": "A-0 A-1 A-2 A-3 A-4 A-5 A-6 A-7 A-8 A-9",
+  "version_sofiaa": "2.0",
+  "decisiones": [
+    {
+      "decision": "Determinismo Estadístico: el LLM nunca calcula cifras estadísticas",
+      "contexto": "Los LLMs generan números plausibles pero no matemáticamente correctos; un ANOVA mal calculado en un proyecto Six Sigma puede costar millones",
+      "alternativas_descartadas": [
+        "Delegar cálculos al LLM",
+        "Usar librerías Python en cliente"
+      ],
+      "justificacion": "Los cálculos estadísticos en servidor con TypeScript garantizan reproducibilidad y auditabilidad; el LLM solo interpreta resultados pre-computados",
+      "consecuencias": "Eliminación estructural de alucinaciones numéricas; mayor confianza en el análisis estadístico"
+    },
+    {
+      "decision": "Sprint A-9: Generador de proyectos con IA usando Groq",
+      "contexto": "La creación de un Project Charter DMAIC completo requería horas de trabajo manual",
+      "alternativas_descartadas": [
+        "Templates estáticos",
+        "Formularios manuales"
+      ],
+      "justificacion": "Groq llama-3.3-70b-versatile genera planes DMAIC completos (charter, hitos, riesgos, AMEF, Kaizen) desde descripción en lenguaje natural",
+      "consecuencias": "Reducción de tiempo de setup de proyectos de horas a minutos; el usuario revisa y edita antes de persistir"
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "Determinismo Estadístico",
+      "definicion": "Principio arquitectónico de ATENA: ningún número estadístico es calculado por el LLM. El motor TypeScript corre en servidor, calcula y persiste resultados, y el LLM solo los interpreta en lenguaje natural.",
+      "relacion_modulos": [
+        "ATENA"
+      ]
+    },
+    {
+      "concepto": "DMAIC",
+      "definicion": "Define-Measure-Analyze-Improve-Control. Metodología Lean Six Sigma implementada como ProjectCharter con hitos, matriz de riesgos, AMEF y eventos Kaizen en ATENA.",
+      "relacion_modulos": [
+        "ATENA"
+      ]
+    },
+    {
+      "concepto": "SPC — Control Estadístico del Proceso",
+      "definicion": "Sistema que monitorea procesos con cartas de control (X-bar, R, p, c), calcula Cp, Cpk y nivel sigma, y detecta señales de descontrol automáticamente.",
+      "relacion_modulos": [
+        "ATENA",
+        "HERMES"
+      ]
+    },
+    {
+      "concepto": "AMEF / FMEA",
+      "definicion": "Análisis de Modo y Efecto de Falla. Evalúa modos de fallo por Severidad, Ocurrencia y Detección, calcula NPR (Número de Prioridad de Riesgo) y prioriza acciones correctivas.",
+      "relacion_modulos": [
+        "ATENA"
+      ]
+    },
+    {
+      "concepto": "Monte Carlo en ATENA",
+      "definicion": "Simulación de distribución de probabilidad para proyecciones financieras (VAN/TIR). Corre n iteraciones en servidor y retorna percentiles P10, P50, P90.",
+      "relacion_modulos": [
+        "ATENA"
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "A-4 — Extension Tools para el LLM",
+      "resultado": "5 herramientas: getProjectDetails, getSPCResults, getAMEFResults, getFinancialProjection, listProjects",
+      "aprendizaje": "Las tools permiten al LLM acceder a análisis pre-computados sin recalcular"
+    },
+    {
+      "hito": "A-9 — Generador de proyectos con IA",
+      "resultado": "POST /api/atena/generar-proyecto genera plan DMAIC completo desde lenguaje natural",
+      "aprendizaje": "El wizard de revisión antes de persistir es crítico para mantener la calidad del proyecto generado"
+    },
+    {
+      "hito": "Integración HERMES Sprint H-4",
+      "resultado": "Alertas automáticas de proceso enviadas vía HERMES cuando SPC detecta señales de descontrol",
+      "aprendizaje": "La integración ATENA→HERMES permite respuesta automatizada a desvíos de proceso"
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Qué es ATENA y qué metodologías implementa?",
+    "¿Qué es el Determinismo Estadístico?",
+    "¿Cómo funciona el Control Estadístico del Proceso (SPC) en ATENA?",
+    "¿Cómo calcula ATENA el AMEF y el NPR?",
+    "¿Qué es el Sprint A-9 y qué generó?",
+    "¿Cómo se integra ATENA con HERMES?",
+    "¿Qué herramientas extension tools tiene ATENA?",
+    "¿Cómo funciona la proyección financiera Monte Carlo de ATENA?"
+  ],
+  "tags": [
+    "atena",
+    "lean-six-sigma",
+    "dmaic",
+    "spc",
+    "amef",
+    "anova",
+    "determinismo-estadistico",
+    "monte-carlo",
+    "fase-2",
+    "reporte-doctoral"
+  ],
+  "texto_embedding": "ATENA es el motor de inteligencia científica Lean Six Sigma de SOFIAA OS. Principio central: Determinismo Estadístico — todos los cálculos (ANOVA, Cp/Cpk, NPR, VAN/TIR, Monte Carlo) corren en servidor TypeScript, nunca en el LLM. Implementa DMAIC, SPC con cartas de control, AMEF/FMEA. Sprint A-9 añade generador de proyectos con Groq. Integración con HERMES para alertas automáticas de proceso. 5 extension tools para el chat.",
+  "documento_original": "ATENA_Reporte_Doctoral.pdf",
+  "procesado_por": "sofiaa",
+  "fecha_procesamiento": "2026-07-27"
+}

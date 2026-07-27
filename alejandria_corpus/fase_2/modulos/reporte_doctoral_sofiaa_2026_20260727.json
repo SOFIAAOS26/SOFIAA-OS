@@ -1,0 +1,133 @@
+{
+  "id": "reporte_doctoral_sofiaa_2026_20260727",
+  "tipo": "reporte_doctoral",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_2",
+  "titulo": "SOFIAA OS — Sistema de Inteligencia Operativa Autónoma · Análisis Doctoral del Estado del Sistema",
+  "resumen": "Análisis doctoral del sistema SOFIAA OS completo al 24 de julio 2026. Documenta la arquitectura core: Next.js 16.2.9, React 19.2.4, Firebase 12, Groq LLM (llama-3.3-70b-versatile), Vercel. 9 extensiones, 4 CRONs, pipeline cognitivo de 17 pasos, 322+ sprints. La metáfora del Sistema Operativo: kernel (route.ts), drivers (extensiones), filesystem (N.E.X.O.), scheduler (CRONs), process monitor (N.O.R.A.), package manager (ALEJANDRÍA). 3 principios fundacionales: URL como señal de activación, cero latencia en camino crítico, zero-failure cognitive.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "N.E.X.O.",
+    "N.O.R.A.",
+    "TEC BII",
+    "ATENA",
+    "PROMETEO",
+    "HERMES",
+    "THEMIS",
+    "ORÁCULO",
+    "APOLO",
+    "ALEJANDRÍA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": "2.0",
+  "decisiones": [
+    {
+      "decision": "URL como señal de activación de extensiones — no hardcodeo de if/else",
+      "contexto": "El sistema necesitaba ser extensible sin modificar el núcleo cada vez que se añade una extensión",
+      "alternativas_descartadas": [
+        "Router de extensiones hardcodeado",
+        "Extensiones activadas por comando"
+      ],
+      "justificacion": "El ExtensionRegistry es agnóstico y extensible: la URL del usuario determina qué extensión activa SOFIAA sin modificar el núcleo",
+      "consecuencias": "Nuevas extensiones se añaden sin tocar route.ts; el sistema es infinitamente extensible"
+    },
+    {
+      "decision": "Zero-failure cognitive — try/catch silencioso y fallback en todas las capas cognitivas",
+      "contexto": "N.O.R.A. y N.E.X.O. no pueden romper el flujo de chat; la conversación debe continuar aunque fallen",
+      "alternativas_descartadas": [
+        "Errores propagados al usuario",
+        "Reintentos síncronos"
+      ],
+      "justificacion": "La experiencia del usuario siempre debe continuar; los fallos cognitivos son datos para N.O.R.A., no bloqueos",
+      "consecuencias": "SOFIAA es resiliente; los fallos de memoria o telemetría son transparentes al usuario"
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "Pipeline Cognitivo de 17 Pasos",
+      "definicion": "El pipeline de route.ts procesa cada mensaje del usuario en 17 pasos secuenciales: autenticación, detección de extensión, recuperación de contexto N.E.X.O., inyección de perfil N.O.R.A., construcción del system prompt, llamada al LLM, evaluación THEMIS, actualización de memoria, etc.",
+      "relacion_modulos": [
+        "SOFIAA",
+        "N.E.X.O.",
+        "N.O.R.A.",
+        "THEMIS",
+        "ALEJANDRÍA"
+      ]
+    },
+    {
+      "concepto": "ExtensionRegistry",
+      "definicion": "Registro agnóstico de extensiones. Cada extensión tiene: id, url_pattern, manifest, system_prompt. La URL del usuario determina qué extensión se activa. Ningún if/else hardcodeado en el núcleo.",
+      "relacion_modulos": [
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "Capability Gateway",
+      "definicion": "Controla qué información puede ver cada extensión según el rol del usuario. Filtro de permisos por extensión y tier de usuario (user/admin).",
+      "relacion_modulos": [
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "3 Principios Fundacionales de SOFIAA OS",
+      "definicion": "1. URL como señal de activación. 2. Cero latencia en el camino crítico — las operaciones cognitivas son post-stream. 3. Zero-failure cognitive — las capas cognitivas nunca bloquean la respuesta.",
+      "relacion_modulos": [
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "Clientes del Sistema",
+      "definicion": "PASCALL (agencia creativa, extensión principal /), Tecnológico de Monterrey (TEC Bii + TEC BII), Jardines de Juan Pablo (JP Memorial), Clientes Marketing Sofia (SMM multi-tenant).",
+      "relacion_modulos": [
+        "SOFIAA",
+        "TEC BII",
+        "PROMETEO"
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "Next.js 16.2.9 + React 19.2.4 + Firebase 12",
+      "resultado": "Stack tecnológico de última generación en producción en Vercel",
+      "aprendizaje": "La actualización a React 19 requirió actualizar los tipos de Firebase y los hooks de estado"
+    },
+    {
+      "hito": "Pipeline cognitivo de 17 pasos",
+      "resultado": "Cada interacción de usuario pasa por un pipeline completo de contexto, memoria, gobernanza y telemetría",
+      "aprendizaje": "El orden de los 17 pasos es crítico; la telemetría debe ser el último paso para capturar el tiempo real"
+    },
+    {
+      "hito": "322+ sprints completados",
+      "resultado": "El sistema más desarrollado de su clase para PyMEs y corporativos mexicanos",
+      "aprendizaje": "La documentación de cada sprint es la única forma de mantener coherencia en un sistema tan complejo"
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Qué versión de Next.js usa SOFIAA OS?",
+    "¿Qué es el ExtensionRegistry?",
+    "¿Cuáles son los 3 principios fundacionales de SOFIAA OS?",
+    "¿Cómo funciona el pipeline cognitivo de 17 pasos?",
+    "¿Qué es el Capability Gateway?",
+    "¿Cuáles son los clientes actuales de SOFIAA OS?",
+    "¿Qué es el Cognitive Policy Engine?",
+    "¿Cómo se despliega SOFIAA OS?",
+    "¿Cuántos sprints tiene SOFIAA OS?",
+    "¿Qué LLM usa SOFIAA OS principalmente?"
+  ],
+  "tags": [
+    "sofiaa",
+    "arquitectura-core",
+    "nextjs",
+    "react-19",
+    "firebase",
+    "groq",
+    "pipeline-cognitivo",
+    "extension-registry",
+    "fase-2",
+    "reporte-doctoral"
+  ],
+  "texto_embedding": "SOFIAA OS es un sistema de inteligencia operativa autónoma. Stack: Next.js 16.2.9, React 19.2.4, Firebase 12, Groq llama-3.3-70b-versatile, Vercel. 9 extensiones, 4 CRONs, pipeline cognitivo 17 pasos, 322+ sprints. 3 principios: URL como señal de activación, cero latencia en camino crítico, zero-failure cognitive. Clientes: PASCALL, Tec de Monterrey, Jardines JP, Marketing Sofia. ExtensionRegistry agnóstico.",
+  "documento_original": "SOFIAA_Reporte_Doctoral_2026.pdf",
+  "procesado_por": "sofiaa",
+  "fecha_procesamiento": "2026-07-27"
+}

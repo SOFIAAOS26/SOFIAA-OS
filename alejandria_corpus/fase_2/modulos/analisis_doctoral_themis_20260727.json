@@ -1,0 +1,125 @@
+{
+  "id": "analisis_doctoral_themis_20260727",
+  "tipo": "analisis_doctoral",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_2",
+  "titulo": "THEMIS — Governance & Ethics Engine · Análisis Doctoral v1.0",
+  "resumen": "Análisis doctoral de THEMIS, el motor de gobernanza y ética de SOFIAA OS. THEMIS evalúa cada respuesta del LLM y cada acción de HERMES contra políticas cognitivas declarativas, emite un ThemisVerdict inmutable y lo persiste en Firestore. Dos flujos: T-1 (respuestas, post-stream no bloqueante) y T-2 (acciones HERMES, síncrono pre-ejecución). Motor determinista en <50ms. Dashboard de administración de políticas en tiempo real (Sprint T-3).",
+  "modulos_afectados": [
+    "THEMIS",
+    "HERMES",
+    "SOFIAA"
+  ],
+  "sprint_referencia": "T-1 T-2 T-3",
+  "version_sofiaa": "2.0",
+  "decisiones": [
+    {
+      "decision": "THEMIS evalúa de forma determinista — no usa LLM para juzgar al LLM",
+      "contexto": "Un LLM evaluando a otro LLM introduce circularidad y no-determinismo en la gobernanza",
+      "alternativas_descartadas": [
+        "LLM como evaluador",
+        "Evaluación manual post-hoc"
+      ],
+      "justificacion": "Los detectores rule-based deterministas corren en <50ms, son auditables y no pueden ser engañados por el modelo que evalúan",
+      "consecuencias": "Gobernanza verdaderamente independiente del modelo evaluado; veredictos reproducibles"
+    },
+    {
+      "decision": "Flujo T-1 post-stream no bloqueante vs Flujo T-2 síncrono bloqueante",
+      "contexto": "Las respuestas deben llegar al usuario sin latencia adicional; las acciones en el mundo real requieren validación previa",
+      "alternativas_descartadas": [
+        "Evaluar respuestas síncronamente",
+        "Evaluar acciones post-ejecución"
+      ],
+      "justificacion": "waitUntil() para respuestas preserva la UX; gate síncrono para acciones garantiza que ninguna acción dañina se ejecute",
+      "consecuencias": "La experiencia del chat no se degrada; HERMES nunca ejecuta una acción sin aprobación de THEMIS"
+    },
+    {
+      "decision": "Principio constitucional: todo juicio de THEMIS queda registrado, no se borra ni edita",
+      "contexto": "La auditoría de gobernanza requiere historial inmutable para ser confiable",
+      "alternativas_descartadas": [
+        "Logs rotativos",
+        "Solo alertas en tiempo real"
+      ],
+      "justificacion": "El historial inmutable en Firestore permite investigar patrones de violación y demostrar cumplimiento",
+      "consecuencias": "THEMIS es el único engine con historial completamente inviolable por diseño"
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "ThemisVerdict",
+      "definicion": "Objeto estructurado que representa el juicio de THEMIS: verdict ('approve'|'block'|'warn'), policies_violated[], severity, reasoning, timestamp. Inmutable una vez persistido en Firestore.",
+      "relacion_modulos": [
+        "THEMIS",
+        "HERMES",
+        "APOLO"
+      ]
+    },
+    {
+      "concepto": "Cognitive Policy Engine",
+      "definicion": "Núcleo de políticas en src/core/cognitive.policy.ts. Cada CognitivePolicy tiene id, name, scope (global/extension/goal_active/unauthenticated), priority y constraints con detectores deterministas.",
+      "relacion_modulos": [
+        "THEMIS",
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "Flujo T-1 — Evaluación de Respuestas",
+      "definicion": "route.ts → evaluateResponse() → ThemisVerdict → Firestore. Corre en waitUntil() post-stream. Nunca bloquea la respuesta al usuario. Registra y puede emitir warnings para revisión.",
+      "relacion_modulos": [
+        "THEMIS",
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "Flujo T-2 — Gate de Acciones HERMES",
+      "definicion": "hermes/execute → evaluateAction() → ThemisVerdict → Firestore. Síncrono y bloqueante. Un veredicto 'block' aborta la acción antes de que toque ningún sistema externo.",
+      "relacion_modulos": [
+        "THEMIS",
+        "HERMES"
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "T-1 — Evaluación post-stream de respuestas",
+      "resultado": "Cada respuesta del LLM tiene un ThemisVerdict inmutable en Firestore",
+      "aprendizaje": "waitUntil() es la única forma de auditar sin degradar latencia"
+    },
+    {
+      "hito": "T-2 — Gate pre-ejecución de acciones HERMES",
+      "resultado": "HERMES no puede ejecutar ninguna acción sin aprobación de THEMIS",
+      "aprendizaje": "El gate síncrono debe completar en <50ms para no degradar la aprobación del usuario"
+    },
+    {
+      "hito": "T-3 — Dashboard de administración de políticas",
+      "resultado": "Los administradores pueden activar/desactivar y modificar políticas cognitivas en tiempo real",
+      "aprendizaje": "La edición en caliente de políticas requiere cache invalidation inmediata"
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Qué es THEMIS y cuál es su función?",
+    "¿Cómo evalúa THEMIS las respuestas del LLM?",
+    "¿Cómo funciona el gate THEMIS para acciones de HERMES?",
+    "¿Qué es un ThemisVerdict?",
+    "¿Qué son las políticas cognitivas?",
+    "¿Por qué THEMIS usa detectores deterministas en lugar de un LLM?",
+    "¿Se pueden borrar o editar los veredictos de THEMIS?",
+    "¿Cómo se administran las políticas de THEMIS?"
+  ],
+  "tags": [
+    "themis",
+    "gobernanza",
+    "etica",
+    "cognitive-policy",
+    "themis-verdict",
+    "hermes-gate",
+    "determinista",
+    "generacion-2",
+    "fase-2",
+    "analisis-doctoral"
+  ],
+  "texto_embedding": "THEMIS es el motor de gobernanza y ética de SOFIAA OS, el tribunal constitucional del Olimpo. Evalúa respuestas LLM (flujo T-1, post-stream, no bloqueante) y acciones HERMES (flujo T-2, síncrono, bloqueante). Motor determinista en <50ms; no usa LLM para juzgar al LLM. Emite ThemisVerdict inmutable en Firestore. Cognitive Policy Engine con políticas declarativas y detectores rule-based. Sprint T-3: dashboard de políticas en tiempo real.",
+  "documento_original": "Analisis_Doctoral_THEMIS.pdf",
+  "procesado_por": "sofiaa",
+  "fecha_procesamiento": "2026-07-27"
+}

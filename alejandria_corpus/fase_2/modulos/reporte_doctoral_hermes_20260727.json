@@ -1,0 +1,116 @@
+{
+  "id": "reporte_doctoral_hermes_20260727",
+  "tipo": "reporte_doctoral",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_2",
+  "titulo": "HERMES — Action Execution Layer · Reporte Doctoral v1.0",
+  "resumen": "Análisis técnico integral de HERMES, la capa de ejecución de acciones de SOFIAA OS. HERMES es el sistema nervioso motor del ecosistema: recibe intenciones semánticas de PROMETEO, ATENA y TEC Bii, y las materializa en acciones reales sobre plataformas externas. Principios: Human-in-the-Loop Mandatory (toda acción requiere aprobación explícita), Forward-Compatible Schema (Etapa 2 ya contemplada), Fault-Tolerant Execution (MAX_REINTENTOS=3 con transiciones atómicas). 4 conectores Etapa 1: Monday.com, Slack, Calendario SMM, HERMES Interno.",
+  "modulos_afectados": [
+    "HERMES",
+    "PROMETEO",
+    "ATENA",
+    "TEC BII",
+    "THEMIS",
+    "SOFIAA"
+  ],
+  "sprint_referencia": "H-1 H-2 H-3 H-4",
+  "version_sofiaa": "2.0",
+  "decisiones": [
+    {
+      "decision": "Human-in-the-Loop Mandatory — no configurable ni derivable",
+      "contexto": "Las acciones en plataformas externas (Monday.com, Slack) son irreversibles en muchos casos",
+      "alternativas_descartadas": [
+        "Ejecución automática completa",
+        "Aprobación solo para acciones críticas"
+      ],
+      "justificacion": "El principio es absoluto: toda acción requiere aprobación explícita. No existe override técnico posible.",
+      "consecuencias": "HERMES nunca actúa sin consentimiento del usuario; los errores de acción son imposibles por diseño"
+    },
+    {
+      "decision": "Forward-Compatible Schema — conectores Etapa 2 definidos desde el inicio",
+      "contexto": "Los integrantes del equipo necesitarían Meta Ads, Google Ads, WhatsApp Business, Mailchimp, HubSpot en el futuro",
+      "alternativas_descartadas": [
+        "Schema mínimo expandible después",
+        "Conectores independientes sin schema común"
+      ],
+      "justificacion": "El schema define los tipos de acción de Etapa 2 hoy; las acciones encoladas en Firestore esperan hasta que el conector se implemente",
+      "consecuencias": "PROMETEO puede encolar meta_ads_escalar_presupuesto hoy; HERMES lo ejecutará sin cambiar el schema cuando Etapa 2 llegue"
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "State Machine de Acciones HERMES",
+      "definicion": "Ciclo de vida: pending → approved → executing → completed/failed/needs_retry. Transiciones atómicas en Firestore. MAX_REINTENTOS=3 para tolerancia a fallos transitorios.",
+      "relacion_modulos": [
+        "HERMES"
+      ]
+    },
+    {
+      "concepto": "Conectores Etapa 1",
+      "definicion": "4 conectores completamente implementados: monday_cloud (Monday.com), slack (mensajería), calendario_smm (Calendario de contenido), hermes_interno (base de datos interna).",
+      "relacion_modulos": [
+        "HERMES"
+      ]
+    },
+    {
+      "concepto": "PROMETEO Bridge",
+      "definicion": "Bridge que traduce recomendaciones del Director Autónomo PROMETEO en acciones HERMES. Función enqueueBriefActions() convierte alertas de fatiga publicitaria en tareas Monday.com.",
+      "relacion_modulos": [
+        "HERMES",
+        "PROMETEO"
+      ]
+    },
+    {
+      "concepto": "ATENA Bridge",
+      "definicion": "Bridge que convierte alertas SPC de ATENA (señales de descontrol de proceso) en acciones HERMES para notificación automática al equipo responsable.",
+      "relacion_modulos": [
+        "HERMES",
+        "ATENA"
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "H-1 — Conectores Monday.com y Slack + State Machine",
+      "resultado": "Primera ejecución de acción real en plataforma externa con aprobación Human-in-the-Loop",
+      "aprendizaje": "La UI de aprobación debe ser clara sobre qué acción se va a ejecutar y en qué plataforma"
+    },
+    {
+      "hito": "H-2 — PROMETEO Bridge",
+      "resultado": "El Director Autónomo puede encolar acciones en Monday.com y Slack automáticamente",
+      "aprendizaje": "El bridge debe manejar fallo gracioso si HERMES no está disponible"
+    },
+    {
+      "hito": "H-4 — ATENA Bridge",
+      "resultado": "Alertas SPC se convierten en acciones de notificación automática",
+      "aprendizaje": "La integración cross-engine fortalece el valor del ecosistema como sistema unificado"
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Qué es HERMES y cuál es su función?",
+    "¿Qué significa Human-in-the-Loop Mandatory?",
+    "¿Cuáles son los conectores de HERMES?",
+    "¿Cómo funciona la State Machine de acciones de HERMES?",
+    "¿Qué es el Forward-Compatible Schema?",
+    "¿Cuáles son los conectores de Etapa 2 planificados?",
+    "¿Cómo se integra HERMES con PROMETEO?",
+    "¿Cómo se integra HERMES con ATENA?",
+    "¿Cómo se integra HERMES con THEMIS?"
+  ],
+  "tags": [
+    "hermes",
+    "action-execution",
+    "human-in-the-loop",
+    "monday-com",
+    "slack",
+    "connectors",
+    "state-machine",
+    "generacion-2",
+    "fase-2",
+    "reporte-doctoral"
+  ],
+  "texto_embedding": "HERMES es la capa de ejecución de acciones de SOFIAA OS, el sistema nervioso motor del Olimpo. Principios: Human-in-the-Loop Mandatory (toda acción requiere aprobación explícita), Forward-Compatible Schema (Etapa 2 pre-definida), Fault-Tolerant (MAX_REINTENTOS=3). 4 conectores Etapa 1: Monday.com, Slack, Calendario SMM, HERMES Interno. State Machine: pending→approved→executing→completed/failed. PROMETEO Bridge y ATENA Bridge.",
+  "documento_original": "HERMES_Reporte_Doctoral.pdf",
+  "procesado_por": "sofiaa",
+  "fecha_procesamiento": "2026-07-27"
+}

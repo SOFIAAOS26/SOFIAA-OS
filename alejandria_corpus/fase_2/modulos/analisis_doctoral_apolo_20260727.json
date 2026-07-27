@@ -1,0 +1,108 @@
+{
+  "id": "analisis_doctoral_apolo_20260727",
+  "tipo": "analisis_doctoral",
+  "fecha": "2026-07-25",
+  "fase_corpus": "fase_2",
+  "titulo": "APOLO — Client Intelligence & Reporting Engine · Análisis Doctoral de Arquitectura y Diseño",
+  "resumen": "Análisis doctoral de APOLO, el motor de inteligencia de clientes y generación de reportes ejecutivos de SOFIAA OS. APOLO agrega datos de todos los engines del Olimpo en un único documento coherente. Pipeline de 4 fases: (1) agregación paralela de Firestore, (2) construcción de secciones con KPIs deterministas, (3) síntesis narrativa Groq, (4) evaluación ética THEMIS. Genera 6 tipos de reportes en PDF/DOCX. Diseñado en sprints AP-0 a AP-5 en julio 2026.",
+  "modulos_afectados": [
+    "APOLO",
+    "THEMIS",
+    "ORÁCULO",
+    "PROMETEO",
+    "ATENA",
+    "TEC BII",
+    "NEXO",
+    "HERMES",
+    "SOFIAA"
+  ],
+  "sprint_referencia": "AP-0 AP-1 AP-2 AP-3 AP-4 AP-5",
+  "version_sofiaa": "2.0",
+  "decisiones": [
+    {
+      "decision": "Pipeline de 4 fases con evaluación ética THEMIS antes de marcar reporte como 'listo'",
+      "contexto": "Los reportes ejecutivos para clientes deben cumplir políticas de gobernanza antes de distribuirse",
+      "alternativas_descartadas": [
+        "Distribución directa sin validación",
+        "Validación manual post-generación"
+      ],
+      "justificacion": "THEMIS gate garantiza que cada reporte cumple las políticas cognitivas del sistema antes de ser entregado",
+      "consecuencias": "Todos los reportes de APOLO tienen sello de aprobación ética inmutable en Firestore"
+    },
+    {
+      "decision": "APOLO es consumidor puro — no produce señales propias, solo integra",
+      "contexto": "Con múltiples engines operando en paralelo, la fragmentación cognitiva era el principal riesgo para los clientes",
+      "alternativas_descartadas": [
+        "Reportes por engine separados",
+        "Dashboard agregado sin narrativa"
+      ],
+      "justificacion": "Un único documento ejecutivo narrativo es más accionable que múltiples dashboards especializados",
+      "consecuencias": "APOLO ocupa el nivel más alto de la jerarquía informacional; es el único componente que consume todos los engines simultáneamente"
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "Pipeline APOLO de 4 Fases",
+      "definicion": "Fase 1: agregación paralela desde Firestore de hasta 5 engines. Fase 2: construcción de secciones con KPIs deterministas sin LLM. Fase 3: síntesis narrativa via Groq llama-3.3-70b-versatile. Fase 4: evaluación ética THEMIS.",
+      "relacion_modulos": [
+        "APOLO",
+        "THEMIS"
+      ]
+    },
+    {
+      "concepto": "6 Tipos de Reportes APOLO",
+      "definicion": "Resumen semanal, brief ejecutivo, rendimiento de campaña, calidad operacional, estado de proyectos y outlook estratégico. Exportables en PDF o DOCX nativos.",
+      "relacion_modulos": [
+        "APOLO"
+      ]
+    },
+    {
+      "concepto": "Color Amber Solar (#D97706)",
+      "definicion": "Color de marca de APOLO, derivado del Sol — símbolo de iluminación del Olimpo. Apolo es el dios que no miente y revela la verdad existente en los datos.",
+      "relacion_modulos": [
+        "APOLO"
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "AP-0 — Definición de arquitectura y schema de reporte",
+      "resultado": "Schema ReportData con 6 tipos de reporte y estructura de secciones",
+      "aprendizaje": "El schema debe capturar qué engines contribuyen a cada tipo de reporte"
+    },
+    {
+      "hito": "AP-3 — Síntesis narrativa con Groq",
+      "resultado": "Las secciones con KPIs deterministas se transforman en narrativa ejecutiva de calidad consultora",
+      "aprendizaje": "El LLM agrega valor máximo cuando los datos ya están pre-estructurados"
+    },
+    {
+      "hito": "AP-4 — Gate THEMIS para reportes",
+      "resultado": "Ningún reporte se marca como listo sin aprobación ética",
+      "aprendizaje": "La integración APOLO→THEMIS es el ejemplo más claro del principio THEMIS PRIMERO del Olimpo"
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Qué es APOLO y cuál es su función en el Olimpo?",
+    "¿Qué tipos de reportes genera APOLO?",
+    "¿Cómo funciona el pipeline de generación de reportes de APOLO?",
+    "¿Por qué APOLO requiere aprobación de THEMIS?",
+    "¿En qué formatos exporta APOLO los reportes?",
+    "¿Qué engines consume APOLO para generar sus reportes?",
+    "¿Cuál es la posición de APOLO en la jerarquía del Olimpo?"
+  ],
+  "tags": [
+    "apolo",
+    "reportes-ejecutivos",
+    "client-intelligence",
+    "themis-gate",
+    "agregacion-datos",
+    "pdf-docx",
+    "generacion-2",
+    "fase-2",
+    "analisis-doctoral"
+  ],
+  "texto_embedding": "APOLO es el motor de inteligencia de clientes de SOFIAA OS. Agrega datos de todos los engines (ORÁCULO, PROMETEO, ATENA, TEC Bii, NEXO) en reportes ejecutivos narrativos. Pipeline 4 fases: agregación paralela Firestore → KPIs deterministas → síntesis Groq → gate THEMIS. 6 tipos de reporte exportables en PDF/DOCX. Es el único engine que consume todos los demás simultáneamente. Color: Amber Solar #D97706. Sprints AP-0 a AP-5, julio 2026.",
+  "documento_original": "Analisis_Doctoral_APOLO.pdf",
+  "procesado_por": "sofiaa",
+  "fecha_procesamiento": "2026-07-27"
+}

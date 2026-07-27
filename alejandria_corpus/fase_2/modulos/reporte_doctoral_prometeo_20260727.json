@@ -1,0 +1,122 @@
+{
+  "id": "reporte_doctoral_prometeo_20260727",
+  "tipo": "reporte_doctoral",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_2",
+  "titulo": "PROMETEO — Growth Intelligence Engine v2.0 · CMO Cognitivo · Reporte Doctoral",
+  "resumen": "Análisis técnico integral de PROMETEO, el motor de inteligencia de crecimiento de SOFIAA OS. Diseñado como CMO Cognitivo que parte del objetivo de negocio, no de la campaña. 5 módulos: Goal Engine (árbol de decisiones estratégicas), Brand DNA (12 dimensiones, 12 arquetipos), Creative Memory (scoring predictivo de performance creativo), Creative Lab (generador Groq de variantes hook×CTA×oferta), Director Autónomo (brief ejecutivo diario con detección de fatiga). HERMES Bridge y CRON diario 08:00 UTC.",
+  "modulos_afectados": [
+    "PROMETEO",
+    "N.E.X.O.",
+    "HERMES",
+    "SOFIAA"
+  ],
+  "sprint_referencia": "P-0 P-1 P-2 P-3 P-4 P-5 P-6 P-7 P-8",
+  "version_sofiaa": "2.0",
+  "decisiones": [
+    {
+      "decision": "PROMETEO parte del objetivo de negocio, no de la campaña",
+      "contexto": "El marketing basado en campañas invierte la causalidad: se publica porque 'hay que publicar', no porque hay un objetivo estratégico",
+      "alternativas_descartadas": [
+        "Planificador de contenido",
+        "Gestor de calendarios SMM"
+      ],
+      "justificacion": "El Goal Engine evalúa presupuesto, inventario y capacidad operativa antes de elegir canal; la campaña emerge como consecuencia de la estrategia",
+      "consecuencias": "Reducción de gasto en marketing sin ROI; cada pieza de contenido tiene una justificación estratégica trazable"
+    },
+    {
+      "decision": "Brand DNA como perfil estructurado de 12 dimensiones publicado a N.E.X.O.",
+      "contexto": "SOFIAA necesitaba poder razonar sobre la identidad de marca de cada cliente desde su memoria a largo plazo",
+      "alternativas_descartadas": [
+        "Brand guidelines en texto libre",
+        "Perfil de marca sin estructura"
+      ],
+      "justificacion": "12 dimensiones estructuradas con 12 arquetipos permiten búsqueda semántica y razonamiento sobre identidad de marca",
+      "consecuencias": "SOFIAA puede responder '¿cómo hablaría esta marca sobre X?' desde N.E.X.O. sin consultar documentos externos"
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "Goal Engine",
+      "definicion": "Árbol de decisiones estratégicas para objetivos de marketing. Evalúa disponibilidad de presupuesto, inventario y capacidad operativa. Genera KPIs por objetivo y prioriza canales.",
+      "relacion_modulos": [
+        "PROMETEO"
+      ]
+    },
+    {
+      "concepto": "Brand DNA",
+      "definicion": "Perfil estructurado de personalidad de marca con 12 dimensiones (arquetipo, valores, tono, tabús, promesas, voz, colores, tipografía, etc.) y 12 arquetipos disponibles. Se publica como 6 nodos semánticos a N.E.X.O.",
+      "relacion_modulos": [
+        "PROMETEO",
+        "N.E.X.O."
+      ]
+    },
+    {
+      "concepto": "Director Autónomo",
+      "definicion": "Motor de brief ejecutivo diario que detecta fatiga publicitaria, analiza performance de creativos y genera recomendaciones priorizadas por urgencia. CRON diario a las 08:00 UTC.",
+      "relacion_modulos": [
+        "PROMETEO",
+        "HERMES"
+      ]
+    },
+    {
+      "concepto": "Creative Lab",
+      "definicion": "Generador de variantes creativas con Groq. Combina hook × CTA × oferta para generar múltiples variaciones de un creativo con scoring predictivo de performance.",
+      "relacion_modulos": [
+        "PROMETEO"
+      ]
+    },
+    {
+      "concepto": "HERMES Bridge de PROMETEO",
+      "definicion": "enqueueBriefActions() convierte las recomendaciones del Director Autónomo en acciones ejecutables en Monday.com y Slack a través de HERMES.",
+      "relacion_modulos": [
+        "PROMETEO",
+        "HERMES"
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "P-0 — Marketing Sofia reempaquetado como PROMETEO extension SEE",
+      "resultado": "Marketing Sofia se convierte en PROMETEO con manifest formal y sistema de tipos propio",
+      "aprendizaje": "El patrón SEE permite migrar módulos legacy sin reescritura del núcleo"
+    },
+    {
+      "hito": "P-5 — Director Autónomo con detección de fatiga",
+      "resultado": "PROMETEO genera briefs ejecutivos diarios con recomendaciones de pausa o escalada de presupuesto",
+      "aprendizaje": "La detección de fatiga publicitaria requiere al menos 7 días de datos históricos de performance"
+    },
+    {
+      "hito": "P-8 — CRON automático diario",
+      "resultado": "El Director Autónomo opera autónomamente sin intervención del usuario",
+      "aprendizaje": "El CRON procesa todos los workspaces del ecosistema en batch; la idempotencia es crítica"
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Qué es PROMETEO y cuál es su función?",
+    "¿Qué es el Goal Engine?",
+    "¿Qué es el Brand DNA y cuántas dimensiones tiene?",
+    "¿Qué es el Director Autónomo?",
+    "¿Cómo detecta PROMETEO la fatiga publicitaria?",
+    "¿Qué es el Creative Lab?",
+    "¿Cómo se integra PROMETEO con N.E.X.O.?",
+    "¿Cómo se integra PROMETEO con HERMES?",
+    "¿Cada cuándo corre el CRON del Director Autónomo?"
+  ],
+  "tags": [
+    "prometeo",
+    "growth-intelligence",
+    "cmo-cognitivo",
+    "brand-dna",
+    "goal-engine",
+    "director-autonomo",
+    "fatiga-publicitaria",
+    "hermes-bridge",
+    "fase-2",
+    "reporte-doctoral"
+  ],
+  "texto_embedding": "PROMETEO es el motor de Growth Intelligence de SOFIAA OS, CMO Cognitivo. Parte del objetivo de negocio, no de la campaña. 5 módulos: Goal Engine (árbol estratégico), Brand DNA (12 dimensiones/arquetipos, publica 6 nodos a N.E.X.O.), Creative Memory (scoring predictivo), Creative Lab (Groq variantes hook×CTA×oferta), Director Autónomo (brief diario + fatiga + HERMES Bridge). CRON 08:00 UTC. 9 sprints P-0 a P-8.",
+  "documento_original": "PROMETEO_Reporte_Doctoral.pdf",
+  "procesado_por": "sofiaa",
+  "fecha_procesamiento": "2026-07-27"
+}

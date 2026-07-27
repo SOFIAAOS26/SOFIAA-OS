@@ -1,0 +1,112 @@
+{
+  "id": "analisis_doctoral_oraculo_20260727",
+  "tipo": "analisis_doctoral",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_2",
+  "titulo": "ORÁCULO — Predictive Intelligence Engine · Análisis Doctoral v1.0",
+  "resumen": "Análisis doctoral de ORÁCULO, el motor de inteligencia predictiva de SOFIAA OS y séptimo dios del Olimpo (primero de Generación 2). ORÁCULO sintetiza señales de los 6 engines operacionales cada 6 horas mediante motor determinista sin LLM en el hot path, genera predicciones accionables priorizadas por severidad y horizonte temporal, y las persiste en Firestore. Sprint O-4 añade insights estratégicos cross-engine con Groq. Sprint O-5 automatiza con CRON.",
+  "modulos_afectados": [
+    "ORÁCULO",
+    "ATENA",
+    "TEC BII",
+    "PROMETEO",
+    "NEXO",
+    "HERMES",
+    "THEMIS",
+    "SOFIAA"
+  ],
+  "sprint_referencia": "O-1 O-2 O-3 O-4 O-5",
+  "version_sofiaa": "2.0",
+  "decisiones": [
+    {
+      "decision": "Motor de predicción completamente determinista — sin LLM en el hot path",
+      "contexto": "La predicción debe ser reproducible y auditable; el LLM introduce no-determinismo inaceptable en decisiones críticas",
+      "alternativas_descartadas": [
+        "Predicciones generadas por LLM",
+        "Motor probabilístico"
+      ],
+      "justificacion": "El motor de reglas determinista garantiza que la misma señal siempre produce la misma predicción; el LLM se reserva solo para insights narrativos cross-engine",
+      "consecuencias": "Predicciones auditables y reproducibles; Groq solo se usa en Sprint O-4 para síntesis narrativa"
+    },
+    {
+      "decision": "Scan cada 6 horas con CRON — meta-observador en lugar de más dashboards",
+      "contexto": "Con 6 engines operando, el volumen de datos superaba la capacidad de monitoreo manual",
+      "alternativas_descartadas": [
+        "Dashboards adicionales por engine",
+        "Polling manual del usuario"
+      ],
+      "justificacion": "ORÁCULO como meta-observador centraliza la vigilancia; el usuario recibe un único flujo de predicciones priorizadas",
+      "consecuencias": "El usuario no necesita revisar 6 sistemas — ORÁCULO ya lo hizo; integración natural con el chat SOFIAA"
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "OracleSignal",
+      "definicion": "Señal cruda emitida por un engine durante el scan. Contiene: engine, signalType, entityId, severity, data. Las señales se agrupan y deduplan antes de convertirse en predicciones.",
+      "relacion_modulos": [
+        "ORÁCULO"
+      ]
+    },
+    {
+      "concepto": "Flujo de 3 Etapas ORÁCULO",
+      "definicion": "Scan: scanAllEngines() en paralelo, target <500ms. Predict: generatePredictions() con motor de reglas + THEMIS gate. Insight: generateInsights() con Groq (único paso con LLM).",
+      "relacion_modulos": [
+        "ORÁCULO",
+        "THEMIS"
+      ]
+    },
+    {
+      "concepto": "OracleConfig en Firestore",
+      "definicion": "Configuración global de ORÁCULO en system/oraculo: qué engines están activos, umbrales numéricos por engine, intervalo de scan. Cache de 2 minutos; DEFAULT_ORACLE_CONFIG como fallback.",
+      "relacion_modulos": [
+        "ORÁCULO"
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "O-1 — Scanners ATENA y TEC Bii",
+      "resultado": "Señales de SPC descontrolado y proyectos críticos detectadas automáticamente",
+      "aprendizaje": "Los scanners deben ser tolerantes a datos incompletos para no interrumpir el ciclo"
+    },
+    {
+      "hito": "O-2 — Scanners PROMETEO, NEXO, HERMES, THEMIS + motor de pronósticos",
+      "resultado": "Cobertura completa de los 6 engines operacionales; motor de reglas determinista funcional",
+      "aprendizaje": "La deduplicación de predicciones activas es crítica para no saturar al usuario"
+    },
+    {
+      "hito": "O-4 — Insights estratégicos cross-engine con Groq",
+      "resultado": "ORÁCULO genera narrativa ejecutiva de patrones cruzados entre engines",
+      "aprendizaje": "El LLM agrega valor cuando ya tiene predicciones estructuradas como contexto"
+    },
+    {
+      "hito": "O-5 — CRON automático cada 6 horas",
+      "resultado": "ORÁCULO opera sin intervención humana; predicciones siempre actualizadas",
+      "aprendizaje": "El CRON en Vercel Hobby tiene límite de 60s por ejecución — el scan paralelo es indispensable"
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Qué es ORÁCULO y cuál es su función?",
+    "¿Cómo funciona el motor de predicciones de ORÁCULO?",
+    "¿Con qué frecuencia escanea ORÁCULO los engines?",
+    "¿Qué es una OracleSignal?",
+    "¿Cómo se configuran los umbrales de ORÁCULO?",
+    "¿Cuándo usa ORÁCULO el LLM (Groq)?",
+    "¿Cómo se integra ORÁCULO con THEMIS?",
+    "¿Qué signals detecta ORÁCULO por engine?"
+  ],
+  "tags": [
+    "oraculo",
+    "predictive-intelligence",
+    "motor-determinista",
+    "cron",
+    "signals",
+    "generacion-2",
+    "fase-2",
+    "analisis-doctoral"
+  ],
+  "texto_embedding": "ORÁCULO es el motor predictivo de SOFIAA OS, séptimo dios del Olimpo y primero de Generación 2. Escanea señales de 6 engines cada 6 horas con motor determinista (sin LLM en hot path). Flujo: Scan (Promise.all, <500ms) → Predict (motor de reglas + THEMIS gate) → Insight (Groq, único paso LLM). Predice riesgos cruzados y los presenta antes de que el usuario pregunte. CRON automático Sprint O-5.",
+  "documento_original": "Analisis_Doctoral_ORACULO.pdf",
+  "procesado_por": "sofiaa",
+  "fecha_procesamiento": "2026-07-27"
+}

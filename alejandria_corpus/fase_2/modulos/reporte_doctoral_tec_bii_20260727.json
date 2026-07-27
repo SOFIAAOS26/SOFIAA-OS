@@ -1,0 +1,122 @@
+{
+  "id": "reporte_doctoral_tec_bii_20260727",
+  "tipo": "reporte_doctoral",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_2",
+  "titulo": "TEC BII — Inteligencia Cognitiva Operacional · Reporte Doctoral v2.0",
+  "resumen": "Análisis doctoral de TEC Bii, el módulo de inteligencia cognitiva operacional de SOFIAA OS para el Área de Producción Audiovisual del Tecnológico de Monterrey Campus Monterrey. Opera bajo el principio de Tier 4 Intelligence: toda entidad ingresada (proyectos, briefs, empleados, proveedores, clientes, evaluaciones) se publica automáticamente al grafo N.E.X.O., recibe perfil cognitivo y se conecta semánticamente. 4 motores autónomos: Cognitive Publisher, Cross-Domain Reasoning Engine, N.O.R.A. Reflection Engine, Refinement CRON.",
+  "modulos_afectados": [
+    "TEC BII",
+    "N.E.X.O.",
+    "N.O.R.A.",
+    "SOFIAA"
+  ],
+  "sprint_referencia": "T2-0 T2-1 T2-2 T2-3 T2-4 T2-5 T2-6 Q-1 Q-2 Q-3",
+  "version_sofiaa": "2.0",
+  "decisiones": [
+    {
+      "decision": "Tier 4 Intelligence — toda entidad se publica automáticamente al grafo cognitivo",
+      "contexto": "Un sistema de gestión de proyectos convencional no puede razonar sobre patrones emergentes entre entidades",
+      "alternativas_descartadas": [
+        "Base de datos relacional estándar",
+        "Dashboard de proyectos sin IA"
+      ],
+      "justificacion": "La publicación automática al grafo N.E.X.O. permite al sistema detectar conexiones semánticas entre proyectos, empleados y briefs que ningún dashboard estático podría capturar",
+      "consecuencias": "TEC Bii razona sobre el Área de Producción Audiovisual del TEC como sistema cognitivo, no como base de datos"
+    },
+    {
+      "decision": "N.O.R.A. Reflection Engine periódico para TEC Bii",
+      "contexto": "El director del área necesitaba reflexiones estratégicas sobre el estado operacional sin revisar cada entidad manualmente",
+      "alternativas_descartadas": [
+        "Reportes estáticos periódicos",
+        "Alertas individuales por entidad"
+      ],
+      "justificacion": "La reflexión narrativa con patrones detectados es más accionable que reportes de métricas individuales",
+      "consecuencias": "El director recibe reflexiones operacionales periódicas con hipótesis cruzadas y recomendaciones estratégicas"
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "Cognitive Publisher",
+      "definicion": "Motor que toma entidades TEC Bii (proyectos, briefs, empleados) y las publica como NexoNodes al grafo N.E.X.O. con perfil cognitivo generado por Groq + embeddings Gemini.",
+      "relacion_modulos": [
+        "TEC BII",
+        "N.E.X.O."
+      ]
+    },
+    {
+      "concepto": "Cross-Domain Reasoning Engine",
+      "definicion": "Detecta pares semánticos entre nodos N.E.X.O. del usuario y entidades TEC Bii usando similitud coseno. Conecta conocimiento personal del usuario con datos operacionales del área.",
+      "relacion_modulos": [
+        "TEC BII",
+        "N.E.X.O."
+      ]
+    },
+    {
+      "concepto": "Tier 4 Intelligence",
+      "definicion": "Principio de TEC Bii: toda entidad operacional tiene perfil cognitivo (importancia, riesgo, hipótesis) y se conecta semánticamente con el grafo. Es el nivel más alto de inteligencia operacional aplicada.",
+      "relacion_modulos": [
+        "TEC BII",
+        "N.E.X.O."
+      ]
+    },
+    {
+      "concepto": "Refinement CRON",
+      "definicion": "Orquestación batch diaria que re-procesa entidades TEC Bii, actualiza embeddings, detecta nuevas conexiones cross-domain y ejecuta el Reflection Engine de N.O.R.A. Idempotente y tolerante a fallos.",
+      "relacion_modulos": [
+        "TEC BII",
+        "N.O.R.A."
+      ]
+    },
+    {
+      "concepto": "5 Extension Tools TEC Bii v2",
+      "definicion": "Herramientas expuestas al chat SOFIAA para TEC Bii: getProyectos, getBriefs, getEmpleados, getInsightsOperacionales, getRiesgosPredictivos. CRUD sobre Firestore con Capability Gateway.",
+      "relacion_modulos": [
+        "TEC BII",
+        "SOFIAA"
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "Sprint T2-0 — Arquitectura base TEC Bii v2",
+      "resultado": "Schema cognitivo completo con Cognitive Publisher y Cross-Domain Engine funcionales",
+      "aprendizaje": "El Cognitive Publisher debe ser tolerante a entidades con datos incompletos"
+    },
+    {
+      "hito": "Sprint T2-6 — N.O.R.A. Reflection Engine",
+      "resultado": "TEC Bii genera reflexiones operacionales narrativas periódicas",
+      "aprendizaje": "La reflexión en JSON mode de Groq permite estructurar el output para uso programático"
+    },
+    {
+      "hito": "Sprints Q-1/Q-2/Q-3 — Refinamiento y extensiones",
+      "resultado": "TEC Bii es el módulo con más sprints de refinamiento del sistema; la complejidad del dominio institucional lo requiere",
+      "aprendizaje": "Los módulos para clientes institucionales requieren significativamente más iteración que los módulos internos"
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Qué es TEC Bii y para qué cliente fue construido?",
+    "¿Qué es el Tier 4 Intelligence?",
+    "¿Qué es el Cognitive Publisher de TEC Bii?",
+    "¿Qué es el Cross-Domain Reasoning Engine?",
+    "¿Cómo funciona el Refinement CRON de TEC Bii?",
+    "¿Qué herramientas extension tools tiene TEC Bii?",
+    "¿Cómo se integra TEC Bii con N.E.X.O.?",
+    "¿Cómo funciona el N.O.R.A. Reflection Engine para TEC Bii?"
+  ],
+  "tags": [
+    "tec-bii",
+    "tec-monterrey",
+    "cognicion-distribuida",
+    "tier-4-intelligence",
+    "cognitive-publisher",
+    "cross-domain",
+    "nora-reflection",
+    "fase-2",
+    "reporte-doctoral"
+  ],
+  "texto_embedding": "TEC Bii es el módulo de inteligencia cognitiva operacional de SOFIAA OS para el Área de Producción Audiovisual del TEC de Monterrey. Principio: Tier 4 Intelligence — toda entidad (proyectos, briefs, empleados) se publica al grafo N.E.X.O. con perfil cognitivo. 4 motores: Cognitive Publisher (Groq+Gemini), Cross-Domain Reasoning (coseno), N.O.R.A. Reflection (reflexiones periódicas), Refinement CRON (batch diario). 5 extension tools v2.",
+  "documento_original": "TEC_BII_Reporte_Doctoral.pdf",
+  "procesado_por": "sofiaa",
+  "fecha_procesamiento": "2026-07-27"
+}

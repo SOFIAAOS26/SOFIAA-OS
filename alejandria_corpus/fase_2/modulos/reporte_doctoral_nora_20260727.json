@@ -1,0 +1,112 @@
+{
+  "id": "reporte_doctoral_nora_20260727",
+  "tipo": "reporte_doctoral",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_2",
+  "titulo": "N.O.R.A. — Neural Observer & Reasoning Architecture · Análisis Doctoral del Sistema de Observación Cognitiva",
+  "resumen": "Análisis doctoral de N.O.R.A., la capa de observación, razonamiento y autoconciencia de SOFIAA OS. N.O.R.A. es un sistema distribuido de sensores cognitivos en dos dimensiones: Telemetría (Sprints I-0, F-3, H-3 — registra latencia, tipo de tarea, proveedor LLM, capa de caché) y Cognitiva (Sprints M-3, D-D — construye modelo mental del usuario: profundidad preferida, formalidad, afinidades temáticas). También opera como motor de reflexión institucional para TEC Bii (Sprint T2-6).",
+  "modulos_afectados": [
+    "N.O.R.A.",
+    "SOFIAA",
+    "TEC BII"
+  ],
+  "sprint_referencia": "I-0 F-3 H-2 H-3 M-3 D-D G-1 G-2 G-3 T2-6",
+  "version_sofiaa": "2.0",
+  "decisiones": [
+    {
+      "decision": "N.O.R.A. como sistema distribuido, no módulo único",
+      "contexto": "La observación del sistema requería sensores en múltiples capas sin un único punto de fallo",
+      "alternativas_descartadas": [
+        "Módulo de observación centralizado",
+        "Logs de plataforma externos"
+      ],
+      "justificacion": "Los sensores distribuidos permiten observar el pipeline completo sin overhead en el camino crítico",
+      "consecuencias": "N.O.R.A. puede extenderse a nuevas dimensiones de observación sin rediseñar el sistema"
+    },
+    {
+      "decision": "CognitiveProfile del usuario actualizable sesión a sesión",
+      "contexto": "El perfil cognitivo del usuario evoluciona; un perfil estático se vuelve obsoleto",
+      "alternativas_descartadas": [
+        "Perfil fijo al onboarding",
+        "Sin perfil cognitivo"
+      ],
+      "justificacion": "La actualización incremental del perfil permite a SOFIAA adaptarse a cambios en las preferencias del usuario",
+      "consecuencias": "SOFIAA mejora su adaptación al usuario con cada sesión sin intervención explícita"
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "Pipeline Observer",
+      "definicion": "Sensor que registra cada request procesado por el pipeline de SOFIAA. Campos: id, timestamp, messageSnippet, taskType, provider, confidence, cacheLayer, latencyMs. Implementado en src/core/pipeline-observer.ts.",
+      "relacion_modulos": [
+        "N.O.R.A.",
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "CognitiveProfile",
+      "definicion": "Modelo mental del usuario que evoluciona sesión a sesión. Captura: preferencia de profundidad, formalidad, afinidades temáticas. Se usa para personalizar el system prompt de SOFIAA.",
+      "relacion_modulos": [
+        "N.O.R.A.",
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "N.O.R.A. TEC Bii Reflection Engine",
+      "definicion": "Encarnación de N.O.R.A. para TEC Bii (Sprint T2-6). Analiza proyectos, empleados y briefs, generando reflexiones narrativas con patrones detectados y recomendaciones estratégicas. Almacenado en users/{uid}/tec_bii_reflexiones.",
+      "relacion_modulos": [
+        "N.O.R.A.",
+        "TEC BII"
+      ]
+    },
+    {
+      "concepto": "NoraPanel.tsx",
+      "definicion": "Panel de telemetría administrativa (Sprint I-0). Permite al administrador observar en tiempo real el comportamiento del pipeline para todos los usuarios. Activado con frase secreta 'Fiat lux'.",
+      "relacion_modulos": [
+        "N.O.R.A."
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "Sprint I-0 — NoraPanel: Observer Panel admin",
+      "resultado": "Telemetría en tiempo real del pipeline disponible para el administrador",
+      "aprendizaje": "La frase secreta de activación es un patrón válido para herramientas de administración no expuestas públicamente"
+    },
+    {
+      "hito": "Sprint M-3 — CognitiveProfile del usuario",
+      "resultado": "SOFIAA adapta su comportamiento basándose en el perfil cognitivo actualizado sesión a sesión",
+      "aprendizaje": "La metacognición aplicada a sistemas de IA mejora la experiencia sin intervención del usuario"
+    },
+    {
+      "hito": "Sprint T2-6 — N.O.R.A. TEC Bii Reflection Engine",
+      "resultado": "N.O.R.A. extiende su observación al dominio institucional de TEC Bii con reflexiones periódicas",
+      "aprendizaje": "El patrón de Reflection Engine es reutilizable en cualquier dominio con datos operacionales"
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Qué es N.O.R.A. y cuál es su función?",
+    "¿Cuáles son las dos dimensiones de N.O.R.A.?",
+    "¿Qué es el Pipeline Observer?",
+    "¿Qué es el CognitiveProfile?",
+    "¿Cómo funciona el NoraPanel?",
+    "¿Cómo se activa el NoraPanel?",
+    "¿Qué es el N.O.R.A. TEC Bii Reflection Engine?",
+    "¿Cómo se actualiza el CognitiveProfile del usuario?"
+  ],
+  "tags": [
+    "nora",
+    "observacion-cognitiva",
+    "telemetria",
+    "cognitive-profile",
+    "pipeline-observer",
+    "metacognicion",
+    "tec-bii",
+    "fase-2",
+    "reporte-doctoral"
+  ],
+  "texto_embedding": "N.O.R.A. es el sistema distribuido de observación cognitiva de SOFIAA OS. Dos dimensiones: Telemetría (Pipeline Observer — latencia, taskType, provider, cacheLayer) y Cognitiva (CognitiveProfile — profundidad, formalidad, afinidades, actualizado sesión a sesión). NoraPanel.tsx: admin con frase 'Fiat lux'. Sprint T2-6: Reflection Engine para TEC Bii genera reflexiones operacionales periódicas. Principio: metacognición aplicada a IA.",
+  "documento_original": "NORA_Reporte_Doctoral.pdf",
+  "procesado_por": "sofiaa",
+  "fecha_procesamiento": "2026-07-27"
+}

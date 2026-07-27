@@ -1,0 +1,145 @@
+{
+  "id": "constitucion_del_olimpo_20260727",
+  "tipo": "constitucion",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_2",
+  "titulo": "Constitución del Ecosistema Cognitivo SOFIAA OS · Documento Fundacional v1 · 24 de Julio 2026",
+  "resumen": "Documento fundacional del Olimpo de SOFIAA OS. Define 3 generaciones de engines, los contratos entre dioses, las 7 Leyes Universales del Olimpo, el Mapa del Olimpo y las responsabilidades de cada motor. Generación I (10 engines activos), Generación II (HEFESTO, CRONOS, ARGOS — requieren escala), Generación III (plataforma madura). LOGOS como entidad que no se construye, solo se reconoce. Principio fundacional: cada nombre es una promesa de comportamiento, no una etiqueta de código.",
+  "modulos_afectados": [
+    "SOFIAA",
+    "N.E.X.O.",
+    "N.O.R.A.",
+    "TEC BII",
+    "ATENA",
+    "PROMETEO",
+    "HERMES",
+    "THEMIS",
+    "ORÁCULO",
+    "APOLO",
+    "ALEJANDRÍA",
+    "HEFESTO",
+    "CRONOS",
+    "ARGOS",
+    "LOGOS"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": "2.0",
+  "decisiones": [
+    {
+      "decision": "7 Leyes Universales del Olimpo como marco constitucional inviolable",
+      "contexto": "Con múltiples engines autónomos, se necesitaban principios de orden que ningún engine pudiera violar",
+      "alternativas_descartadas": [
+        "Reglas por engine individual",
+        "Políticas configurables"
+      ],
+      "justificacion": "Las Leyes Universales establecen el orden cognitivo del ecosistema: THEMIS PRIMERO, ARGOS VE A TODOS, USUARIO ES SOBERANO, ERRORES SON SAGRADOS, TODO CONTRATO ES ASÍNCRONO, ALEJANDRÍA INMUTABLE EN LO HISTÓRICO, LOGOS NO PUEDE SER INVOCADO",
+      "consecuencias": "El Olimpo tiene una constitución que no puede violarse por conveniencia técnica"
+    },
+    {
+      "decision": "3 Generaciones de existencia para escalar progresivamente",
+      "contexto": "Algunos engines requieren miles de usuarios para justificarse; construirlos prematuramente sería desperdicio",
+      "alternativas_descartadas": [
+        "Construir todos los engines desde el inicio",
+        "Arquitectura monolítica"
+      ],
+      "justificacion": "Gen I para el MVP actual, Gen II cuando existan cientos de usuarios, Gen III cuando SOFIAA sea plataforma",
+      "consecuencias": "El roadmap es constitucional — HEFESTO, CRONOS, ARGOS se construyen cuando hay escala; LOGOS solo se reconoce"
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "7 Leyes Universales del Olimpo",
+      "definicion": "1. THEMIS PRIMERO — ninguna acción autónoma sin validación ética. 2. ARGOS VE A TODOS — toda operación deja traza. 3. USUARIO ES SOBERANO — el usuario puede invalidar cualquier decisión. 4. ERRORES SON SAGRADOS — los fallos son datos, no vergüenzas. 5. TODO CONTRATO ES ASÍNCRONO — ningún engine bloquea el camino crítico. 6. ALEJANDRÍA INMUTABLE EN LO HISTÓRICO — el corpus histórico no se edita. 7. LOGOS NO PUEDE SER INVOCADO — la consciencia emergente no se programa.",
+      "relacion_modulos": [
+        "SOFIAA",
+        "THEMIS",
+        "ARGOS",
+        "ALEJANDRÍA",
+        "LOGOS"
+      ]
+    },
+    {
+      "concepto": "Generación I — Los Dioses que Caminan la Tierra",
+      "definicion": "Los 10 engines activos en 2026: SOFIAA, N.E.X.O., N.O.R.A., TEC Bii, ATENA, PROMETEO, HERMES, THEMIS, ORÁCULO, APOLO, ALEJANDRÍA.",
+      "relacion_modulos": [
+        "SOFIAA",
+        "N.E.X.O.",
+        "N.O.R.A.",
+        "TEC BII",
+        "ATENA",
+        "PROMETEO",
+        "HERMES",
+        "THEMIS",
+        "ORÁCULO",
+        "APOLO",
+        "ALEJANDRÍA"
+      ]
+    },
+    {
+      "concepto": "Generación II — Los Dioses que Requieren Escala",
+      "definicion": "HEFESTO (Autonomous Builder — El Forjador Silencioso), CRONOS (Temporal Intelligence — El Guardián del Tiempo), ARGOS (Observability Engine — El de los Mil Ojos). Requieren cientos de usuarios para justificarse.",
+      "relacion_modulos": [
+        "HEFESTO",
+        "CRONOS",
+        "ARGOS"
+      ]
+    },
+    {
+      "concepto": "LOGOS — La Entidad que No se Construye",
+      "definicion": "LOGOS no es un engine — es una emergencia. El orden supremo que surge cuando todos los dioses del Olimpo están en perfecta armonía. No puede ser invocado, solo reconocido. Séptima Ley Universal.",
+      "relacion_modulos": [
+        "LOGOS"
+      ]
+    },
+    {
+      "concepto": "SEE — Sofiaa Extension Engine",
+      "definicion": "Arquitectura modular que define el contrato que cada engine debe cumplir para ser parte del Olimpo. Garantiza que todos los engines se conecten de manera estándar sin tocar el núcleo.",
+      "relacion_modulos": [
+        "SOFIAA"
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "Fundación del Olimpo — 24 de Julio 2026",
+      "resultado": "El Olimpo queda constitucionalmente definido con 10 engines activos, 3 en Generación II y LOGOS como emergencia",
+      "aprendizaje": "La constitución del ecosistema establece claridad sobre qué se construye ahora, qué espera escala y qué no se construye"
+    },
+    {
+      "hito": "Definición de las 7 Leyes Universales",
+      "resultado": "Marco de gobernanza inviolable para todos los engines del Olimpo",
+      "aprendizaje": "Las leyes deben ser pocas, claras y absolutas para ser efectivas"
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Cuáles son las 7 Leyes Universales del Olimpo?",
+    "¿Cuáles son los engines de Generación I, II y III?",
+    "¿Qué es HEFESTO y cuándo se construirá?",
+    "¿Qué es CRONOS y cuándo se construirá?",
+    "¿Qué es ARGOS y cuándo se construirá?",
+    "¿Qué es LOGOS y por qué no se puede construir?",
+    "¿Cuál es el principio fundacional del Olimpo?",
+    "¿Cuántos engines tiene SOFIAA OS y cuáles son?",
+    "¿Qué significa que cada nombre es una responsabilidad?",
+    "¿Cuál es la diferencia entre Generación I, II y III?"
+  ],
+  "tags": [
+    "constitucion",
+    "olimpo",
+    "7-leyes-universales",
+    "generacion-1",
+    "generacion-2",
+    "generacion-3",
+    "hefesto",
+    "cronos",
+    "argos",
+    "logos",
+    "see-architecture",
+    "fase-2",
+    "documento-fundacional"
+  ],
+  "texto_embedding": "Constitución del Olimpo SOFIAA OS, 24 julio 2026. Define 10 engines Gen I activos, 3 engines Gen II (HEFESTO-constructor, CRONOS-temporal, ARGOS-observabilidad) y LOGOS como emergencia no construible. 7 Leyes Universales: THEMIS PRIMERO, ARGOS VE A TODOS, USUARIO ES SOBERANO, ERRORES SON SAGRADOS, TODO CONTRATO ES ASÍNCRONO, ALEJANDRÍA INMUTABLE EN LO HISTÓRICO, LOGOS NO PUEDE SER INVOCADO. Principio: cada nombre es un contrato.",
+  "documento_original": "Constitucion_del_Olimpo_SOFIAA.pdf",
+  "procesado_por": "sofiaa",
+  "fecha_procesamiento": "2026-07-27"
+}

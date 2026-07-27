@@ -1,0 +1,122 @@
+{
+  "id": "reporte_doctoral_nexo_20260727",
+  "tipo": "reporte_doctoral",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_2",
+  "titulo": "N.E.X.O. — Nexus Extension de Conocimiento y Operaciones · Reporte Doctoral v2.0",
+  "resumen": "Análisis integral de N.E.X.O., la capa de memoria a largo plazo de SOFIAA OS. N.E.X.O. convierte lo que el usuario ve, lee y procesa en un grafo de experiencia semántica con decay orgánico. 7 motores especializados: Ingest Pipeline (Groq LLM classifier), Decay Engine (λ=ln(2)/t½), Context Injection (inyección en system prompt), Reflection Engine (insights automáticos), PDF Library, Attention Engine (refuerzo por uso), Semantic Retrieval (coseno*0.65 + peso*0.35). Nodo nuevo: peso 0.60; eliminación: <0.05.",
+  "modulos_afectados": [
+    "N.E.X.O.",
+    "SOFIAA",
+    "TEC BII",
+    "PROMETEO",
+    "ALEJANDRÍA"
+  ],
+  "sprint_referencia": "N-0 N-2 N-3 N-4 M-0 M-1 M-2 M-4 M-4B",
+  "version_sofiaa": "2.0",
+  "decisiones": [
+    {
+      "decision": "Decay orgánico exponencial — el sistema olvida como la memoria humana",
+      "contexto": "El almacenamiento infinito degrada la relevancia del sistema con el tiempo; la memoria humana olvida selectivamente",
+      "alternativas_descartadas": [
+        "Retención permanente de todos los nodos",
+        "Borrado basado en fecha fija"
+      ],
+      "justificacion": "El decay exponencial λ=ln(2)/t½ por categoría modela el olvido natural: los nodos poco usados desaparecen, los frecuentes se refuerzan",
+      "consecuencias": "N.E.X.O. se mantiene relevante y eficiente; el grafo crece con el usuario y olvida lo irrelevante"
+    },
+    {
+      "decision": "Semantic Retrieval: ranking híbrido coseno*0.65 + peso*0.35",
+      "contexto": "El solo coseno semántico no captura la importancia acumulada del nodo a lo largo del tiempo",
+      "alternativas_descartadas": [
+        "Solo coseno semántico",
+        "Solo peso (frecuencia)"
+      ],
+      "justificacion": "El peso acumulado por uso refleja la relevancia personal del nodo para este usuario específico",
+      "consecuencias": "Retrieval personalizado: el mismo query retorna resultados diferentes según el historial de uso del usuario"
+    }
+  ],
+  "conceptos_clave": [
+    {
+      "concepto": "NexoNode",
+      "definicion": "Unidad fundamental de N.E.X.O. Representa un fragmento de conocimiento del usuario: página web, restaurante, producto, artículo o insight. Campos core: id, titulo, resumen, tags, embedding, peso, categoria, timestamp, fuente.",
+      "relacion_modulos": [
+        "N.E.X.O."
+      ]
+    },
+    {
+      "concepto": "Decay Engine",
+      "definicion": "Motor de olvido adaptativo. Aplica decaimiento exponencial λ=ln(2)/t½ según la categoría del nodo. Corre en CRON diario a las 3 AM. Nodos por debajo de peso 0.05 se eliminan permanentemente.",
+      "relacion_modulos": [
+        "N.E.X.O."
+      ]
+    },
+    {
+      "concepto": "Reflection Engine (M-0)",
+      "definicion": "Genera insights cognitivos automáticos desde patrones del grafo. Detecta conexiones entre nodos que el usuario no había explicitado y las surfacéa como reflexiones en el chat.",
+      "relacion_modulos": [
+        "N.E.X.O.",
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "Attention Engine (M-2)",
+      "definicion": "Refuerza los nodos que SOFIAA referencia en conversación. Cada vez que un nodo es citado en el chat, su peso aumenta +0.03 via waitUntil() post-stream.",
+      "relacion_modulos": [
+        "N.E.X.O.",
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "Brand DNA Publisher",
+      "definicion": "Publica el Brand DNA de PROMETEO al grafo N.E.X.O. como 6 nodos semánticos: arquetipo, valores, tono, tabús, promesas, voz. Permite a SOFIAA razonar sobre identidad de marca desde memoria.",
+      "relacion_modulos": [
+        "N.E.X.O.",
+        "PROMETEO"
+      ]
+    }
+  ],
+  "hitos": [
+    {
+      "hito": "N-2 — Ingest Pipeline con Groq LLM Classifier",
+      "resultado": "El contenido web se clasifica y estructura automáticamente en NexoNodes semánticos",
+      "aprendizaje": "La clasificación LLM de tipo de contenido es crítica para el decay apropiado"
+    },
+    {
+      "hito": "N-3 — Decay Engine con CRON",
+      "resultado": "El grafo se mantiene fresco automáticamente sin intervención del usuario",
+      "aprendizaje": "El CRON de decay debe ser idempotente para tolerar re-ejecuciones"
+    },
+    {
+      "hito": "M-4 — Semantic Retrieval con ranking híbrido",
+      "resultado": "El retrieval combina relevancia semántica con relevancia personal",
+      "aprendizaje": "El peso 0.65/0.35 (coseno/peso) puede ajustarse por usuario en versiones futuras"
+    }
+  ],
+  "preguntas_que_responde": [
+    "¿Qué es N.E.X.O. y cuál es su función?",
+    "¿Qué es un NexoNode?",
+    "¿Cómo funciona el Decay Engine de N.E.X.O.?",
+    "¿Cómo se calcula el peso de un nodo en N.E.X.O.?",
+    "¿Cuándo se elimina un nodo de N.E.X.O.?",
+    "¿Cómo funciona el Semantic Retrieval de N.E.X.O.?",
+    "¿Qué es el Reflection Engine?",
+    "¿Cómo funciona el Attention Engine?",
+    "¿Cómo se publica el Brand DNA de PROMETEO en N.E.X.O.?"
+  ],
+  "tags": [
+    "nexo",
+    "memoria-largo-plazo",
+    "decay-organico",
+    "knowledge-graph",
+    "semantic-retrieval",
+    "embeddings",
+    "groq",
+    "fase-2",
+    "reporte-doctoral"
+  ],
+  "texto_embedding": "N.E.X.O. es la capa de memoria a largo plazo de SOFIAA OS. Construye grafo de experiencia semántica con decay orgánico exponencial λ=ln(2)/t½. 7 motores: Ingest Pipeline (Groq classifier), Decay Engine (CRON 3AM), Context Injection, Reflection Engine, PDF Library, Attention Engine (+0.03 por uso), Semantic Retrieval (coseno*0.65+peso*0.35). Peso inicial: 0.60; eliminación: <0.05. Brand DNA Publisher integra con PROMETEO.",
+  "documento_original": "NEXO_Reporte_Doctoral.pdf",
+  "procesado_por": "sofiaa",
+  "fecha_procesamiento": "2026-07-27"
+}

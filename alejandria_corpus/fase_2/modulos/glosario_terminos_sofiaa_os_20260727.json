@@ -1,0 +1,103 @@
+{
+  "id": "glosario_terminos_sofiaa_os_20260727",
+  "tipo": "glosario",
+  "fecha": "2026-07-24",
+  "fase_corpus": "fase_2",
+  "titulo": "Glosario de Términos de SOFIAA OS — Vocabulario del Olimpo",
+  "resumen": "Glosario accesible de todos los términos técnicos del ecosistema SOFIAA OS organizado en 5 secciones: (1) Engines y Arquitectura (Engine, Olimpo, SOFIAA OS, SEE, Capability Gateway, Agent Runtime, Firestore), (2) Sprints, Versiones y Metodología (Sprint, Generación, CI/CD, CRON, Deployable), (3) Términos de IA y Datos (LLM, Embeddings, HybridScore, Decay Orgánico, Corpus, System Prompt), (4) Módulos y Engines específicos (NEXO, NORA, PROMETEO, ATENA, HERMES, THEMIS, ORÁCULO, APOLO, ALEJANDRÍA), (5) Seguridad y Acceso (Firebase Authentication, API Key, Edge Function).",
+  "modulos_afectados": [
+    "SOFIAA",
+    "N.E.X.O.",
+    "N.O.R.A.",
+    "TEC BII",
+    "ATENA",
+    "PROMETEO",
+    "HERMES",
+    "THEMIS",
+    "ORÁCULO",
+    "APOLO",
+    "ALEJANDRÍA"
+  ],
+  "sprint_referencia": null,
+  "version_sofiaa": "2.0",
+  "decisiones": [],
+  "conceptos_clave": [
+    {
+      "concepto": "Engine (Motor)",
+      "definicion": "Departamento especializado dentro de SOFIAA OS. Cada engine tiene responsabilidad única. Juntos forman el Olimpo.",
+      "relacion_modulos": [
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "SEE — Sofiaa Extension Engine",
+      "definicion": "Contrato arquitectónico que todos los engines deben cumplir para integrarse al sistema. Garantiza estandarización sin tocar el núcleo.",
+      "relacion_modulos": [
+        "SOFIAA"
+      ]
+    },
+    {
+      "concepto": "HybridScore",
+      "definicion": "Sistema de puntuación combinada: similitud coseno matemática + importancia temporal acumulada. Determina qué tan relevante es un conocimiento en N.E.X.O. y ALEJANDRÍA.",
+      "relacion_modulos": [
+        "N.E.X.O.",
+        "ALEJANDRÍA"
+      ]
+    },
+    {
+      "concepto": "Decay Orgánico",
+      "definicion": "Los conocimientos no usados pierden relevancia con el tiempo siguiendo la fórmula e^(-lambda * t). Nodo nuevo entra con peso 0.60; nodos bajo 0.05 se eliminan permanentemente.",
+      "relacion_modulos": [
+        "N.E.X.O."
+      ]
+    },
+    {
+      "concepto": "CRON",
+      "definicion": "Programador automático de tareas. Ejecuta operaciones en horarios fijos sin intervención humana. SOFIAA OS tiene 3 CRONs diarios y 2 semanales.",
+      "relacion_modulos": [
+        "SOFIAA",
+        "N.E.X.O.",
+        "PROMETEO",
+        "ORÁCULO"
+      ]
+    },
+    {
+      "concepto": "System Prompt",
+      "definicion": "Instrucciones que se dan a la IA al inicio de cada conversación para establecer rol, personalidad e información de contexto. ALEJANDRÍA, N.E.X.O. y N.O.R.A. inyectan contexto en el system prompt.",
+      "relacion_modulos": [
+        "SOFIAA",
+        "ALEJANDRÍA",
+        "N.E.X.O.",
+        "N.O.R.A."
+      ]
+    }
+  ],
+  "hitos": [],
+  "preguntas_que_responde": [
+    "¿Qué significa Engine en SOFIAA OS?",
+    "¿Qué es el Olimpo?",
+    "¿Qué es SEE (Sofiaa Extension Engine)?",
+    "¿Qué son los Embeddings?",
+    "¿Qué es el HybridScore?",
+    "¿Qué es el Decay Orgánico?",
+    "¿Qué es un CRON?",
+    "¿Qué es el System Prompt?",
+    "¿Qué es Firebase Authentication?",
+    "¿Qué es un Sprint?",
+    "¿Qué significa Generación en SOFIAA OS?"
+  ],
+  "tags": [
+    "glosario",
+    "vocabulario",
+    "terminos",
+    "olimpo",
+    "sofiaa-os",
+    "accesible",
+    "fase-2",
+    "referencia"
+  ],
+  "texto_embedding": "Glosario de términos de SOFIAA OS. Define Engine (departamento especializado), Olimpo (conjunto de todos los engines), SEE (contrato arquitectónico), Embeddings (vectores de significado), HybridScore (coseno + peso temporal), Decay Orgánico (e^-lambda*t), CRON (automatización), System Prompt, Firebase Authentication, Sprint, Generación. Organizado en 5 secciones para audiencia no técnica.",
+  "documento_original": "Glosario de Términos de SOFIAA OS.docx",
+  "procesado_por": "sofiaa",
+  "fecha_procesamiento": "2026-07-27"
+}

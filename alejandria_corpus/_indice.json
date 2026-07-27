@@ -1,6 +1,6 @@
 {
-  "generado": "2026-07-24T18:18:35.869Z",
-  "total": 59,
+  "generado": "2026-07-27T00:00:00Z",
+  "total": 73,
   "documentos": [
     {
       "id": "brainstorming_sofiaa_fase_2_alpha_hardening_20260724",
@@ -1465,6 +1465,377 @@
         "experiencias",
         "typescript",
         "react"
+      ]
+    },
+    {
+      "id": "reporte_doctoral_alejandria_20260727",
+      "archivo": "fase_2/modulos/reporte_doctoral_alejandria_20260727.json",
+      "tipo": "reporte_doctoral",
+      "titulo": "ALEJANDRÍA — Knowledge Graph de Autoconocimiento de Ingeniería · Reporte Doctoral v1.0",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_2",
+      "modulos_afectados": [
+        "ALEJANDRÍA",
+        "SOFIAA"
+      ],
+      "sprint_referencia": "AJ-0 AJ-1 AJ-2 AJ-3 AJ-4 AJ-5",
+      "tags": [
+        "alejandria",
+        "knowledge-graph",
+        "autoconocimiento",
+        "rag",
+        "embeddings",
+        "corpus",
+        "fase-2",
+        "reporte-doctoral"
+      ]
+    },
+    {
+      "id": "reporte_doctoral_atena_20260727",
+      "archivo": "fase_2/modulos/reporte_doctoral_atena_20260727.json",
+      "tipo": "reporte_doctoral",
+      "titulo": "ATENA — Advanced Technology for Enterprise Nexus & Analytics · Reporte Doctoral v1.0",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_2",
+      "modulos_afectados": [
+        "ATENA",
+        "HERMES",
+        "SOFIAA"
+      ],
+      "sprint_referencia": "A-0 A-9",
+      "tags": [
+        "atena",
+        "lean-six-sigma",
+        "dmaic",
+        "spc",
+        "amef",
+        "determinismo-estadistico",
+        "fase-2",
+        "reporte-doctoral"
+      ]
+    },
+    {
+      "id": "analisis_doctoral_apolo_20260727",
+      "archivo": "fase_2/modulos/analisis_doctoral_apolo_20260727.json",
+      "tipo": "analisis_doctoral",
+      "titulo": "APOLO — Client Intelligence & Reporting Engine · Análisis Doctoral de Arquitectura y Diseño",
+      "fecha": "2026-07-25",
+      "fase_corpus": "fase_2",
+      "modulos_afectados": [
+        "APOLO",
+        "THEMIS",
+        "ORÁCULO",
+        "PROMETEO",
+        "ATENA",
+        "TEC BII",
+        "NEXO"
+      ],
+      "sprint_referencia": "AP-0 AP-5",
+      "tags": [
+        "apolo",
+        "reportes-ejecutivos",
+        "client-intelligence",
+        "themis-gate",
+        "generacion-2",
+        "fase-2",
+        "analisis-doctoral"
+      ]
+    },
+    {
+      "id": "analisis_doctoral_oraculo_20260727",
+      "archivo": "fase_2/modulos/analisis_doctoral_oraculo_20260727.json",
+      "tipo": "analisis_doctoral",
+      "titulo": "ORÁCULO — Predictive Intelligence Engine · Análisis Doctoral v1.0",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_2",
+      "modulos_afectados": [
+        "ORÁCULO",
+        "ATENA",
+        "TEC BII",
+        "PROMETEO",
+        "NEXO",
+        "HERMES",
+        "THEMIS"
+      ],
+      "sprint_referencia": "O-1 O-5",
+      "tags": [
+        "oraculo",
+        "predictive-intelligence",
+        "motor-determinista",
+        "cron",
+        "generacion-2",
+        "fase-2",
+        "analisis-doctoral"
+      ]
+    },
+    {
+      "id": "analisis_doctoral_themis_20260727",
+      "archivo": "fase_2/modulos/analisis_doctoral_themis_20260727.json",
+      "tipo": "analisis_doctoral",
+      "titulo": "THEMIS — Governance & Ethics Engine · Análisis Doctoral v1.0",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_2",
+      "modulos_afectados": [
+        "THEMIS",
+        "HERMES",
+        "SOFIAA"
+      ],
+      "sprint_referencia": "T-1 T-2 T-3",
+      "tags": [
+        "themis",
+        "gobernanza",
+        "etica",
+        "cognitive-policy",
+        "hermes-gate",
+        "generacion-2",
+        "fase-2",
+        "analisis-doctoral"
+      ]
+    },
+    {
+      "id": "constitucion_del_olimpo_20260727",
+      "archivo": "fase_2/modulos/constitucion_del_olimpo_20260727.json",
+      "tipo": "constitucion",
+      "titulo": "Constitución del Ecosistema Cognitivo SOFIAA OS · Documento Fundacional v1 · 24 de Julio 2026",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_2",
+      "modulos_afectados": [
+        "SOFIAA",
+        "THEMIS",
+        "ALEJANDRÍA",
+        "HEFESTO",
+        "CRONOS",
+        "ARGOS",
+        "LOGOS"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "constitucion",
+        "olimpo",
+        "7-leyes-universales",
+        "generacion-1",
+        "generacion-2",
+        "hefesto",
+        "cronos",
+        "argos",
+        "logos",
+        "fase-2"
+      ]
+    },
+    {
+      "id": "glosario_terminos_sofiaa_os_20260727",
+      "archivo": "fase_2/modulos/glosario_terminos_sofiaa_os_20260727.json",
+      "tipo": "glosario",
+      "titulo": "Glosario de Términos de SOFIAA OS — Vocabulario del Olimpo",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_2",
+      "modulos_afectados": [
+        "SOFIAA",
+        "N.E.X.O.",
+        "ALEJANDRÍA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "glosario",
+        "vocabulario",
+        "terminos",
+        "olimpo",
+        "sofiaa-os",
+        "fase-2",
+        "referencia"
+      ]
+    },
+    {
+      "id": "reporte_doctoral_hermes_20260727",
+      "archivo": "fase_2/modulos/reporte_doctoral_hermes_20260727.json",
+      "tipo": "reporte_doctoral",
+      "titulo": "HERMES — Action Execution Layer · Reporte Doctoral v1.0",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_2",
+      "modulos_afectados": [
+        "HERMES",
+        "PROMETEO",
+        "ATENA",
+        "TEC BII",
+        "THEMIS"
+      ],
+      "sprint_referencia": "H-1 H-2 H-3 H-4",
+      "tags": [
+        "hermes",
+        "action-execution",
+        "human-in-the-loop",
+        "monday-com",
+        "slack",
+        "connectors",
+        "generacion-2",
+        "fase-2",
+        "reporte-doctoral"
+      ]
+    },
+    {
+      "id": "reporte_doctoral_nexo_20260727",
+      "archivo": "fase_2/modulos/reporte_doctoral_nexo_20260727.json",
+      "tipo": "reporte_doctoral",
+      "titulo": "N.E.X.O. — Nexus Extension de Conocimiento y Operaciones · Reporte Doctoral v2.0",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_2",
+      "modulos_afectados": [
+        "N.E.X.O.",
+        "SOFIAA",
+        "TEC BII",
+        "PROMETEO",
+        "ALEJANDRÍA"
+      ],
+      "sprint_referencia": "N-0 N-4 M-0 M-4B",
+      "tags": [
+        "nexo",
+        "memoria-largo-plazo",
+        "decay-organico",
+        "knowledge-graph",
+        "semantic-retrieval",
+        "fase-2",
+        "reporte-doctoral"
+      ]
+    },
+    {
+      "id": "reporte_doctoral_nora_20260727",
+      "archivo": "fase_2/modulos/reporte_doctoral_nora_20260727.json",
+      "tipo": "reporte_doctoral",
+      "titulo": "N.O.R.A. — Neural Observer & Reasoning Architecture · Análisis Doctoral del Sistema de Observación Cognitiva",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_2",
+      "modulos_afectados": [
+        "N.O.R.A.",
+        "SOFIAA",
+        "TEC BII"
+      ],
+      "sprint_referencia": "I-0 M-3 D-D T2-6",
+      "tags": [
+        "nora",
+        "observacion-cognitiva",
+        "telemetria",
+        "cognitive-profile",
+        "metacognicion",
+        "tec-bii",
+        "fase-2",
+        "reporte-doctoral"
+      ]
+    },
+    {
+      "id": "reporte_doctoral_prometeo_20260727",
+      "archivo": "fase_2/modulos/reporte_doctoral_prometeo_20260727.json",
+      "tipo": "reporte_doctoral",
+      "titulo": "PROMETEO — Growth Intelligence Engine v2.0 · CMO Cognitivo · Reporte Doctoral",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_2",
+      "modulos_afectados": [
+        "PROMETEO",
+        "N.E.X.O.",
+        "HERMES",
+        "SOFIAA"
+      ],
+      "sprint_referencia": "P-0 P-8",
+      "tags": [
+        "prometeo",
+        "growth-intelligence",
+        "cmo-cognitivo",
+        "brand-dna",
+        "goal-engine",
+        "director-autonomo",
+        "hermes-bridge",
+        "fase-2",
+        "reporte-doctoral"
+      ]
+    },
+    {
+      "id": "reporte_ejecutivo_v5_julio2026_20260727",
+      "archivo": "fase_2/modulos/reporte_ejecutivo_v5_julio2026_20260727.json",
+      "tipo": "reporte_ejecutivo",
+      "titulo": "SOFIAA OS Reporte Ejecutivo v5.0 — El Olimpo Completo · 26 de Julio 2026",
+      "fecha": "2026-07-26",
+      "fase_corpus": "fase_2",
+      "modulos_afectados": [
+        "SOFIAA",
+        "N.E.X.O.",
+        "N.O.R.A.",
+        "TEC BII",
+        "ATENA",
+        "PROMETEO",
+        "HERMES",
+        "THEMIS",
+        "ORÁCULO",
+        "APOLO",
+        "ALEJANDRÍA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "reporte-ejecutivo",
+        "olimpo-completo",
+        "generacion-2",
+        "10-engines",
+        "julio-2026",
+        "v5",
+        "fase-2"
+      ]
+    },
+    {
+      "id": "reporte_doctoral_sofiaa_2026_20260727",
+      "archivo": "fase_2/modulos/reporte_doctoral_sofiaa_2026_20260727.json",
+      "tipo": "reporte_doctoral",
+      "titulo": "SOFIAA OS — Sistema de Inteligencia Operativa Autónoma · Análisis Doctoral del Estado del Sistema",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_2",
+      "modulos_afectados": [
+        "SOFIAA",
+        "N.E.X.O.",
+        "N.O.R.A.",
+        "TEC BII",
+        "ATENA",
+        "PROMETEO",
+        "HERMES",
+        "THEMIS",
+        "ORÁCULO",
+        "APOLO",
+        "ALEJANDRÍA"
+      ],
+      "sprint_referencia": null,
+      "tags": [
+        "sofiaa",
+        "arquitectura-core",
+        "nextjs",
+        "react-19",
+        "firebase",
+        "groq",
+        "pipeline-cognitivo",
+        "extension-registry",
+        "fase-2",
+        "reporte-doctoral"
+      ]
+    },
+    {
+      "id": "reporte_doctoral_tec_bii_20260727",
+      "archivo": "fase_2/modulos/reporte_doctoral_tec_bii_20260727.json",
+      "tipo": "reporte_doctoral",
+      "titulo": "TEC BII — Inteligencia Cognitiva Operacional · Reporte Doctoral v2.0",
+      "fecha": "2026-07-24",
+      "fase_corpus": "fase_2",
+      "modulos_afectados": [
+        "TEC BII",
+        "N.E.X.O.",
+        "N.O.R.A.",
+        "SOFIAA"
+      ],
+      "sprint_referencia": "T2-0 T2-6 Q-1 Q-3",
+      "tags": [
+        "tec-bii",
+        "tec-monterrey",
+        "cognicion-distribuida",
+        "tier-4-intelligence",
+        "cognitive-publisher",
+        "cross-domain",
+        "nora-reflection",
+        "fase-2",
+        "reporte-doctoral"
       ]
     }
   ]
