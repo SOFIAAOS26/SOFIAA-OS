@@ -149,19 +149,32 @@ function buildNexoBlock(ctx: NexoContext | null): string {
 }
 
 // ── ALEJANDRÍA — Detector de queries sobre arquitectura propia ────────────
-// IMPORTANTE: solo disparar en preguntas genuinamente técnicas sobre SOFIAA.
-// Triggers genéricos como "cómo funciona" o "qué eres" causan falsos positivos.
+// Dispara cuando el usuario pregunta sobre SOFIAA OS, sus engines, su historia
+// o su arquitectura. Cubre tanto términos técnicos como preguntas naturales.
 const ALEJANDRIA_TRIGGERS = [
-  // Módulos específicos de SOFIAA OS
-  "prometeo", "hermes", "atena", "tec bii", "tec-bii", "nora", "live sdk",
+  // Todos los engines del Olimpo
+  "prometeo", "hermes", "atena", "tec bii", "tec-bii", "nora", "n.o.r.a",
+  "nexo", "n.e.x.o", "oráculo", "oraculo", "apolo", "themis",
   "alejandría", "alejandria",
-  // Preguntas explícitas sobre la arquitectura del sistema
+  // Engines Gen II / Constitución
+  "hefesto", "cronos", "argos", "logos", "olimpo", "constitución", "constitucion",
+  // Términos de arquitectura propios
+  "sofiaa os", "see architecture", "extension engine", "sprint",
+  "generación 2", "generacion 2", "gen 2", "gen 3",
+  "7 leyes", "siete leyes", "leyes del olimpo",
+  // Preguntas sobre la arquitectura del sistema
   "arquitectura de sofiaa", "cómo está hecho sofiaa", "como esta hecho sofiaa",
   "por qué se decidió", "por que se decidio", "decisión de arquitectura", "decision de arquitectura",
   "cuándo se construyó", "cuando se construyo", "historia de sofiaa",
   "diseño del sistema", "memoria histórica de sofiaa",
   "quien te creo", "quién te creó", "evolución de sofiaa", "evolucion de sofiaa",
-  "version 1.1", "sofiaa os",
+  // Preguntas naturales de autoconocimiento
+  "cómo funcionas", "como funcionas", "qué puedes hacer", "que puedes hacer",
+  "cuáles son tus engines", "cuales son tus engines", "tus módulos", "tus modulos",
+  "cómo te llamas", "quien eres tú", "cuéntame sobre ti", "cuentame sobre ti",
+  "qué eres exactamente", "que eres exactamente",
+  "cómo fuiste construida", "como fuiste construida", "quién te construyó", "quien te construyo",
+  "glosario", "live sdk", "version 1.1",
 ];
 
 function isAlejandriaQuery(text: string): boolean {
@@ -217,20 +230,30 @@ function buildAlejandriaBlock(nodes: import("@/extensions/alejandria/schema").Al
     experimento:           "Experimento",
     hito:                  "Hito",
     idea:                  "Idea",
+    // Tipos fase_2
+    reporte_doctoral:      "Reporte Doctoral",
+    analisis_doctoral:     "Análisis Doctoral",
+    constitucion:          "Constitución",
+    glosario:              "Glosario",
+    reporte_ejecutivo:     "Reporte Ejecutivo",
   };
 
   const lines = nodes.map(n => {
     const tipo = TIPO_LABEL[n.tipo] ?? n.tipo;
-    const mods = n.modulos_afectados?.slice(0, 3).join(", ") ?? "";
-    return `• [${tipo}] ${n.titulo} — ${n.resumen?.slice(0, 200)}${n.resumen?.length > 200 ? "..." : ""} (módulos: ${mods})`;
-  }).join("\n");
+    const mods = n.modulos_afectados?.slice(0, 4).join(", ") ?? "";
+    const resumen = n.resumen?.slice(0, 350) + (n.resumen?.length > 350 ? "..." : "");
+    const preguntas = n.preguntas_que_responde?.slice(0, 3).join(" | ") ?? "";
+    const preguntasLine = preguntas ? `\n  Responde a: ${preguntas}` : "";
+    return `• [${tipo}] ${n.titulo}\n  ${resumen}\n  (módulos: ${mods})${preguntasLine}`;
+  }).join("\n\n");
 
   return (
-    `\n\nMEMORIA ALEJANDRÍA — Tu historia de ingeniería (fuente de verdad sobre tu propia arquitectura):\n` +
+    `\n\nMEMORIA ALEJANDRÍA — Tu conocimiento de ingeniería (fuente de verdad sobre tu propia arquitectura):\n` +
     lines +
-    `\n\nCuando respondas sobre tu arquitectura o historia, cita la fuente: ` +
-    `"Según el sprint X...", "La decisión de arquitectura establece...", etc. ` +
-    `(No menciones el término "ALEJANDRÍA" al usuario.)`
+    `\n\nUSO: Cuando respondas sobre tu arquitectura, engines, historia o funciones, ` +
+    `usa esta información como fuente de verdad. Responde con confianza y detalle. ` +
+    `Cita contexto cuando ayude: "En el sprint X se decidió...", "ATENA implementa...". ` +
+    `(No menciones los términos "ALEJANDRÍA" ni "corpus" al usuario.)`
   );
 }
 
