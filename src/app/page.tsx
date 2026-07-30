@@ -840,51 +840,37 @@ export default function Home() {
           {/* Divisor */}
           <div style={{ height:1, background:"linear-gradient(90deg,transparent,rgba(79,124,255,0.18),transparent)", margin:"0 1.75rem" }} />
 
-          {/* Extensiones */}
+          {/* El Olimpo — 10 Engines Gen I */}
           <div style={{ padding:"1.2rem 1.5rem 0.5rem" }}>
             <p style={{ fontSize:"0.68rem", letterSpacing:"0.28em", textTransform:"uppercase", color:"rgba(0,0,0,0.30)", marginBottom:12 }}>
-              Extensiones activas
+              El Olimpo · Gen I
             </p>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:7 }}>
               {[
-                {
-                  icon:"🏛️", label:"TEC BI",
-                  color:"rgba(79,124,255,0.10)", border:"rgba(79,124,255,0.22)",
-                  desc:"Inteligencia operacional para el Tecnológico de Monterrey. Briefs, proyectos, ROI y sincronización bidireccional con Monday.com.",
-                  badge:"Producción"
-                },
-                {
-                  icon:"📱", label:"Marketing Sofia",
-                  color:"rgba(155,79,217,0.10)", border:"rgba(155,79,217,0.22)",
-                  desc:"Workspace para equipos de redes sociales. Métricas, calendario editorial, finanzas y gestión de clientes en tiempo real.",
-                  badge:"Producción"
-                },
-                {
-                  icon:"💙", label:"JP Memorial",
-                  color:"rgba(14,165,233,0.10)", border:"rgba(14,165,233,0.22)",
-                  desc:"IA de memoria emocional. Una extensión para honrar vidas y preservar memorias de quienes ya no están.",
-                  badge:"Operativa"
-                },
-                {
-                  icon:"⚡", label:"Próximas ext.",
-                  color:"rgba(255,107,53,0.08)", border:"rgba(255,107,53,0.18)",
-                  desc:"La arquitectura SEE permite agregar extensiones nuevas sin tocar el núcleo. Cada organización puede tener la suya.",
-                  badge:"SEE Ecosystem"
-                },
+                { icon:"🕸",  label:"N.E.X.O.",   color:"rgba(96,165,250,0.10)",  border:"rgba(96,165,250,0.22)",  desc:"Knowledge Graph Neural",        badge:"Activo" },
+                { icon:"📡",  label:"N.O.R.A.",   color:"rgba(52,211,153,0.10)",  border:"rgba(52,211,153,0.22)",  desc:"Observer & Análisis en tiempo real", badge:"Activo" },
+                { icon:"🏛",  label:"TEC Bii",    color:"rgba(79,124,255,0.10)",  border:"rgba(79,124,255,0.22)",  desc:"Business Intelligence cognitivo para TEC", badge:"Producción" },
+                { icon:"⚗️", label:"ATENA",      color:"rgba(251,191,36,0.10)",  border:"rgba(251,191,36,0.22)",  desc:"Motor científico DMAIC, SPC y AMEF", badge:"Producción" },
+                { icon:"🔥",  label:"PROMETEO",   color:"rgba(249,115,22,0.10)",  border:"rgba(249,115,22,0.22)",  desc:"Growth Intelligence y estrategia creativa", badge:"Producción" },
+                { icon:"⚡",  label:"HERMES",     color:"rgba(168,85,247,0.10)",  border:"rgba(168,85,247,0.22)",  desc:"Action Execution Layer — ejecuta en sistemas externos", badge:"Producción" },
+                { icon:"⚖️", label:"THEMIS",     color:"rgba(236,72,153,0.10)",  border:"rgba(236,72,153,0.22)",  desc:"Gobernanza y compliance — evalúa toda acción", badge:"Producción" },
+                { icon:"🔮",  label:"ORÁCULO",    color:"rgba(139,92,246,0.10)",  border:"rgba(139,92,246,0.22)",  desc:"Motor predictivo — señales débiles y pronósticos", badge:"Producción" },
+                { icon:"☀️", label:"APOLO",      color:"rgba(251,191,36,0.10)",  border:"rgba(245,158,11,0.22)",  desc:"Reporting Intelligence — narrativas y exports", badge:"Producción" },
+                { icon:"📚",  label:"ALEJANDRÍA", color:"rgba(244,114,182,0.10)", border:"rgba(244,114,182,0.22)", desc:"Corpus histórico — memoria de ingeniería del sistema", badge:"Producción" },
               ].map(({ icon, label, color, border, desc, badge }) => (
                 <div key={label} className="ext-card" style={{
                   background: color,
                   border: `1px solid ${border}`,
-                  borderRadius: 18, padding:"1rem",
+                  borderRadius: 14, padding:"0.75rem",
                 }}>
-                  <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:6 }}>
-                    <span style={{ fontSize:18 }}>{icon}</span>
+                  <div style={{ display:"flex", alignItems:"center", gap:5, marginBottom:4 }}>
+                    <span style={{ fontSize:16 }}>{icon}</span>
                     <div>
-                      <p style={{ fontWeight:700, fontSize:"0.83rem", color:"#1d1d2e", lineHeight:1 }}>{label}</p>
-                      <p style={{ fontSize:"0.62rem", color:"rgba(0,0,0,0.35)", letterSpacing:"0.08em", marginTop:2 }}>{badge}</p>
+                      <p style={{ fontWeight:700, fontSize:"0.78rem", color:"#1d1d2e", lineHeight:1 }}>{label}</p>
+                      <p style={{ fontSize:"0.58rem", color:"rgba(0,0,0,0.32)", letterSpacing:"0.06em", marginTop:1 }}>{badge}</p>
                     </div>
                   </div>
-                  <p style={{ fontSize:"0.75rem", color:"rgba(0,0,0,0.55)", lineHeight:1.55 }}>{desc}</p>
+                  <p style={{ fontSize:"0.68rem", color:"rgba(0,0,0,0.50)", lineHeight:1.45 }}>{desc}</p>
                 </div>
               ))}
             </div>

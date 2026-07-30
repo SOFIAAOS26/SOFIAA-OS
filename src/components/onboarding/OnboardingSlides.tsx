@@ -127,60 +127,68 @@ function Slide1() {
   );
 }
 
-// ── Slide 2 — Ecosistema SEE ────────────────────────────────────────────────
-const EXTENSIONS = [
-  { icon: "🏛", name: "TEC BI",          color: "#60A5FA", delay: 0,    anim: "sofiaa-float0", desc: "Business Intelligence" },
-  { icon: "📱", name: "Marketing Sofia", color: "#A855F7", delay: 0.15, anim: "sofiaa-float1", desc: "Social Media & Agencias" },
-  { icon: "🕊", name: "JP Memorial",     color: "#F472B6", delay: 0.30, anim: "sofiaa-float2", desc: "Catálogo & Acompañamiento" },
+// ── Slide 2 — El Olimpo · 10 Engines Gen I ─────────────────────────────────
+const ENGINES = [
+  { icon: "🕸",  name: "N.E.X.O.",   color: "#60A5FA", desc: "Knowledge Graph"      },
+  { icon: "📡",  name: "N.O.R.A.",   color: "#34D399", desc: "Observer & Análisis"  },
+  { icon: "🏛",  name: "TEC Bii",    color: "#93C5FD", desc: "Business Intelligence" },
+  { icon: "⚗️", name: "ATENA",      color: "#FCD34D", desc: "Motor Científico"      },
+  { icon: "🔥",  name: "PROMETEO",   color: "#FB923C", desc: "Growth Intelligence"  },
+  { icon: "⚡",  name: "HERMES",     color: "#C084FC", desc: "Action Execution"     },
+  { icon: "⚖️", name: "THEMIS",     color: "#F472B6", desc: "Gobernanza"            },
+  { icon: "🔮",  name: "ORÁCULO",    color: "#A78BFA", desc: "Predictive Engine"    },
+  { icon: "☀️", name: "APOLO",      color: "#FBBF24", desc: "Reporting Intel"       },
+  { icon: "📚",  name: "ALEJANDRÍA", color: "#F9A8D4", desc: "Corpus & Memoria"     },
 ];
 
 function Slide2() {
   return (
-    <div style={{ textAlign: "center", padding: "0 24px" }}>
+    <div style={{ textAlign: "center", padding: "0 16px" }}>
       <div style={{ animation: "sofiaa-fadeUp 0.6s ease both" }}>
         <p style={{
           fontSize: 10, fontWeight: 700, letterSpacing: "3px",
-          marginBottom: 10, fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+          marginBottom: 8, fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
           background: AURORA, WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent", backgroundClip: "text",
         }}>
-          SEE · SOFIAA EXTENSION ECOSYSTEM
+          EL OLIMPO · GEN I · 10 ENGINES ACTIVOS
         </p>
         <h2 style={{
-          fontSize: "clamp(24px, 6vw, 38px)", fontWeight: 900,
-          color: "#fff", marginBottom: 8, letterSpacing: "-0.5px", lineHeight: 1.15,
+          fontSize: "clamp(22px, 5vw, 34px)", fontWeight: 900,
+          color: "#fff", marginBottom: 6, letterSpacing: "-0.5px", lineHeight: 1.15,
           fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
         }}>
-          Tu ecosistema<br />de extensiones
+          Una arquitectura.<br />Diez inteligencias.
         </h2>
-        <p style={{ fontSize: 13, color: "rgba(255,255,255,0.40)", marginBottom: 40 }}>
-          Módulos especializados que SOFIAA activa según tu industria.
+        <p style={{ fontSize: 12, color: "rgba(255,255,255,0.38)", marginBottom: 24 }}>
+          Cada motor opera de forma autónoma dentro del IX-OS.
         </p>
       </div>
 
-      <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
-        {EXTENSIONS.map((ext, i) => (
-          <div key={i} style={{ animation: `sofiaa-chip 0.6s ease ${0.2 + ext.delay}s both` }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8 }}>
+        {ENGINES.map((eng, i) => (
+          <div key={i} style={{ animation: `sofiaa-chip 0.5s ease ${0.1 + i * 0.05}s both` }}>
             <div style={{
               background: "rgba(255,255,255,0.04)",
-              border: `1px solid ${ext.color}33`,
-              borderRadius: 20, padding: "22px 18px", width: 115,
-              animation: `${ext.anim} ${3.5 + i * 0.5}s ease-in-out infinite`,
-              boxShadow: `0 8px 32px ${ext.color}22`,
+              border: `1px solid ${eng.color}30`,
+              borderRadius: 14, padding: "12px 6px",
+              boxShadow: `0 4px 16px ${eng.color}18`,
             }}>
               <div style={{
-                width: 54, height: 54, borderRadius: "50%",
-                background: `radial-gradient(circle, ${ext.color}28, ${ext.color}0A)`,
-                border: `1px solid ${ext.color}44`,
+                width: 36, height: 36, borderRadius: "50%",
+                background: `radial-gradient(circle, ${eng.color}22, ${eng.color}08)`,
+                border: `1px solid ${eng.color}40`,
                 display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 26, margin: "0 auto 12px",
-                boxShadow: `0 0 20px ${ext.color}33`,
+                fontSize: 18, margin: "0 auto 8px",
               }}>
-                {ext.icon}
+                {eng.icon}
               </div>
-              <p style={{ fontWeight: 700, fontSize: 12, color: "#fff", marginBottom: 4,
-                fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}>{ext.name}</p>
-              <p style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", lineHeight: 1.4 }}>{ext.desc}</p>
+              <p style={{
+                fontWeight: 700, fontSize: 10, color: "#fff", marginBottom: 2,
+                fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+                lineHeight: 1.2,
+              }}>{eng.name}</p>
+              <p style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", lineHeight: 1.3 }}>{eng.desc}</p>
             </div>
           </div>
         ))}
